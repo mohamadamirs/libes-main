@@ -19,6 +19,6 @@ export default defineConfig({
 
   prefetch: {
     prefetchAll: false, // Jangan semua link di-prefetch otomatis
-    defaultStrategy: "tap", // Hanya prefetch saat link disentuh/diklik
+    defaultStrategy: "load",
   },
 });

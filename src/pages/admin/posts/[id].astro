@@ -57,9 +57,10 @@ const formatDate = (date: any) => {
         Penulis: <span class="text-slate-900">{post.author_name || 'Anonim'}</span>
       </p>
 
-      <div class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap break-words overflow-x-hidden overflow-y-auto max-h-[50vh] border-t border-slate-50 pt-4 mt-4 pr-2">
+      {/* Ubah baris <article> menjadi seperti ini */}
+      <article class="prose prose-slate prose-base md:prose-lg max-w-full w-full break-words prose-headings:font-black prose-a:text-blue-600 prose-p:leading-relaxed whitespace-pre-wrap overflow-x-hidden">
         {post.content}
-      </div>
+      </article>
     </div>
 
     <div class="grid grid-cols-2 gap-3">

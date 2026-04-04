@@ -37,47 +37,50 @@ const formatDate = (date: any) => {
 <Layout title={`${post.title} | Literasi Brebesan`} description={post.content?.substring(0, 150)}>
   <Header />
 
-  <main class="min-h-screen bg-white pt-24 pb-20">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6">
+  <main class="min-h-screen bg-white pt-26 md:pt-28 pb-16 md:pb-20 overflow-x-hidden">
+    {/* Mengubah px-4 menjadi px-6 di HP agar teks tidak mepet ke pinggir layar */}
+    <div class="max-w-3xl mx-auto px-6 sm:px-8 w-full">
 
-      <a href="/publikasi" class="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-blue-600 transition-colors mb-8">
+      <a href="/publikasi" class="inline-flex items-center text-[10px] md:text-xs font-black uppercase tracking-widest text-slate-400 hover:text-blue-600 transition-colors mb-6 md:mb-8">
         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
         Kembali ke Etalase
       </a>
 
-      <header class="mb-12">
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.1] tracking-tight mb-8">
+      <header class="mb-8 md:mb-12 w-full break-words">
+        {/* Ukuran judul diperkecil menjadi text-xl di HP agar pas */}
+        <h1 class="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-black text-slate-900 leading-snug md:leading-[1.1] tracking-tight mb-6 md:mb-8">
           {post.title}
         </h1>
 
-        <div class="flex flex-wrap items-center gap-4 border-b border-slate-100 pb-8">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-black text-sm uppercase border border-blue-200">
+        <div class="flex flex-wrap items-center gap-3 md:gap-4 border-b border-slate-100 pb-6 md:pb-8">
+          <div class="flex items-center gap-2.5 md:gap-3">
+            <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-black text-xs md:text-sm uppercase border border-blue-200">
               {post.author_name ? post.author_name.charAt(0) : "A"}
             </div>
             <div>
-              <p class="text-sm font-bold text-slate-900">{post.author_name || "Anonim"}</p>
-              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-0.5">Penulis</p>
+              <p class="text-xs md:text-sm font-bold text-slate-900">{post.author_name || "Anonim"}</p>
+              <p class="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-slate-400 mt-0.5">Penulis</p>
             </div>
           </div>
 
-          <div class="h-8 w-px bg-slate-100 hidden sm:block"></div>
+          <div class="h-6 md:h-8 w-px bg-slate-100 hidden sm:block"></div>
 
           <div class="flex flex-col">
-            <p class="text-sm font-bold text-slate-900">{formatDate(post.updated_at)}</p>
-            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-0.5">Terbit</p>
+            <p class="text-xs md:text-sm font-bold text-slate-900">{formatDate(post.updated_at)}</p>
+            <p class="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-slate-400 mt-0.5">Terbit</p>
           </div>
         </div>
       </header>
 
-      <article class="prose prose-slate prose-lg md:prose-xl max-w-none prose-headings:font-black prose-a:text-blue-600 prose-p:leading-relaxed whitespace-pre-wrap">
+      {/* Menambahkan prose-p:leading-8 agar spasi antar baris lebih lega dan nyaman dibaca */}
+      <article class="prose prose-slate prose-sm sm:prose-base md:prose-lg w-full max-w-full break-words overflow-x-hidden prose-headings:font-black prose-a:text-blue-600 prose-a:break-all prose-p:leading-8 whitespace-pre-wrap">
         {post.content}
       </article>
 
-      <div class="mt-20 p-8 bg-slate-50 rounded-3xl border border-slate-200 text-center">
-        <h3 class="text-xl font-black text-slate-900 mb-2">Punya ide cerita atau opini?</h3>
-        <p class="text-slate-600 mb-6 max-w-md mx-auto">Ruang Literasi Brebesan selalu terbuka buat kanca-kanca yang mau merawat nalar lewat tulisan.</p>
-        <a href="/user/posts/create" class="inline-flex bg-blue-600 text-white px-8 py-3 rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-slate-900 transition-all">
+      <div class="mt-12 md:mt-20 p-6 md:p-8 bg-slate-50 rounded-2xl md:rounded-3xl border border-slate-200 text-center w-full">
+        <h3 class="text-base md:text-xl font-black text-slate-900 mb-2">Punya ide cerita atau opini?</h3>
+        <p class="text-slate-600 mb-5 md:mb-6 max-w-md mx-auto text-xs md:text-base">Ruang Literasi Brebesan selalu terbuka buat kanca-kanca yang mau merawat nalar lewat tulisan.</p>
+        <a href="/user/posts/create" class="inline-flex bg-blue-600 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-slate-900 transition-all">
           Tulis Karyamu
         </a>
       </div>
