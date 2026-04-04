@@ -1,0 +1,62 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Sidebar from "../../components/docs/Sidebar.astro";
+import FolderGrid from "../../components/docs/FolderGrid.astro";
+import FileGrid from "../../components/docs/FileGrid.astro";
+import Footer from "../../components/Footer.astro";
+import { getArchiveNavigation } from "../../lib/googleDrive";
+import { getFolders } from "../../lib/googleDrive";
+
+
+const yearId = Astro.url.searchParams.get("yearId");
+const monthId = Astro.url.searchParams.get("monthId");
+const activityId = Astro.url.searchParams.get("activityId");
+
+// Panggil "Otak" di lib untuk menentukan data dan view
+const { data, view, baseUrl } = await getArchiveNavigation(yearId, monthId, activityId);
+---
+
+<Layout title="Dokumentasi | Literasi Brebesan">
+  <Header />
+  <div class="flex h-screen bg-white pt-16 overflow-hidden">
+    <Sidebar activeYear={yearId} />
+
+    <main class="flex-1 flex flex-col min-w-0 bg-slate-50/50">
+      <!-- BREADCRUMBS -->
+      <nav class="px-6 h-14 flex items-center border-b border-slate-200 bg-white">
+        <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+          <a href="/dokumentasi" class="hover:text-blue-600">ARSIP</a>
+          {yearId && <><span>/</span><a href={`?yearId=${yearId}`}>TAHUN</a></>}
+          {monthId && <><span>/</span><a href={`?yearId=${yearId}&monthId=${monthId}`}>BULAN</a></>}
+          {activityId && <><span>/</span><span class="text-slate-900">MEDIA</span></>}
+        </div>
+      </nav>
+
+      <div class="flex-1 overflow-y-auto p-6 md:p-10 pb-32">
+        <header class="mb-10">
+          <h1 class="text-3xl font-black italic text-slate-900 tracking-tighter">
+            {view === 'years' && 'Arsip Dokumentasi'}
+            {view === 'months' && 'Pilih Bulan'}
+            {view === 'activities' && 'Daftar Kegiatan'}
+            {view === 'files' && 'Galeri Media'}
+          </h1>
+        </header>
+
+        <!-- RENDER KONTEN BERDASARKAN VIEW -->
+              {view !== "files" && (
+          <FolderGrid
+            items={data}
+            baseUrl={baseUrl}
+            type={view === 'years' ? 'year' : 'folder'}
+          />
+        )}
+
+        {view === "files" && (
+          <FileGrid activityId={activityId} />
+        )}
+      </div>
+    </main>
+  </div>
+  <Footer />
+</Layout>

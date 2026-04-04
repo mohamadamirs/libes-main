@@ -1,11 +1,11 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
 import { sql } from "../../lib/db";
 
-// 1. Tangkap slug dari URL
 const { slug } = Astro.params;
 
-// 2. Tarik data postingan berdasarkan slug tersebut
 const { rows } = await sql`
   SELECT
     p.title,
@@ -19,7 +19,6 @@ const { rows } = await sql`
 
 const post = rows[0];
 
-// 3. Proteksi: Kalau artikel gak ada (atau statusnya bukan published), tampilin 404
 if (!post) {
   return new Response("Waduh, tulisannya gak ketemu atau belum dirilis, Nyet!", {
     status: 404,
@@ -27,46 +26,64 @@ if (!post) {
   });
 }
 
-// Fungsi format tanggal
 const formatDate = (date: any) => {
   if (!date) return "";
   return new Date(date).toLocaleDateString("id-ID", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+    year: "numeric", month: "long", day: "numeric",
   });
 };
 ---
 
-<Layout title={`${post.title} | Literasi Brebesan`}>
+<Layout title={`${post.title} | Literasi Brebesan`} description={post.content?.substring(0, 150)}>
+  <Header />
+
   <main class="min-h-screen bg-white pt-24 pb-20">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6">
 
-    <div class="max-w-3xl mx-auto px-4 mb-8">
-      <a href="/publikasi" class="inline-flex items-center text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors">
+      <a href="/publikasi" class="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-blue-600 transition-colors mb-8">
         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-        Kembali ke Daftar Tulisan
+        Kembali ke Etalase
       </a>
-    </div>
 
-    <article class="max-w-3xl mx-auto px-4">
-
-      <header class="mb-10 border-b border-slate-100 pb-8">
-        <h1 class="text-4xl md:text-5xl font-black text-slate-900 leading-tight mb-6">
+      <header class="mb-12">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.1] tracking-tight mb-8">
           {post.title}
         </h1>
 
-        <div class="flex items-center text-slate-500 text-sm">
-          <div class="flex items-center bg-blue-50 px-3 py-1.5 rounded-lg font-bold mr-4 text-blue-700">
-            ✍️ {post.author_name || "Anonim"}
+        <div class="flex flex-wrap items-center gap-4 border-b border-slate-100 pb-8">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-black text-sm uppercase border border-blue-200">
+              {post.author_name ? post.author_name.charAt(0) : "A"}
+            </div>
+            <div>
+              <p class="text-sm font-bold text-slate-900">{post.author_name || "Anonim"}</p>
+              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-0.5">Penulis</p>
+            </div>
           </div>
-          <time class="font-medium text-slate-400">📅 {formatDate(post.updated_at)}</time>
+
+          <div class="h-8 w-px bg-slate-100 hidden sm:block"></div>
+
+          <div class="flex flex-col">
+            <p class="text-sm font-bold text-slate-900">{formatDate(post.updated_at)}</p>
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-0.5">Terbit</p>
+          </div>
         </div>
       </header>
 
-      <div class="text-lg text-slate-800 leading-relaxed whitespace-pre-wrap tracking-wide">
+      <article class="prose prose-slate prose-lg md:prose-xl max-w-none prose-headings:font-black prose-a:text-blue-600 prose-p:leading-relaxed whitespace-pre-wrap">
         {post.content}
+      </article>
+
+      <div class="mt-20 p-8 bg-slate-50 rounded-3xl border border-slate-200 text-center">
+        <h3 class="text-xl font-black text-slate-900 mb-2">Punya ide cerita atau opini?</h3>
+        <p class="text-slate-600 mb-6 max-w-md mx-auto">Ruang Literasi Brebesan selalu terbuka buat kanca-kanca yang mau merawat nalar lewat tulisan.</p>
+        <a href="/user/posts/create" class="inline-flex bg-blue-600 text-white px-8 py-3 rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-slate-900 transition-all">
+          Tulis Karyamu
+        </a>
       </div>
 
-    </article>
+    </div>
   </main>
+
+  <Footer />
 </Layout>
