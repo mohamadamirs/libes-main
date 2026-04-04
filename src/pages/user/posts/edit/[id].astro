@@ -2,6 +2,7 @@
 import DashboardLayout from "../../../../layouts/DashboardLayout.astro";
 import { actions } from "astro:actions";
 import { sql } from "../../../../lib/db";
+import RichTextEditor from "../../../../components/RichTextEditor.astro";
 
 const { id } = Astro.params;
 const { user } = Astro.locals;
@@ -12,18 +13,21 @@ const { rows } = await sql`
 `;
 const post = rows[0];
 
+// Ambil daftar kategori untuk dropdown
+const { rows: categories } = await sql`SELECT id, name FROM categories ORDER BY name ASC`;
+
 // Kalau iseng ngetik ID ngawur di URL, tendang!
 if (!post) return Astro.redirect('/user?error=Postingan gak ketemu');
 ---
 
-<DashboardLayout title="Dandani Tulisan">
+<DashboardLayout title="Edit Tulisan">
   <div class="max-w-2xl mx-auto pt-8">
     <header class="mb-10">
       <div class="flex items-center gap-2 mb-2">
          <a href="/user" class="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:underline">← Balik</a>
       </div>
-      <h1 class="text-3xl font-black italic uppercase tracking-tighter text-slate-900">Dandani Tulisan</h1>
-      <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">ID: {post.id.split('-')[0]}</p>
+      <h1 class="text-3xl font-black uppercase tracking-tighter text-slate-900 leading-none">Edit Tulisan</h1>
+      <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-2">ID: {post.id.split('-')[0]}</p>
     </header>
 
     <form method="POST" action={actions.updatePost} class="space-y-6">
@@ -34,27 +38,39 @@ if (!post) return Astro.redirect('/user?error=Postingan gak ketemu');
         <input type="text" name="title" value={post.title} required class="w-full px-6 py-5 bg-white border border-slate-200 rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-slate-900" />
       </div>
 
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="group">
+          <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Kategori</label>
+          <select name="category_id" class="w-full px-6 py-5 bg-white border border-slate-200 rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-slate-900 appearance-none">
+            <option value="">Pilih Kategori (Opsional)</option>
+            {categories.map((cat) => (
+              <option value={cat.id} selected={cat.id === post.category_id}>{cat.name}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
       <div class="group">
-        <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Isi Cerita</label>
-        <textarea name="content" rows="10" class="w-full px-6 py-5 bg-white border border-slate-200 rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-medium text-slate-700">{post.content}</textarea>
+        <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Isi Konten</label>
+        <RichTextEditor name="content" value={post.content} />
       </div>
 
       <div class="flex flex-col sm:flex-row gap-4 pt-4">
         <div class="flex-1 bg-slate-100 p-2 rounded-[2rem] flex gap-1">
           <label class="flex-1 cursor-pointer">
             <input type="radio" name="status" value="draft" class="peer hidden" checked={post.status === 'draft'} />
-            <div class="text-center py-3 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-white peer-checked:text-slate-900 peer-checked:shadow-sm transition-all italic">Draft</div>
+            <div class="text-center py-3 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-white peer-checked:text-slate-900 peer-checked:shadow-sm transition-all">Draft</div>
           </label>
 
           <label class="flex-1 cursor-pointer">
             <input type="radio" name="status" value="pending" class="peer hidden" checked={post.status === 'pending' || post.status === 'published'} />
-            <div class="text-center py-3 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:shadow-lg transition-all italic">Kirim</div>
+            <div class="text-center py-3 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:shadow-lg transition-all">Kirim</div>
           </label>
 
           {user?.role === 'admin' && (
             <label class="flex-1 cursor-pointer">
               <input type="radio" name="status" value="published" class="peer hidden" checked={post.status === 'published'} />
-              <div class="text-center py-3 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-green-500 peer-checked:text-white peer-checked:shadow-lg transition-all italic">Terbit</div>
+              <div class="text-center py-3 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-green-500 peer-checked:text-white peer-checked:shadow-lg transition-all">Terbitin</div>
             </label>
           )}
         </div>

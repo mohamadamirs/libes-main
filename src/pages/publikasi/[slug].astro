@@ -72,9 +72,7 @@ const formatDate = (date: any) => {
         </div>
       </header>
 
-      {/* Menambahkan prose-p:leading-8 agar spasi antar baris lebih lega dan nyaman dibaca */}
-      <article class="prose prose-slate prose-sm sm:prose-base md:prose-lg w-full max-w-full break-words overflow-x-hidden prose-headings:font-black prose-a:text-blue-600 prose-a:break-all prose-p:leading-8 whitespace-pre-wrap">
-        {post.content}
+      <article class="prose prose-slate prose-sm sm:prose-base md:prose-lg w-full max-w-full break-words overflow-x-hidden prose-headings:font-black prose-a:text-blue-600 prose-a:break-all prose-p:leading-8" set:html={post.content}>
       </article>
 
       <div class="mt-12 md:mt-20 p-6 md:p-8 bg-slate-50 rounded-2xl md:rounded-3xl border border-slate-200 text-center w-full">

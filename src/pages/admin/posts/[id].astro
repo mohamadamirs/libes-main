@@ -11,9 +11,10 @@ const { id } = Astro.params;
 
 // Ambil data artikel dan nama penulis
 const { rows } = await sql`
-  SELECT p.*, pr.full_name as author_name
+  SELECT p.*, pr.full_name as author_name, c.name as category_name
   FROM posts p
   LEFT JOIN profiles pr ON p.user_id = pr.id
+  LEFT JOIN categories c ON p.category_id = c.id
   WHERE p.id = ${id}
 `;
 
@@ -29,27 +30,32 @@ const formatDate = (date: any) => {
 };
 ---
 
-<DashboardLayout title="Pratinjau Artikel">
+<DashboardLayout title="Baca Artikel">
   <div class="pt-6 pb-24 px-4 max-w-lg mx-auto">
 
     <a href="/admin" class="inline-flex items-center text-[10px] font-bold uppercase text-slate-400 mb-6 hover:text-blue-600">
-      ← Kembali ke Dasbor
+      ← Balik ke Dashboard
     </a>
 
-    <div class="bg-white rounded-xl border border-slate-200 p-5 mb-6 shadow-sm">
+    <div class="bg-white rounded-xl border border-slate-200 p-5 mb-6 shadow-sm overflow-hidden">
 
-      <div class="flex items-center justify-between mb-4 pb-4 border-b border-slate-50">
-        <span class={`text-[9px] font-bold uppercase px-2 py-1 rounded ${
-          post.status === 'published' ? 'bg-green-50 text-green-600' : 'bg-blue-50 text-blue-600'
-        }`}>
-          {post.status}
-        </span>
-        <span class="text-[9px] text-slate-400 font-bold uppercase">
+      <div class="flex items-center justify-between mb-4 pb-4 border-b border-slate-50 gap-2">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class={`text-[9px] font-bold uppercase px-2 py-1 rounded shrink-0 ${
+            post.status === 'published' ? 'bg-green-50 text-green-600' : 'bg-blue-50 text-blue-600'
+          }`}>
+            {post.status}
+          </span>
+          <span class="text-[9px] font-black uppercase px-2 py-1 bg-slate-100 text-slate-500 rounded shrink-0">
+            {post.category_name || 'Tanpa Kategori'}
+          </span>
+        </div>
+        <span class="text-[9px] text-slate-400 font-bold uppercase shrink-0">
           {formatDate(post.created_at)}
         </span>
       </div>
 
-      <h1 class="text-xl font-bold text-slate-900 leading-tight mb-2">
+      <h1 class="text-lg sm:text-xl font-black text-slate-900 leading-tight mb-2 break-words">
         {post.title}
       </h1>
 
@@ -57,9 +63,7 @@ const formatDate = (date: any) => {
         Penulis: <span class="text-slate-900">{post.author_name || 'Anonim'}</span>
       </p>
 
-      {/* Ubah baris <article> menjadi seperti ini */}
-      <article class="prose prose-slate prose-base md:prose-lg max-w-full w-full break-words prose-headings:font-black prose-a:text-blue-600 prose-p:leading-relaxed whitespace-pre-wrap overflow-x-hidden">
-        {post.content}
+      <article class="prose prose-slate prose-sm sm:prose-base max-w-full w-full break-words prose-headings:font-black prose-a:text-blue-600 prose-p:leading-relaxed overflow-x-hidden" set:html={post.content}>
       </article>
     </div>
 
@@ -68,18 +72,18 @@ const formatDate = (date: any) => {
       {post.status !== 'published' && (
         <form method="POST" action={actions.approvePost} class="m-0">
           <input type="hidden" name="id" value={post.id} />
-          <button type="submit" class="w-full py-3.5 bg-blue-600 text-white text-[10px] font-bold rounded-xl uppercase tracking-wider shadow-lg shadow-blue-100">
-            Terima & Terbitkan
+          <button type="submit" class="w-full py-3.5 bg-blue-600 text-white text-[10px] font-bold rounded-xl uppercase tracking-wider shadow-lg shadow-blue-100 active:scale-95 transition-all">
+            Terbitin Sekarang
           </button>
         </form>
       )}
 
-      <form method="POST" action={actions.deletePost} class="m-0" onsubmit="return confirm('Hapus artikel ini?')">
+      <form method="POST" action={actions.deletePost} class="m-0" onsubmit="return confirm('Yakin mau hapus artikel ini?')">
         <input type="hidden" name="id" value={post.id} />
-        <button type="submit" class={`w-full py-3.5 border font-bold text-[10px] rounded-xl uppercase tracking-wider ${
+        <button type="submit" class={`w-full py-3.5 border font-bold text-[10px] rounded-xl uppercase tracking-wider active:scale-95 transition-all ${
           post.status === 'published' ? 'col-span-2 bg-red-50 text-red-600 border-red-100' : 'bg-white text-slate-400 border-slate-200'
         }`}>
-          Hapus Artikel
+          Hapus Aja
         </button>
       </form>
 

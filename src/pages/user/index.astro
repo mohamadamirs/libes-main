@@ -1,27 +1,39 @@
 ---
 import DashboardLayout from "../../layouts/DashboardLayout.astro";
 import { sql } from "../../lib/db";
+import { actions } from "astro:actions";
+import Pagination from "../../components/Pagination.astro";
 
 const { user } = Astro.locals;
 
-// Ambil data postingan - Simple aja
+// Konfigurasi Pagination
+const page = parseInt(Astro.url.searchParams.get('page') || '1');
+const limit = 10;
+const offset = (page - 1) * limit;
+
+// Hitung Total Tulisan
+const { rows: countRows } = await sql`
+  SELECT COUNT(*) as total FROM posts WHERE user_id = ${user?.id}
+`;
+const totalPosts = parseInt(countRows[0].total || '0');
+const totalPages = Math.ceil(totalPosts / limit);
+
+// Ambil data postingan dengan Limit & Offset
 const { rows: posts } = await sql`
   SELECT id, title, created_at
   FROM posts
   WHERE user_id = ${user?.id}
   ORDER BY created_at DESC
+  LIMIT ${limit} OFFSET ${offset}
 `;
-
-const totalPosts = posts.length;
 ---
 
 <DashboardLayout title="Dashboard">
-  <div class="pt-10 md:pt-14">
-
+  <div>
     <div class="flex items-center justify-between mb-8">
       <div>
-        <h1 class="text-2xl font-black text-slate-900 tracking-tight italic uppercase">Dashboard</h1>
-        <p class="text-[10px] text-slate-400 uppercase font-bold tracking-[0.2em] mt-1">Kanca: {user?.fullName.split(' ')[0]}</p>
+        <h1 class="text-2xl font-black text-slate-900 tracking-tight uppercase">Dashboard</h1>
+        <p class="text-[10px] text-slate-400 uppercase font-bold tracking-[0.2em] mt-1">Halo, {user?.fullName.split(' ')[0]}</p>
       </div>
       <a href="/user/posts/create" class="bg-blue-600 text-white p-3 rounded-2xl shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all active:scale-95">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -46,38 +58,43 @@ const totalPosts = posts.length;
 
       {posts.length === 0 ? (
         <div class="py-16 text-center border-2 border-dashed border-slate-200 rounded-[2rem] bg-white/50">
-          <p class="text-xs font-bold text-slate-400 italic">Belum ada cerita, Nyet. Klik tombol biru di atas!</p>
+          <p class="text-xs font-bold text-slate-400">Belum ada cerita. Klik tombol biru di atas buat nulis!</p>
         </div>
       ) : (
-        posts.map((post) => (
-          <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all group">
-            <div class="flex items-center justify-between gap-4">
-              <div class="flex-1 min-w-0">
-                <a href={`/user/posts/edit/${post.id}`} class="block">
-                  <h4 class="font-bold text-sm text-slate-900 truncate group-hover:text-blue-600 transition-colors">
-                      {post.title}
-                  </h4>
-                  <p class="text-[9px] text-slate-400 font-bold uppercase mt-1 tracking-tighter">
-                    {new Date(post.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
-                  </p>
-                </a>
-              </div>
+        <>
+          <div class="space-y-3">
+            {posts.map((post) => (
+              <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all group">
+                <div class="flex items-center justify-between gap-4">
+                  <div class="flex-1 min-w-0">
+                    <a href={`/user/posts/edit/${post.id}`} class="block">
+                      <h4 class="font-bold text-sm text-slate-900 truncate group-hover:text-blue-600 transition-colors">
+                          {post.title}
+                      </h4>
+                      <p class="text-[9px] text-slate-400 font-bold uppercase mt-1 tracking-tighter">
+                        {new Date(post.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                      </p>
+                    </a>
+                  </div>
 
-              <div class="flex items-center gap-1">
-                <a href={`/user/posts/edit/${post.id}`} class="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                </a>
+                  <div class="flex items-center gap-1">
+                    <a href={`/user/posts/edit/${post.id}`} class="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </a>
 
-                <form action={actions.deletePost} method="POST" onsubmit="return confirm('Yakin pan dihapus?')">
-                  <input type="hidden" name="id" value={post.id} />
-                  <button type="submit" class="p-2 text-slate-200 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                  </button>
-                </form>
+                    <form action={actions.deletePost} method="POST" onsubmit="return confirm('Yakin pan dihapus?')">
+                      <input type="hidden" name="id" value={post.id} />
+                      <button type="submit" class="p-2 text-slate-200 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                      </button>
+                    </form>
+                  </div>
+                </div>
               </div>
-            </div>
+            ))}
           </div>
-        ))
+          <Pagination currentPage={page} totalPages={totalPages} paramName="page" />
+        </>
       )}
     </div>
   </div>

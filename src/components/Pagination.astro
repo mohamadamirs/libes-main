@@ -1,0 +1,76 @@
+---
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  paramName: string;
+}
+
+const { currentPage, totalPages, paramName } = Astro.props;
+
+// Fungsi untuk mempertahankan parameter URL lain (misal ?pPage=1&aPage=2)
+const getUrl = (page: number) => {
+  const url = new URL(Astro.url);
+  url.searchParams.set(paramName, page.toString());
+  return url.pathname + url.search;
+};
+
+// Hitung rentang angka (max 4 angka berurutan)
+const maxVisible = 4;
+let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+let endPage = startPage + maxVisible - 1;
+
+if (endPage > totalPages) {
+  endPage = totalPages;
+  startPage = Math.max(1, endPage - maxVisible + 1);
+}
+
+const visiblePages = [];
+for (let i = startPage; i <= endPage; i++) {
+  visiblePages.push(i);
+}
+---
+
+{totalPages > 1 && (
+  <nav class="flex items-center justify-center gap-1 mt-6">
+    {/* Tombol Prev */}
+    {currentPage > 1 ? (
+      <a href={getUrl(currentPage - 1)} class="px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors">Prev</a>
+    ) : (
+      <span class="px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 cursor-not-allowed">Prev</span>
+    )}
+
+    {/* Angka Halaman Pertama + Ellipsis */}
+    {startPage > 1 && (
+      <>
+        <a href={getUrl(1)} class="px-3 py-2 rounded-xl text-[11px] font-bold text-slate-500 hover:bg-slate-100 transition-colors">1</a>
+        {startPage > 2 && <span class="px-2 text-slate-300 font-bold text-xs tracking-widest">...</span>}
+      </>
+    )}
+
+    {/* Deretan Angka Utama */}
+    {visiblePages.map(page => (
+      <a href={getUrl(page)} class={`px-3 py-2.5 min-w-[2.5rem] text-center rounded-xl text-[11px] font-black transition-all ${
+        page === currentPage 
+          ? 'bg-blue-600 text-white shadow-md shadow-blue-200' 
+          : 'bg-white border border-slate-100 text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+      }`}>
+        {page}
+      </a>
+    ))}
+
+    {/* Ellipsis + Angka Halaman Terakhir */}
+    {endPage < totalPages && (
+      <>
+        {endPage < totalPages - 1 && <span class="px-2 text-slate-300 font-bold text-xs tracking-widest">...</span>}
+        <a href={getUrl(totalPages)} class="px-3 py-2 rounded-xl text-[11px] font-bold text-slate-500 hover:bg-slate-100 transition-colors">{totalPages}</a>
+      </>
+    )}
+
+    {/* Tombol Next */}
+    {currentPage < totalPages ? (
+      <a href={getUrl(currentPage + 1)} class="px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors">Next</a>
+    ) : (
+      <span class="px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 cursor-not-allowed">Next</span>
+    )}
+  </nav>
+)}

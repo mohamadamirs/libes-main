@@ -1,0 +1,58 @@
+CREATE SCHEMA "public";
+CREATE TABLE "agendas" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+	"title" text NOT NULL,
+	"description" text NOT NULL,
+	"event_date" date NOT NULL,
+	"event_time" text NOT NULL,
+	"location" text NOT NULL,
+	"wa_link" text DEFAULT 'https://wa.me/628993986415' NOT NULL,
+	"image_url" text,
+	"status" text DEFAULT 'draft' NOT NULL,
+	"publish_at" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE "categories" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+	"name" varchar(100) NOT NULL,
+	"slug" varchar(100) NOT NULL CONSTRAINT "categories_slug_key" UNIQUE,
+	"description" text,
+	"created_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+CREATE TABLE "posts" (
+	"id" uuid PRIMARY KEY,
+	"title" text NOT NULL,
+	"content" text,
+	"status" text DEFAULT 'draft' NOT NULL,
+	"user_id" uuid NOT NULL,
+	"created_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	"updated_at" timestamp NOT NULL,
+	"slug" varchar(255) CONSTRAINT "posts_slug_key" UNIQUE,
+	"category_id" uuid
+);
+CREATE TABLE "profiles" (
+	"id" uuid PRIMARY KEY,
+	"full_name" text,
+	"bio" text,
+	"role" text DEFAULT 'user' NOT NULL,
+	"created_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	"instagram" text
+);
+CREATE TABLE "users" (
+	"id" uuid PRIMARY KEY,
+	"email" text NOT NULL,
+	"password_hash" text NOT NULL,
+	"created_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+CREATE UNIQUE INDEX "agendas_pkey" ON "agendas" ("id");
+CREATE UNIQUE INDEX "categories_pkey" ON "categories" ("id");
+CREATE UNIQUE INDEX "categories_slug_key" ON "categories" ("slug");
+CREATE INDEX "posts_category_id_idx" ON "posts" ("category_id");
+CREATE UNIQUE INDEX "posts_pkey" ON "posts" ("id");
+CREATE UNIQUE INDEX "posts_slug_key" ON "posts" ("slug");
+CREATE UNIQUE INDEX "profiles_pkey" ON "profiles" ("id");
+CREATE UNIQUE INDEX "users_email_key" ON "users" ("email");
+CREATE UNIQUE INDEX "users_pkey" ON "users" ("id");
+ALTER TABLE "posts" ADD CONSTRAINT "posts_category_id_fkey" FOREIGN KEY ("category_id") REFERENCES "categories"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "posts" ADD CONSTRAINT "posts_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "profiles" ADD CONSTRAINT "profiles_id_fkey" FOREIGN KEY ("id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
