@@ -1,0 +1,88 @@
+---
+import DashboardLayout from "../../../layouts/DashboardLayout.astro";
+import { sql } from "../../../lib/db";
+import { actions } from "astro:actions";
+
+const { user } = Astro.locals;
+// Keamanan: Hanya admin yang bisa masuk
+if (user?.role !== 'admin') return Astro.redirect('/user');
+
+const { id } = Astro.params;
+
+// Ambil data artikel dan nama penulis
+const { rows } = await sql`
+  SELECT p.*, pr.full_name as author_name
+  FROM posts p
+  LEFT JOIN profiles pr ON p.user_id = pr.id
+  WHERE p.id = ${id}
+`;
+
+const post = rows[0];
+
+// Jika artikel tidak ditemukan
+if (!post) return Astro.redirect('/admin');
+
+const formatDate = (date: any) => {
+  return new Date(date).toLocaleDateString('id-ID', {
+    day: 'numeric', month: 'short', year: 'numeric'
+  });
+};
+---
+
+<DashboardLayout title="Pratinjau Artikel">
+  <div class="pt-6 pb-24 px-4 max-w-lg mx-auto">
+
+    <a href="/admin" class="inline-flex items-center text-[10px] font-bold uppercase text-slate-400 mb-6 hover:text-blue-600">
+      ← Kembali ke Dasbor
+    </a>
+
+    <div class="bg-white rounded-xl border border-slate-200 p-5 mb-6 shadow-sm">
+
+      <div class="flex items-center justify-between mb-4 pb-4 border-b border-slate-50">
+        <span class={`text-[9px] font-bold uppercase px-2 py-1 rounded ${
+          post.status === 'published' ? 'bg-green-50 text-green-600' : 'bg-blue-50 text-blue-600'
+        }`}>
+          {post.status}
+        </span>
+        <span class="text-[9px] text-slate-400 font-bold uppercase">
+          {formatDate(post.created_at)}
+        </span>
+      </div>
+
+      <h1 class="text-xl font-bold text-slate-900 leading-tight mb-2">
+        {post.title}
+      </h1>
+
+      <p class="text-[10px] text-slate-500 font-medium mb-6">
+        Penulis: <span class="text-slate-900">{post.author_name || 'Anonim'}</span>
+      </p>
+
+      <div class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap break-words overflow-x-hidden overflow-y-auto max-h-[50vh] border-t border-slate-50 pt-4 mt-4 pr-2">
+        {post.content}
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+
+      {post.status !== 'published' && (
+        <form method="POST" action={actions.approvePost} class="m-0">
+          <input type="hidden" name="id" value={post.id} />
+          <button type="submit" class="w-full py-3.5 bg-blue-600 text-white text-[10px] font-bold rounded-xl uppercase tracking-wider shadow-lg shadow-blue-100">
+            Terima & Terbitkan
+          </button>
+        </form>
+      )}
+
+      <form method="POST" action={actions.deletePost} class="m-0" onsubmit="return confirm('Hapus artikel ini?')">
+        <input type="hidden" name="id" value={post.id} />
+        <button type="submit" class={`w-full py-3.5 border font-bold text-[10px] rounded-xl uppercase tracking-wider ${
+          post.status === 'published' ? 'col-span-2 bg-red-50 text-red-600 border-red-100' : 'bg-white text-slate-400 border-slate-200'
+        }`}>
+          Hapus Artikel
+        </button>
+      </form>
+
+    </div>
+
+  </div>
+</DashboardLayout>
