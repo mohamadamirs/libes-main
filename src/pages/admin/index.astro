@@ -3,20 +3,17 @@ import DashboardLayout from "../../layouts/DashboardLayout.astro";
 import { sql } from "../../lib/db";
 import { actions } from "astro:actions";
 
+// Proteksi Admin
 const { user } = Astro.locals;
-
-// Proteksi halaman admin
 if (user?.role !== 'admin') return Astro.redirect('/user');
 
-// Ambil semua data artikel
+// --- DATA ARTIKEL ---
 const { rows: allPosts } = await sql`
   SELECT p.*, pr.full_name as author
   FROM posts p
   JOIN profiles pr ON p.user_id = pr.id
   ORDER BY p.created_at DESC
 `;
-
-// Pisahkan berdasarkan status
 const pendingPosts = allPosts.filter(p => p.status === 'pending');
 const publishedPosts = allPosts.filter(p => p.status === 'published');
 
@@ -26,105 +23,121 @@ const stats = {
   total: allPosts.length
 };
 
+// --- DATA AGENDA ---
+const { rows: agendas } = await sql`
+  SELECT id, title, event_date, status
+  FROM agendas
+  ORDER BY created_at DESC
+`;
+
 const formatDate = (date: any) => {
   return new Date(date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
 };
 ---
 
 <DashboardLayout title="Dasbor Admin">
-  <div class="pt-6 pb-24 px-4 max-w-lg mx-auto">
+  <div class="pt-6 pb-24 px-4 md:px-8 max-w-6xl mx-auto">
 
-    <header class="mb-6">
-      <h1 class="text-2xl font-bold text-slate-900">Dasbor Admin</h1>
-      <p class="text-sm text-slate-500">Kelola semua artikel di sini.</p>
+    <header class="mb-6 md:mb-10 text-center md:text-left">
+      <h1 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Dasbor Admin</h1>
+      <p class="text-xs md:text-sm text-slate-500 mt-1">Pusat kendali artikel dan agenda komunitas.</p>
     </header>
 
-    <div class="grid grid-cols-3 gap-2 mb-8">
-      <div class="bg-blue-50 border border-blue-100 p-3 rounded-xl text-center">
-        <span class="block text-xl font-bold text-blue-700">{stats.pending}</span>
-        <span class="text-[10px] text-blue-600 font-medium uppercase tracking-wider">Menunggu</span>
+    <div class="grid grid-cols-3 gap-2 md:gap-4 mb-8 md:mb-12">
+      <div class="bg-blue-50 border border-blue-100 p-3 md:p-5 rounded-2xl text-center shadow-sm">
+        <span class="block text-xl md:text-3xl font-black text-blue-700">{stats.pending}</span>
+        <span class="text-[9px] md:text-[11px] text-blue-600 font-bold uppercase tracking-widest mt-1 block">Menunggu</span>
       </div>
-      <div class="bg-green-50 border border-green-100 p-3 rounded-xl text-center">
-        <span class="block text-xl font-bold text-green-700">{stats.published}</span>
-        <span class="text-[10px] text-green-600 font-medium uppercase tracking-wider">Terbit</span>
+      <div class="bg-green-50 border border-green-100 p-3 md:p-5 rounded-2xl text-center shadow-sm">
+        <span class="block text-xl md:text-3xl font-black text-green-700">{stats.published}</span>
+        <span class="text-[9px] md:text-[11px] text-green-600 font-bold uppercase tracking-widest mt-1 block">Terbit</span>
       </div>
-      <div class="bg-slate-50 border border-slate-200 p-3 rounded-xl text-center">
-        <span class="block text-xl font-bold text-slate-700">{stats.total}</span>
-        <span class="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Total</span>
+      <div class="bg-slate-50 border border-slate-200 p-3 md:p-5 rounded-2xl text-center shadow-sm">
+        <span class="block text-xl md:text-3xl font-black text-slate-700">{stats.total}</span>
+        <span class="text-[9px] md:text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-1 block">Total</span>
       </div>
     </div>
 
-    <div class="mb-8">
-      <h2 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-        Menunggu Persetujuan
-      </h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
 
-      <div class="flex flex-col gap-3">
-        {pendingPosts.length === 0 ? (
-          <div class="text-center p-6 bg-slate-50 rounded-xl border border-slate-200">
-            <p class="text-xs text-slate-500">Tidak ada artikel baru.</p>
-          </div>
-        ) : (
-          pendingPosts.map(post => (
-            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-              <h3 class="text-sm font-bold text-slate-900 line-clamp-2 leading-tight mb-1">{post.title}</h3>
-              <p class="text-[10px] text-slate-500 mb-4">{post.author} • {formatDate(post.created_at)}</p>
+      <div>
+        <h2 class="text-sm md:text-base font-black text-slate-800 mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+          Verifikasi Artikel
+        </h2>
 
-              <div class="grid grid-cols-3 gap-2">
-                <a href={`/admin/posts/${post.id}`} class="text-center py-2.5 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-lg active:bg-slate-200">
-                  BACA
-                </a>
-                <form method="POST" action={actions.approvePost} class="m-0">
-                  <input type="hidden" name="id" value={post.id} />
-                  <button type="submit" class="w-full text-center py-2.5 bg-blue-600 text-white text-[10px] font-bold rounded-lg active:bg-blue-700">
-                    TERIMA
-                  </button>
-                </form>
-                <form method="POST" action={actions.deletePost} class="m-0" onsubmit="return confirm('Hapus artikel ini selamanya?')">
-                  <input type="hidden" name="id" value={post.id} />
-                  <button type="submit" class="w-full text-center py-2.5 bg-red-50 text-red-600 border border-red-100 text-[10px] font-bold rounded-lg active:bg-red-100">
-                    TOLAK
-                  </button>
-                </form>
-              </div>
+        <div class="flex flex-col gap-3">
+          {pendingPosts.length === 0 ? (
+            <div class="text-center p-8 bg-slate-50 rounded-2xl border border-slate-200 border-dashed">
+              <p class="text-xs font-medium text-slate-500">Semua artikel sudah diverifikasi. ✨</p>
             </div>
-          ))
-        )}
+          ) : (
+            pendingPosts.map(post => (
+              <div class="bg-white p-4 md:p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                <h3 class="text-sm md:text-base font-bold text-slate-900 line-clamp-2 leading-tight mb-1">{post.title}</h3>
+                <p class="text-[10px] md:text-xs text-slate-500 mb-4">{post.author} • {formatDate(post.created_at)}</p>
+                <div class="grid grid-cols-3 gap-2">
+                  <a href={`/admin/posts/${post.id}`} class="text-center py-2.5 bg-slate-100 text-slate-700 text-[10px] md:text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-slate-200 transition-colors">BACA</a>
+                  <form method="POST" action={actions.approvePost} class="m-0">
+                    <input type="hidden" name="id" value={post.id} />
+                    <button type="submit" class="w-full text-center py-2.5 bg-blue-600 text-white text-[10px] md:text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-700 transition-colors">TERIMA</button>
+                  </form>
+                  <form method="POST" action={actions.deletePost} class="m-0" onsubmit="return confirm('Hapus artikel ini selamanya?')">
+                    <input type="hidden" name="id" value={post.id} />
+                    <button type="submit" class="w-full text-center py-2.5 bg-red-50 text-red-600 border border-red-100 text-[10px] md:text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-red-100 transition-colors">TOLAK</button>
+                  </form>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
-    </div>
 
-    <div>
-      <h2 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-slate-400"></span>
-        Telah Terbit
-      </h2>
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-sm md:text-base font-black text-slate-800 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+            Kelola Agenda
+          </h2>
+          <a href="/admin/agendas/create" class="px-4 py-2 bg-slate-900 text-white text-[10px] md:text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-slate-800 transition-all shadow-md shadow-slate-200">
+            + Buat Baru
+          </a>
+        </div>
 
-      <div class="flex flex-col gap-2">
-        {publishedPosts.length === 0 ? (
-          <div class="text-center p-6 bg-slate-50 rounded-xl border border-slate-200">
-            <p class="text-xs text-slate-500">Belum ada artikel yang diterbitkan.</p>
-          </div>
-        ) : (
-          publishedPosts.map(post => (
-            <div class="bg-white p-3 rounded-xl border border-slate-200 flex justify-between items-center gap-3">
-              <div class="min-w-0 flex-1">
-                <h3 class="text-xs font-bold text-slate-900 truncate">{post.title}</h3>
-                <p class="text-[9px] text-slate-500 mt-0.5">{post.author}</p>
-              </div>
-
-              <div class="flex gap-1.5 shrink-0">
-                <a href={`/admin/posts/${post.id}`} class="px-3 py-2 bg-slate-100 text-slate-600 text-[9px] font-bold rounded-md">BACA</a>
-                <form method="POST" action={actions.deletePost} class="m-0" onsubmit="return confirm('Hapus artikel yang sudah terbit ini?')">
-                  <input type="hidden" name="id" value={post.id} />
-                  <button type="submit" class="px-3 py-2 bg-red-50 text-red-600 text-[9px] font-bold rounded-md">HAPUS</button>
-                </form>
-              </div>
+        <div class="flex flex-col gap-3">
+          {agendas.length === 0 ? (
+            <div class="text-center p-8 bg-slate-50 rounded-2xl border border-slate-200 border-dashed">
+              <p class="text-xs font-medium text-slate-500">Belum ada agenda yang dibuat.</p>
             </div>
-          ))
-        )}
-      </div>
-    </div>
+          ) : (
+            agendas.map(agenda => (
+              <div class="bg-white p-4 md:p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-4 hover:shadow-md transition-shadow">
+                <div class="min-w-0 flex-1">
+                  <div class="flex flex-wrap items-center gap-2 mb-1">
+                    <h3 class="text-xs md:text-sm font-bold text-slate-900 truncate">{agenda.title}</h3>
+                    <span class={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest ${
+                      agenda.status === 'published' ? 'bg-green-50 text-green-600 border border-green-100' :
+                      agenda.status === 'scheduled' ? 'bg-amber-50 text-amber-600 border border-amber-100' : 'bg-slate-100 text-slate-500 border border-slate-200'
+                    }`}>
+                      {agenda.status}
+                    </span>
+                  </div>
+                  <p class="text-[10px] md:text-xs font-medium text-slate-500">Aksi: {formatDate(agenda.event_date)}</p>
+                </div>
 
+                <div class="flex gap-2 shrink-0">
+                  <a href={`/admin/agendas/${agenda.id}`} class="flex-1 sm:flex-none text-center px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-black tracking-widest rounded-xl transition-colors">EDIT</a>
+                  <form method="POST" action={actions.deleteAgenda} class="flex-1 sm:flex-none m-0" onsubmit="return confirm('Hapus agenda ini selamanya?')">
+                    <input type="hidden" name="id" value={agenda.id} />
+                    <button type="submit" class="w-full text-center px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 text-[10px] font-black tracking-widest rounded-xl transition-colors">HAPUS</button>
+                  </form>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+    </div>
   </div>
 </DashboardLayout>
