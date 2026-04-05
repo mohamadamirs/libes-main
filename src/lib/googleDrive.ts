@@ -1,16 +1,23 @@
-import { google, drive_v3 } from "googleapis"; // Mengimpor library googleapis untuk berinteraksi dengan Google APIs
+import { google } from "googleapis"; // Mengimpor library googleapis untuk berinteraksi dengan Google APIs
 
 // Mengatur autentikasi JWT (JSON Web Token) untuk akun layanan Google.
+const googleEmail = import.meta.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+const googleKey = import.meta.env.GOOGLE_PRIVATE_KEY || process.env.GOOGLE_PRIVATE_KEY;
+
+if (!googleEmail || !googleKey) {
+  console.error("❌ ERROR: Google Drive environment variables (GOOGLE_SERVICE_ACCOUNT_EMAIL or GOOGLE_PRIVATE_KEY) are missing!");
+}
+
 const auth = new google.auth.JWT({
-  email: import.meta.env.GOOGLE_SERVICE_ACCOUNT_EMAIL, // Email akun layanan
-  key: import.meta.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"), // Kunci privat
+  email: googleEmail, // Email akun layanan
+  key: googleKey ? googleKey.replace(/\\n/g, "\n") : undefined, // Kunci privat
   scopes: ["https://www.googleapis.com/auth/drive.readonly"], // Scope akses: hanya membaca Google Drive
 });
 
 // Menginisialisasi objek Google Drive API
 const drive = google.drive({ version: "v3", auth });
 
-const ROOT_ID = import.meta.env.GOOGLE_DRIVE_ROOT_FOLDER_ID;
+const ROOT_ID = import.meta.env.GOOGLE_DRIVE_ROOT_FOLDER_ID || process.env.GOOGLE_DRIVE_ROOT_FOLDER_ID;
 
 export interface DriveItem {
   id: string;

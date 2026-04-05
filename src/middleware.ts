@@ -1,22 +1,7 @@
 import { defineMiddleware } from "astro:middleware";
 import { jwtVerify } from "jose";
 import { sql } from "./lib/db";
-
-// Ganti yang lama:
-// const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET);
-
-// Jadi yang ini (Pake import.meta.env biar pasti kebaca Astro):
-// Kita ambil dari dua kemungkinan (Astro Dev & Vercel Prod)
-const authSecret = import.meta.env.AUTH_SECRET || process.env.AUTH_SECRET;
-
-// Pastikan kuncinya gak kosong sebelum di-encode
-if (!authSecret) {
-  console.error("❌ ERROR: AUTH_SECRET gak kebaca dari .env.local!");
-}
-
-const SECRET = new TextEncoder().encode(
-  authSecret || "fallback-rahasia-sementara-biar-gak-crash",
-);
+import { SECRET } from "./lib/jwt";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const { cookies, url, redirect, locals } = context;

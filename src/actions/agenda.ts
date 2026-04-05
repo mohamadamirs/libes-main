@@ -72,7 +72,7 @@ export const agendaActions = {
         try {
           const blob = await put(`agenda-posters/${Date.now()}-${input.poster.name}`, input.poster, {
             access: 'public',
-            token: import.meta.env.BLOB_READ_WRITE_TOKEN,
+            token: import.meta.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN,
           });
           imageUrl = blob.url;
         } catch (blobError: any) {
