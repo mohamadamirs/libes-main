@@ -4,7 +4,7 @@ import { z } from "astro:schema";
 import { sql } from "../lib/db";
 import { v4 as uuidv4 } from "uuid";
 import { generateSlug } from "../lib/utils";
-import DOMPurify from "isomorphic-dompurify";
+import sanitizeHtml from "sanitize-html";
 
 export const postActions = {
   createPost: defineAction({
@@ -25,7 +25,7 @@ export const postActions = {
 
       const id = uuidv4();
       const slug = generateSlug(input.title);
-      const safeContent = DOMPurify.sanitize(input.content || "");
+      const safeContent = sanitizeHtml(input.content || "");
 
       await sql`
         INSERT INTO posts (id, title, content, status, user_id, slug, updated_at, category_id)
@@ -49,7 +49,7 @@ export const postActions = {
       if (!user) throw new Error("Gak ada akses!");
 
       const newSlug = generateSlug(input.title);
-      const safeContent = DOMPurify.sanitize(input.content || "");
+      const safeContent = sanitizeHtml(input.content || "");
 
       if (user.role === "admin") {
         await sql`
