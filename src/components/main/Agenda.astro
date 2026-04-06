@@ -3,7 +3,6 @@ import { sql } from '../../lib/db';
 
 /* ====================================================================
    1. TRIK LAZY EVALUATION (AUTO-SWAP STATUS)
-   Cek apakah ada agenda 'scheduled' yang waktunya sudah tiba.
    ==================================================================== */
 const { rows: readyToPublish } = await sql`
   SELECT id FROM agendas
@@ -13,20 +12,14 @@ const { rows: readyToPublish } = await sql`
   LIMIT 1
 `;
 
-// Jika ada agenda yang antre dan sudah waktunya rilis...
 if (readyToPublish.length > 0) {
   const newAgendaId = readyToPublish[0].id;
-
-  // A. Lengserkan semua agenda yang saat ini 'published' menjadi 'draft'
   await sql`UPDATE agendas SET status = 'draft' WHERE status = 'published'`;
-
-  // B. Naikkan tahta agenda yang baru menjadi 'published', dan bersihkan jadwalnya
   await sql`UPDATE agendas SET status = 'published', publish_at = NULL WHERE id = ${newAgendaId}`;
 }
 
 /* ====================================================================
-   2. QUERY UTAMA SEPERTI BIASA
-   Sekarang database dijamin bersih, hanya ada maksimal 1 yang published
+   2. QUERY UTAMA
    ==================================================================== */
 const { rows } = await sql`
   SELECT * FROM agendas
@@ -38,7 +31,6 @@ const { rows } = await sql`
 
 const agenda = rows[0];
 
-// Helper format tanggal
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('id-ID', {
     weekday: 'long',
@@ -49,106 +41,85 @@ const formatDate = (dateString: string) => {
 };
 ---
 
-<section id="agenda" class="py-16 px-4 bg-slate-50/50 text-left">
-  <div class="container mx-auto max-w-7xl">
+<section id="agenda" class="py-16 md:py-24 bg-white relative overflow-hidden">
+  <div class="container mx-auto max-w-[1400px] px-4 md:px-8 lg:px-12 relative z-10">
 
-    <div class="flex flex-col md:flex-row items-start justify-between mb-12 gap-4 text-left">
-      <div class="space-y-3 text-left">
-        <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border inline-flex items-center justify-center transition-all duration-300 shadow-sm bg-amber-500 text-white border-amber-600">
-          {agenda ? "Kegiatan Terdekat" : "Kegiatan"}
-        </span>
-        <h2 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight text-left">
-          Agenda <span class="text-blue-600 italic font-serif font-light">{agenda ? "Mendatang" : "Rutin"}</span>
-        </h2>
+    <!-- Section Header -->
+    <div class="mb-10 md:mb-16">
+      <div class="inline-flex items-center gap-2 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-100 mb-6">
+        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+        <span class="text-[9px] font-black uppercase tracking-[0.2em] text-amber-700 leading-none">Agenda Terdekat</span>
       </div>
-      <div id="label-agenda" class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pt-1 text-left md:text-right">
-        {agenda ? "Jangan Sampai Terlewat!" : "Memuat Tanggal..."}
-      </div>
+      <h2 class="text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tighter uppercase leading-[1.1]">
+        Ruang <span class="text-blue-600 italic font-serif font-light lowercase tracking-normal">perjumpaan</span>
+      </h2>
+      <p class="mt-4 text-slate-500 font-medium max-w-md">
+        Merawat nalar lewat diskusi dan aksi nyata bersama kawan-kolektif.
+      </p>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch text-left">
+    <!-- Agenda Card -->
+    {agenda ? (
+      <div class="group relative bg-slate-50 rounded-[2rem] md:rounded-[3rem] p-4 md:p-6 lg:p-8 border border-slate-100 hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500">
+        <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
 
-      <div class="lg:col-span-5 aspect-video lg:aspect-auto bg-slate-200 rounded-3xl overflow-hidden border border-slate-300 shadow-lg">
-        {agenda && agenda.image_url ? (
-          <img src={agenda.image_url} alt={agenda.title} class="w-full h-full object-cover" />
-        ) : (
-          <div class="w-full h-full flex flex-col items-center justify-center text-slate-400 text-center p-6 bg-gradient-to-br from-slate-100 to-slate-200">
-            <p class="font-bold text-[9px] uppercase tracking-[0.3em]">Poster Kegiatan</p>
+          <!-- Image Section -->
+          <div class="w-full lg:w-1/2 shrink-0">
+            <div class="relative aspect-video lg:aspect-[4/3] rounded-2xl md:rounded-[2rem] overflow-hidden shadow-lg border-4 border-white bg-white">
+              <img
+                src={agenda.image_url || "/literasi-brebesan-og.jpg"}
+                alt={agenda.title}
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
           </div>
-        )}
+
+          <!-- Content Section -->
+          <div class="w-full lg:w-1/2 space-y-6 md:space-y-8 py-2">
+            <h3 class="text-2xl md:text-3xl lg:text-4xl font-black text-slate-900 leading-tight uppercase tracking-tight">
+              {agenda.title}
+            </h3>
+
+            <p class="text-base md:text-lg text-slate-500 leading-relaxed line-clamp-4 lg:line-clamp-none">
+              {agenda.description}
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <div>
+                  <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Waktu</p>
+                  <p class="text-[13px] md:text-sm font-bold text-slate-900 leading-none">{formatDate(agenda.event_date)}</p>
+                  <p class="text-[11px] font-medium text-slate-500 mt-1">{agenda.event_time} WIB</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                <div class="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <div>
+                  <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Lokasi</p>
+                  <p class="text-[13px] md:text-sm font-bold text-slate-900 leading-none truncate max-w-[120px] sm:max-w-none">{agenda.location}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4">
+              <a href={agenda.wa_link} target="_blank" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-blue-600 text-white font-black rounded-2xl hover:bg-slate-900 transition-all shadow-lg shadow-blue-200 uppercase tracking-widest text-[11px] w-full sm:w-auto">
+                Ikut Kegiatan
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
-
-      <div class="lg:col-span-7 flex flex-col justify-center space-y-6 lg:p-6 text-left">
-
-        {agenda ? (
-          /* JIKA ADA AGENDA TAYANG */
-          <>
-            <div class="space-y-3 text-left">
-              <h3 class="text-2xl font-bold text-slate-900 leading-tight">{agenda.title}</h3>
-              <p class="text-sm md:text-lg text-slate-600 leading-relaxed max-w-2xl">{agenda.description}</p>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl text-left">
-              <div class="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm text-left">
-                <p class="text-[8px] font-black text-blue-600 uppercase tracking-widest mb-1">Waktu</p>
-                <p class="text-sm font-bold text-slate-900">{formatDate(agenda.event_date)}</p>
-                <p class="text-[10px] text-slate-500 font-medium">{agenda.event_time} WIB - Selesai</p>
-              </div>
-              <div class="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm text-left">
-                <p class="text-[8px] font-black text-blue-600 uppercase tracking-widest mb-1">Lokasi</p>
-                <p class="text-sm font-bold text-slate-900">{agenda.location}</p>
-                <p class="text-[10px] text-slate-500 font-medium">Detail di Grup WA</p>
-              </div>
-            </div>
-
-            <a href={agenda.wa_link} target="_blank" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-slate-900 transition-all shadow-lg shadow-blue-200 w-full sm:w-auto text-sm">
-              RSVP via WhatsApp
-            </a>
-          </>
-        ) : (
-          /* DEFAULT FALLBACK */
-          <>
-            <div class="space-y-3 text-left">
-              <h3 class="text-2xl font-bold text-slate-900 leading-tight">Diskusi & Nongkrong Mingguan</h3>
-              <p class="text-sm md:text-lg text-slate-600 leading-relaxed max-w-2xl">Kumpul bareng teman-teman kolektif buat bahas isu terkini, bedah buku ringan, atau sekadar ngopi. Terbuka untuk umum!</p>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl text-left">
-              <div class="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm text-left">
-                <p class="text-[8px] font-black text-blue-600 uppercase tracking-widest mb-1">Waktu</p>
-                <p class="text-sm font-bold text-slate-900">Setiap Minggu</p>
-                <p class="text-[10px] text-slate-500 font-medium">15:00 WIB - Selesai</p>
-              </div>
-              <div class="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm text-left">
-                <p class="text-[8px] font-black text-blue-600 uppercase tracking-widest mb-1">Lokasi</p>
-                <p class="text-sm font-bold text-slate-900">Kedai Kopi Sekitar</p>
-                <p class="text-[10px] text-slate-500 font-medium">Brebes (Lokasi Update di WA)</p>
-              </div>
-            </div>
-
-            <a href="https://wa.me/628993986415" target="_blank" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-slate-900 transition-all shadow-lg shadow-blue-200 w-full sm:w-auto text-sm">
-              RSVP via WhatsApp
-            </a>
-          </>
-        )}
+    ) : (
+      <div class="bg-slate-50 rounded-[2rem] p-12 text-center border border-slate-100">
+        <h3 class="text-2xl font-black text-slate-400 uppercase tracking-widest">Belum ada agenda terdekat</h3>
       </div>
-    </div>
+    )}
   </div>
 </section>
-
-{!agenda && (
-  <script>
-    document.addEventListener('astro:page-load', () => {
-      const labelAgenda = document.getElementById('label-agenda');
-      if (!labelAgenda) return;
-
-      const today = new Date();
-      const dayOfWeek = today.getDay();
-      const nextSunday = new Date(today);
-      nextSunday.setDate(today.getDate() + (7 - dayOfWeek));
-
-      const formatter = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-      labelAgenda.textContent = `Agenda Minggu Ini: ${formatter.format(nextSunday)}`;
-    });
-  </script>
-)}
