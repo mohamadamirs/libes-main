@@ -73,11 +73,11 @@ export default function AgendaIsland() {
     <div className="group relative bg-slate-50 rounded-[1.5rem] md:rounded-3xl p-5 md:p-10 border border-slate-200 hover:shadow-xl transition-all duration-300">
       <div className="flex flex-col md:flex-row gap-6 md:gap-10 items-center md:items-start">
         <div className="w-1/2 md:w-1/3 shrink-0 flex justify-center">
-          <div className="relative w-full max-w-[230px] md:max-w-[280px] rounded-xl md:rounded-2xl overflow-hidden shadow-lg bg-white border border-slate-200">
+          <div className="relative w-full max-w-[230px] md:max-w-[300px] rounded-xl md:rounded-2xl overflow-hidden shadow-lg bg-white border border-slate-200">
             <img
               src={displayAgenda.image_url || "/literasi-brebesan.webp"}
               alt={displayAgenda.title}
-              className="w-full h-auto max-h-[210px] md:max-h-[450px] object-cover md:object-contain bg-slate-50 transition-all duration-700"
+              className="w-full h-auto max-h-[210px] md:max-h-[600px] object-cover md:object-contain bg-slate-50 transition-all duration-700"
             />
           </div>
         </div>
