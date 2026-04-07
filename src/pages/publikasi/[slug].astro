@@ -11,6 +11,7 @@ const { rows } = await sql`
     p.title,
     p.content,
     p.updated_at,
+    p.user_id,
     pr.full_name as author_name,
     pr.instagram as author_instagram,
     pr.avatar_url as author_avatar
@@ -34,6 +35,7 @@ const formatDate = (date: any) => {
     year: "numeric", month: "long", day: "numeric",
   });
 };
+
 // Helper untuk membersihkan HTML untuk Meta Description
 const stripHtml = (html: string) => {
   if (!html) return "";
@@ -84,55 +86,65 @@ const articleSchema = {
 >
   <Header />
 
-  <main class="min-h-screen bg-white pt-26 md:pt-28 pb-16 md:pb-20 overflow-x-hidden">
-    <div class="max-w-3xl mx-auto px-6 sm:px-8 w-full">
+  <main class="min-h-screen bg-white pt-26 md:pt-32 pb-16 md:pb-20 overflow-x-hidden">
+    <div class="max-w-4xl mx-auto px-6 sm:px-8 w-full">
 
-      <a href="/publikasi" class="inline-flex items-center text-[11px] md:text-xs font-black uppercase tracking-widest text-slate-400 hover:text-blue-600 transition-colors mb-6 md:mb-8">
-        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      <a href="/publikasi" class="inline-flex items-center text-[11px] md:text-xs font-black uppercase tracking-widest text-slate-400 hover:text-blue-600 transition-colors mb-10 group">
+        <svg class="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
         Kembali ke Etalase
       </a>
 
-      <header class="mb-8 md:mb-12 w-full break-words">
-        <h1 class="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-black text-slate-900 leading-snug md:leading-[1.1] tracking-tight mb-6 md:mb-8">
+      <header class="mb-12 md:mb-16 w-full">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.1] tracking-tight mb-10 break-words">
           {post.title}
         </h1>
 
-        <div class="flex flex-wrap items-center gap-3 md:gap-4 border-b border-slate-100 pb-6 md:pb-8">
-          <div class="flex items-center gap-2.5 md:gap-3">
-            <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-black text-xs md:text-sm uppercase border-2 border-white shadow-sm overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-6 py-8 border-y border-slate-100">
+          <div class="flex items-center gap-4">
+            <a href={`/p/${post.user_id}`} class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-black text-sm md:text-base uppercase border-2 border-white shadow-lg overflow-hidden hover:rotate-3 transition-transform">
               {post.author_avatar ? (
                 <img src={post.author_avatar} alt={post.author_name} class="w-full h-full object-cover" />
               ) : (
                 post.author_name ? post.author_name.charAt(0) : "U"
               )}
-            </div>
+            </a>
             <div>
-              <p class="text-xs md:text-sm font-bold text-slate-900">{post.author_name || "Anonim"}</p>
+              <a href={`/p/${post.user_id}`} class="text-sm md:text-base font-black text-slate-900 hover:text-blue-600 transition-colors block tracking-tight">
+                {post.author_name || "Anonim"}
+              </a>
               {post.author_instagram && (
-                <a href={`https://instagram.com/${post.author_instagram.replace('@', '')}`} target="_blank" class="text-[10px] md:text-xs font-bold text-[#833ab4] hover:opacity-70 transition-opacity flex items-center gap-1 uppercase tracking-widest">
+                <a href={`https://instagram.com/${post.author_instagram.replace('@', '')}`} target="_blank" class="text-[10px] md:text-xs font-bold text-[#e1306c] hover:opacity-70 transition-opacity flex items-center gap-1 uppercase tracking-widest mt-1">
+                   <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.332 3.608 1.308.975.975 1.247 2.242 1.308 3.607.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.061 1.365-.333 2.633-1.308 3.608-.975.975-2.242 1.247-3.607 1.308-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.061-2.633-.333-3.608-1.308-.975-.975-1.247-2.242-1.308-3.607-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.062-1.366.332-2.633 1.308-3.608.975-.975 2.242-1.247 3.607-1.308 1.266-.058 1.646-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                    @{post.author_instagram.replace('@', '')}
                 </a>
               )}
             </div>
           </div>
 
-          <div class="h-6 md:h-8 w-px bg-slate-100 hidden sm:block"></div>
-
-          <div class="flex flex-col">
-            <p class="text-xs md:text-sm font-bold text-slate-900">{formatDate(post.updated_at)}</p>
-            <p class="text-[11px] md:text-[11px] font-black uppercase tracking-widest text-slate-400 mt-0.5">Terbit</p>
+          <div class="flex items-center gap-6">
+            <div class="text-right">
+              <p class="text-sm font-black text-slate-900 uppercase tracking-tight">{formatDate(post.updated_at)}</p>
+              <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1">Dipublikasikan</p>
+            </div>
           </div>
         </div>
       </header>
 
-      <article class="prose prose-slate prose-sm sm:prose-base md:prose-lg w-full max-w-full break-words overflow-x-hidden prose-headings:font-black prose-a:text-blue-600 prose-a:break-all prose-p:leading-8" set:html={post.content}>
+      {firstImage && (
+        <div class="mb-12 md:mb-16 -mx-6 sm:mx-0">
+          <img src={firstImage} alt={post.title} class="w-full aspect-video object-cover rounded-none sm:rounded-[3rem] shadow-2xl shadow-slate-200" />
+        </div>
+      )}
+
+      <article class="prose prose-slate prose-lg md:prose-xl w-full max-w-none break-words overflow-x-hidden prose-headings:font-black prose-headings:tracking-tight prose-p:leading-[1.8] prose-p:text-slate-700 prose-a:text-blue-600 prose-a:font-bold prose-img:rounded-3xl prose-img:shadow-xl prose-blockquote:border-l-4 prose-blockquote:border-blue-600 prose-blockquote:bg-blue-50/50 prose-blockquote:p-8 prose-blockquote:rounded-r-3xl prose-blockquote:italic" set:html={post.content}>
       </article>
 
-      <div class="mt-12 md:mt-20 p-6 md:p-8 bg-slate-50 rounded-2xl md:rounded-3xl border border-slate-200 text-center w-full">
-        <h3 class="text-base md:text-xl font-black text-slate-900 mb-2">Punya ide cerita atau opini?</h3>
-        <p class="text-slate-600 mb-5 md:mb-6 max-w-md mx-auto text-xs md:text-base">Ruang Literasi Brebesan selalu terbuka buat teman-teman yang mau merawat nalar lewat tulisan.</p>
-        <a href="/user/posts/create" class="inline-flex bg-blue-600 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[11px] md:text-xs font-bold uppercase tracking-widest hover:bg-slate-900 transition-all">
-          Suarakan Pikiranmu
+      <div class="mt-20 md:mt-32 p-10 md:p-16 bg-slate-900 rounded-[3rem] text-center relative overflow-hidden shadow-2xl shadow-blue-100">
+        <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.2),transparent)]"></div>
+        <h3 class="text-2xl md:text-3xl font-black text-white mb-4 relative z-10 tracking-tight">Ada cerita atau sekadar ingin berbagi?</h3>
+        <p class="text-slate-400 mb-10 max-w-lg mx-auto text-sm md:text-base relative z-10 font-medium">Ruang Literasi Brebesan terbuka untuk siapa saja yang ingin berbagi pengalaman, opini ringan, atau cerita sehari-hari. Mari merawat nalar bersama.</p>
+        <a href="/user/posts/create" class="inline-flex bg-blue-600 text-white px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-[0.2em] hover:bg-white hover:text-slate-900 transition-all shadow-xl shadow-blue-500/20 relative z-10 active:scale-95">
+          Tulis Sekarang
         </a>
       </div>
 

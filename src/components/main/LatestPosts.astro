@@ -7,6 +7,7 @@ const { rows: posts } = await sql`
     p.slug, 
     p.content, 
     p.updated_at, 
+    p.user_id,
     pr.full_name as author_name,
     pr.avatar_url as author_avatar
   FROM posts p
@@ -24,7 +25,14 @@ const stripHtml = (html: string) => {
 const truncateText = (text: string | null, length = 100) => {
   if (!text) return "";
   const clean = stripHtml(text);
-  return clean.length > length ? clean.substring(0, length) + "..." : clean;
+  if (clean.length <= length) return clean;
+  return clean.substring(0, length).trim() + "...";
+};
+
+const truncateTitle = (text: string | null, length = 55) => {
+  if (!text) return "";
+  if (text.length <= length) return text;
+  return text.substring(0, length).trim() + "...";
 };
 ---
 
@@ -35,7 +43,7 @@ const truncateText = (text: string | null, length = 100) => {
         <span class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-600"></span>
         <span class="text-[11px] md:text-xs font-black uppercase tracking-widest text-blue-700 leading-none">Tulisan Terbaru</span>
       </div>
-      <h2 class="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight uppercase leading-tight">
+      <h2 class="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight">
         Ruang <span class="text-blue-600 italic font-serif font-light lowercase tracking-normal">suara</span>
       </h2>
       <p class="mt-3 md:mt-4 text-slate-500 font-medium max-w-xl text-sm md:text-lg leading-relaxed">
@@ -47,32 +55,32 @@ const truncateText = (text: string | null, length = 100) => {
       {posts.map((post) => (
         <article class="group relative flex flex-col bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-purple-900/5 hover:-translate-y-2 transition-all duration-500">
           <div class="flex-1">
-            <h3 class="text-base md:text-xl font-black text-slate-900 mb-3 leading-tight group-hover:text-blue-600 transition-colors tracking-tight truncate w-full" title={post.title}>
+            <h3 class="text-base md:text-xl font-black text-slate-900 mb-3 leading-tight group-hover:text-blue-600 transition-colors tracking-tight line-clamp-2 break-words w-full min-h-[3rem] md:min-h-[3.5rem]" title={post.title}>
               <a href={`/publikasi/${post.slug}`} class="before:absolute before:inset-0 outline-none">
-                {post.title}
+                {truncateTitle(post.title, 55)}
               </a>
             </h3>
-            <p class="text-slate-500 text-xs md:text-sm leading-relaxed mb-6 line-clamp-2 font-medium">
-              {truncateText(post.content, 80)}
+            <p class="text-slate-500 text-xs md:text-sm leading-relaxed mb-6 line-clamp-2 font-medium break-words flex-grow">
+              {truncateText(post.content, 90)}
             </p>
           </div>
 
-          <div class="pt-5 border-t border-slate-100 flex items-center justify-between">
+          <div class="pt-5 border-t border-slate-100 flex items-center justify-between relative z-20">
             <div class="flex items-center gap-3">
-              <div class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-black text-[10px] md:text-xs uppercase overflow-hidden border-2 border-white shadow-sm">
+              <a href={`/p/${post.user_id}`} class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-black text-[10px] md:text-xs uppercase overflow-hidden border-2 border-white shadow-sm hover:scale-110 transition-transform">
                 {post.author_avatar ? (
                   <img src={post.author_avatar} alt={post.author_name} class="w-full h-full object-cover" />
                 ) : (
                   post.author_name?.charAt(0) || 'U'
                 )}
-              </div>
+              </a>
               <div class="flex flex-col">
-                <span class="text-[10px] md:text-[11px] font-black text-slate-900 uppercase tracking-wider">{post.author_name || "Anonim"}</span>
+                <a href={`/p/${post.user_id}`} class="text-[10px] md:text-[11px] font-black text-slate-900 tracking-wider hover:text-blue-600 transition-colors">{post.author_name || "Anonim"}</a>
                 <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Penulis</span>
               </div>
             </div>
             <div class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all shadow-sm">
-              <svg class="w-3 h-3 md:w-4 md:h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>
+              <svg class="w-3.5 h-3.5 md:w-4 md:h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>
             </div>
           </div>
         </article>

@@ -21,6 +21,7 @@ if (activeCategoryId) {
       p.content,
       p.slug,
       p.updated_at,
+      p.user_id,
       pr.full_name as author_name,
       pr.instagram as author_instagram,
       pr.avatar_url as author_avatar,
@@ -39,6 +40,7 @@ if (activeCategoryId) {
       p.content,
       p.slug,
       p.updated_at,
+      p.user_id,
       pr.full_name as author_name,
       pr.instagram as author_instagram,
       pr.avatar_url as author_avatar,
@@ -58,9 +60,16 @@ const stripHtml = (html: string) => {
 };
 
 const truncateText = (text: string | null, length = 100) => {
-  if (!text) return "Tidak ada ringkasan...";
+  if (!text) return "";
   const clean = stripHtml(text);
-  return clean.length > length ? clean.substring(0, length) + "..." : clean;
+  if (clean.length <= length) return clean;
+  return clean.substring(0, length).trim() + "...";
+};
+
+const truncateTitle = (text: string | null, length = 50) => {
+  if (!text) return "";
+  if (text.length <= length) return text;
+  return text.substring(0, length).trim() + "...";
 };
 
 const formatDate = (date: any) => {
@@ -83,21 +92,21 @@ const formatDate = (date: any) => {
       {/* Header */}
       <div class="flex flex-col md:flex-row items-start justify-between gap-6 mb-10 md:mb-14">
         <div class="space-y-3 max-w-2xl text-left">
-          <span class="px-2.5 py-1 rounded-md text-[10px] md:text-[11px] font-black uppercase tracking-widest border inline-flex items-center justify-center transition-all shadow-sm bg-white text-blue-600 border-blue-200/60">
-            Katalog Publikasi
+          <span class="px-2.5 py-1 rounded-md text-[10px] md:text-[11px] font-black tracking-widest border inline-flex items-center justify-center transition-all shadow-sm bg-white text-blue-600 border-blue-200/60">
+            Ruang Suara
           </span>
-          <h1 class="text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight uppercase">
-            Ruang <span class="text-blue-600 italic font-serif font-light lowercase tracking-normal">Suara</span>
+          <h1 class="text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight">
+            Ruang <span class="text-blue-600 italic font-serif font-light lowercase tracking-normal">suara</span>
           </h1>
           <p class="text-slate-500 text-xs md:text-base leading-relaxed max-w-lg font-medium">
-            Kumpulan tulisan, opini, dan cerita dari teman-teman. Baca gratis sepuasnya, <strong class="text-slate-700">wajib login</strong> untuk menulis.
+            Kumpulan tulisan, opini, dan cerita dari teman-teman. Baca gratis sepuasnya, <strong class="text-slate-700">wajib login</strong> untuk mulai berbagi.
           </p>
         </div>
 
         <div class="w-full md:w-auto shrink-0 md:mt-6">
           <a href="/user/posts/create" class="flex items-center justify-center gap-2 bg-slate-900 text-white w-full px-6 py-3.5 md:py-4 rounded-xl md:rounded-2xl text-[11px] md:text-xs font-black uppercase tracking-widest shadow-xl shadow-slate-900/10 hover:bg-blue-600 transition-all active:scale-95 group">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-            Suarakan Pikiranmu
+            Tulis Sekarang
           </a>
         </div>
       </div>
@@ -125,9 +134,9 @@ const formatDate = (date: any) => {
           <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
              <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </div>
-          <h2 class="text-lg md:text-xl font-black text-slate-900 uppercase tracking-tight mb-2">Belum ada tulisan</h2>
-          <p class="text-slate-500 text-sm md:text-base font-medium max-w-xs mx-auto mb-8">Jadilah yang pertama untuk mengisi ruang suara di kategori ini.</p>
-          <a href="/user/posts/create" class="inline-flex items-center gap-2 text-blue-600 font-black uppercase tracking-widest text-[10px] md:text-xs hover:gap-4 transition-all">Mulai Menulis Sekarang →</a>
+          <h2 class="text-lg md:text-xl font-black text-slate-900 tracking-tight mb-2">Belum ada tulisan</h2>
+          <p class="text-slate-500 text-sm md:text-base font-medium max-w-xs mx-auto mb-8">Jadilah yang pertama untuk mengisi ruang cerita di kategori ini.</p>
+          <a href="/user/posts/create" class="inline-flex items-center gap-2 text-blue-600 font-black uppercase tracking-widest text-[10px] md:text-xs hover:gap-4 transition-all">Mulai Menulis →</a>
         </div>
       ) : (
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
@@ -144,32 +153,32 @@ const formatDate = (date: any) => {
                    </span>
                 </div>
 
-                <h2 class="text-base md:text-xl font-black text-slate-900 mb-3 leading-tight group-hover:text-blue-600 transition-colors truncate w-full" title={post.title}>
+                <h2 class="text-base md:text-xl font-black text-slate-900 mb-3 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2 break-words w-full min-h-[3rem] md:min-h-[3.5rem]" title={post.title}>
                   <a href={`/publikasi/${post.slug}`} class="before:absolute before:inset-0 outline-none">
-                    {post.title}
+                    {truncateTitle(post.title, 55)}
                   </a>
                 </h2>
 
-                <p class="text-slate-500 text-xs md:text-sm mb-6 flex-grow line-clamp-2 md:line-clamp-3 leading-relaxed font-medium">
-                  {truncateText(post.content, 100)}
+                <p class="text-slate-500 text-xs md:text-sm mb-6 flex-grow line-clamp-3 leading-relaxed font-medium break-words">
+                  {truncateText(post.content, 110)}
                 </p>
 
-                <div class="mt-auto pt-5 border-t border-slate-50 flex items-center justify-between">
+                <div class="mt-auto pt-5 border-t border-slate-50 flex items-center justify-between relative z-20">
                   <div class="flex items-center gap-3 min-w-0">
-                    <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-100 border-2 border-white shadow-sm flex items-center justify-center text-blue-600 font-black text-[10px] md:text-xs uppercase overflow-hidden shrink-0">
+                    <a href={`/p/${post.user_id}`} class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-100 border-2 border-white shadow-sm flex items-center justify-center text-blue-600 font-black text-[10px] md:text-xs uppercase overflow-hidden shrink-0 hover:scale-110 transition-transform">
                       {post.author_avatar ? (
                         <img src={post.author_avatar} alt={post.author_name} class="w-full h-full object-cover" />
                       ) : (
                         post.author_name?.charAt(0) || 'U'
                       )}
-                    </div>
+                    </a>
                     <div class="flex flex-col min-w-0">
-                      <span class="text-[10px] md:text-[11px] font-black text-slate-900 uppercase tracking-wider truncate">{post.author_name || "Anonim"}</span>
+                      <a href={`/p/${post.user_id}`} class="text-[10px] md:text-[11px] font-black text-slate-900 tracking-wider truncate hover:text-blue-600 transition-colors">{post.author_name || "Anonim"}</a>
                       {post.author_instagram && (
                         <a 
                           href={`https://instagram.com/${post.author_instagram.replace('@', '')}`} 
                           target="_blank" 
-                          class="text-[9px] md:text-[10px] font-bold text-[#833ab4] uppercase tracking-widest mt-0.5 hover:opacity-70 transition-opacity flex items-center gap-1 relative z-20"
+                          class="text-[9px] md:text-[10px] font-bold text-[#e1306c] tracking-widest mt-0.5 hover:opacity-70 transition-opacity flex items-center gap-1"
                         >
                           <svg width="20px" height="20px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 md:w-3 md:h-3" fill="currentColor">
                             <rect x="0" fill="none" width="20" height="20"/>
