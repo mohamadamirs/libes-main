@@ -9,6 +9,7 @@ import preact from "@astrojs/preact";
 
 // https://astro.build/config
 export default defineConfig({
+  site: "https://literasibrebesan.my.id",
   output: "server",
   adapter: vercel(),
 

@@ -55,7 +55,7 @@ export const authActions = {
         console.error("Login error:", e);
         throw new ActionError({
           code: "INTERNAL_SERVER_ERROR",
-          message: e.message || "Terjadi kesalahan sistem saat login.",
+          message: "Terjadi kesalahan sistem saat login.",
         });
       }
     },
@@ -100,7 +100,7 @@ export const authActions = {
         console.error("Register error:", e);
         throw new ActionError({
           code: "INTERNAL_SERVER_ERROR",
-          message: e.message || "Gagal mendaftarkan akun.",
+          message: "Gagal mendaftarkan akun.",
         });
       }
     },
@@ -163,8 +163,10 @@ export const authActions = {
         const origin = `${protocol}://${host}`;
         const resetUrl = `${origin}/reset-password?token=${token}`;
 
+        const senderEmail = import.meta.env.RESEND_FROM_EMAIL || process.env.RESEND_FROM_EMAIL || "Literasi Brebesan <onboarding@resend.dev>";
+
         await resend.emails.send({
-          from: "Literasi Brebesan <onboarding@resend.dev>",
+          from: senderEmail,
           to: input.email,
           subject: "Reset Password - Literasi Brebesan",
           html: `
@@ -189,7 +191,7 @@ export const authActions = {
         console.error("Forgot password error:", e);
         throw new ActionError({
           code: "INTERNAL_SERVER_ERROR",
-          message: e.message || "Gagal memproses permintaan reset password.",
+          message: "Gagal memproses permintaan reset password.",
         });
       }
     },
@@ -207,7 +209,6 @@ export const authActions = {
     }),
     handler: async (input) => {
       try {
-        console.log("Mencoba reset password dengan token:", input.token);
         const { rows } = await sql`
           SELECT id, email, reset_expiry 
           FROM users 
@@ -216,7 +217,6 @@ export const authActions = {
         const user = rows[0];
 
         if (!user) {
-          console.error("Token tidak ditemukan atau tidak valid di database.");
           throw new ActionError({
             code: "BAD_REQUEST",
             message: "Token tidak valid atau sudah kedaluwarsa.",
@@ -227,7 +227,6 @@ export const authActions = {
         const now = new Date();
 
         if (expiry.getTime() < now.getTime()) {
-          console.error("Token sudah kedaluwarsa.");
           throw new ActionError({
             code: "BAD_REQUEST",
             message: "Token sudah kedaluwarsa.",
@@ -244,35 +243,35 @@ export const authActions = {
         `;
 
         return { success: true };
-        } catch (e: any) {
+      } catch (e: any) {
         if (e instanceof ActionError) throw e;
         console.error("Reset password error:", e);
         throw new ActionError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Gagal mereset password.",
         });
-        }
-        },
-        }),
+      }
+    },
+  }),
 
-        createUser: defineAction({
-        accept: "form",
-        input: z.object({
-        fullName: z.string().min(3, "Nama minimal 3 karakter."),
-        email: z.string().email("Format email tidak valid."),
-        password: z.string().min(6, "Password minimal 6 karakter."),
-        role: z.enum(["user", "admin"]).default("user"),
-        }),
-        handler: async (input, context) => {
-        const { user: currentUser } = context.locals;
-        if (!currentUser || currentUser.role !== "admin") {
+  createUser: defineAction({
+    accept: "form",
+    input: z.object({
+      fullName: z.string().min(3, "Nama minimal 3 karakter."),
+      email: z.string().email("Format email tidak valid."),
+      password: z.string().min(6, "Password minimal 6 karakter."),
+      role: z.enum(["user", "admin"]).default("user"),
+    }),
+    handler: async (input, context) => {
+      const { user: currentUser } = context.locals;
+      if (!currentUser || currentUser.role !== "admin") {
         throw new ActionError({
           code: "UNAUTHORIZED",
           message: "Hanya administrator yang dapat membuat user baru.",
         });
-        }
+      }
 
-        try {
+      try {
         const { rows: existingUser } =
           await sql`SELECT id FROM users WHERE email = ${input.email}`;
         if (existingUser.length > 0) {
@@ -290,14 +289,14 @@ export const authActions = {
         await sql`INSERT INTO profiles (id, full_name, role) VALUES (${userId}, ${input.fullName}, ${input.role})`;
 
         return { success: true };
-        } catch (e: any) {
+      } catch (e: any) {
         if (e instanceof ActionError) throw e;
         console.error("Admin Create User error:", e);
         throw new ActionError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Gagal membuat user baru.",
         });
-        }
-        },
-        }),
-        };
+      }
+    },
+  }),
+};

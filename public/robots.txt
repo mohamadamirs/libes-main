@@ -8,7 +8,7 @@ Disallow: /user/
 Disallow: /api/
 
 # Host
-Host: https://literasibrebesan.com
+Host: https://literasibrebesan.my.id
 
 # Sitemaps
-Sitemap: https://literasibrebesan.com/sitemap-index.xml
+Sitemap: https://literasibrebesan.my.id/sitemap.xml
