@@ -17,7 +17,7 @@ const initialToken = data.nextPageToken || null;
           referrerpolicy="no-referrer"
              alt={file.name} class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
         <div class="absolute inset-0 bg-gradient-to-t from-black/80 flex flex-col justify-end p-3 opacity-0 group-hover:opacity-100 transition-opacity">
-          <p class="text-[10px] text-white font-bold truncate">{file.name}</p>
+          <p class="text-[11px] text-white font-bold truncate">{file.name}</p>
         </div>
       </div>
     ))}
@@ -120,7 +120,7 @@ const initialToken = data.nextPageToken || null;
                data-id="${file.id}" data-url="${file.webContentLink}">
             <img src="https://drive.google.com/thumbnail?id=${file.id}&sz=w1000" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 flex flex-col justify-end p-3 opacity-0 group-hover:opacity-100 transition-opacity">
-               <p class="text-[10px] text-white font-bold truncate">${file.name}</p>
+               <p class="text-[11px] text-white font-bold truncate">${file.name}</p>
             </div>
           </div>`;
         this.grid.insertAdjacentHTML('beforeend', html);

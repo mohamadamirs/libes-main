@@ -138,7 +138,7 @@ export const authActions = {
         }
 
         const token = uuidv4();
-        // Kadaluarsa dalam 1 jam
+        // Kedaluwarsa dalam 1 jam
         const expiry = new Date(Date.now() + 60 * 60 * 1000);
 
         await sql`
@@ -219,7 +219,7 @@ export const authActions = {
           console.error("Token tidak ditemukan atau tidak valid di database.");
           throw new ActionError({
             code: "BAD_REQUEST",
-            message: "Token tidak valid atau sudah kadaluarsa.",
+            message: "Token tidak valid atau sudah kedaluwarsa.",
           });
         }
 
@@ -227,10 +227,10 @@ export const authActions = {
         const now = new Date();
 
         if (expiry.getTime() < now.getTime()) {
-          console.error("Token sudah kadaluarsa.");
+          console.error("Token sudah kedaluwarsa.");
           throw new ActionError({
             code: "BAD_REQUEST",
-            message: "Token sudah kadaluarsa.",
+            message: "Token sudah kedaluwarsa.",
           });
         }
 

@@ -17,30 +17,30 @@ const post = rows[0];
 const { rows: categories } = await sql`SELECT id, name FROM categories ORDER BY name ASC`;
 
 // Kalau iseng ngetik ID ngawur di URL, tendang!
-if (!post) return Astro.redirect('/user?error=Postingan gak ketemu');
+if (!post) return Astro.redirect('/user?error=Postingan tidak ditemukan');
 ---
 
 <DashboardLayout title="Edit Tulisan">
   <div class="max-w-2xl mx-auto pt-8">
     <header class="mb-10">
       <div class="flex items-center gap-2 mb-2">
-         <a href="/user" class="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:underline">← Balik</a>
+         <a href="/user" class="text-[11px] font-black uppercase tracking-widest text-blue-600 hover:underline">← Kembali</a>
       </div>
       <h1 class="text-3xl font-black uppercase tracking-tighter text-slate-900 leading-none">Edit Tulisan</h1>
-      <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-2">ID: {post.id.split('-')[0]}</p>
+      <p class="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-2">ID: {post.id.split('-')[0]}</p>
     </header>
 
     <form method="POST" action={actions.updatePost} class="space-y-6">
       <input type="hidden" name="id" value={post.id} />
 
       <div class="group">
-        <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Judul Tulisan</label>
+        <label class="block text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Judul Tulisan</label>
         <input type="text" name="title" value={post.title} required class="w-full px-6 py-5 bg-white border border-slate-200 rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-slate-900" />
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="group">
-          <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Kategori</label>
+          <label class="block text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Kategori</label>
           <select name="category_id" class="w-full px-6 py-5 bg-white border border-slate-200 rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-slate-900 appearance-none">
             <option value="">Pilih Kategori (Opsional)</option>
             {categories.map((cat) => (
@@ -51,7 +51,7 @@ if (!post) return Astro.redirect('/user?error=Postingan gak ketemu');
       </div>
 
       <div class="group">
-        <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Isi Konten</label>
+        <label class="block text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Isi Konten</label>
         <RichTextEditor name="content" value={post.content} />
       </div>
 
@@ -59,23 +59,23 @@ if (!post) return Astro.redirect('/user?error=Postingan gak ketemu');
         <div class="flex-1 bg-slate-100 p-2 rounded-[2rem] flex gap-1">
           <label class="flex-1 cursor-pointer">
             <input type="radio" name="status" value="draft" class="peer hidden" checked={post.status === 'draft'} />
-            <div class="text-center py-3 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-white peer-checked:text-slate-900 peer-checked:shadow-sm transition-all">Draft</div>
+            <div class="text-center py-3 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-white peer-checked:text-slate-900 peer-checked:shadow-sm transition-all">Draft</div>
           </label>
 
           <label class="flex-1 cursor-pointer">
             <input type="radio" name="status" value="pending" class="peer hidden" checked={post.status === 'pending' || post.status === 'published'} />
-            <div class="text-center py-3 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:shadow-lg transition-all">Kirim</div>
+            <div class="text-center py-3 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:shadow-lg transition-all">Kirim</div>
           </label>
 
           {user?.role === 'admin' && (
             <label class="flex-1 cursor-pointer">
               <input type="radio" name="status" value="published" class="peer hidden" checked={post.status === 'published'} />
-              <div class="text-center py-3 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-green-500 peer-checked:text-white peer-checked:shadow-lg transition-all">Terbitin</div>
+              <div class="text-center py-3 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-green-500 peer-checked:text-white peer-checked:shadow-lg transition-all">Terbitin</div>
             </label>
           )}
         </div>
 
-        <button type="submit" class="sm:w-48 bg-blue-600 text-white font-black py-5 rounded-[2rem] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 uppercase tracking-widest text-[10px] active:scale-95">
+        <button type="submit" class="sm:w-48 bg-blue-600 text-white font-black py-5 rounded-[2rem] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 uppercase tracking-widest text-[11px] active:scale-95">
           Simpan Perubahan
         </button>
       </div>

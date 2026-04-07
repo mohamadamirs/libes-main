@@ -34,9 +34,9 @@ for (let i = startPage; i <= endPage; i++) {
   <nav class="flex items-center justify-center gap-1 mt-6">
     {/* Tombol Prev */}
     {currentPage > 1 ? (
-      <a href={getUrl(currentPage - 1)} class="px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors">Prev</a>
+      <a href={getUrl(currentPage - 1)} class="px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors">Prev</a>
     ) : (
-      <span class="px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 cursor-not-allowed">Prev</span>
+      <span class="px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest text-slate-300 cursor-not-allowed">Prev</span>
     )}
 
     {/* Angka Halaman Pertama + Ellipsis */}
@@ -68,9 +68,9 @@ for (let i = startPage; i <= endPage; i++) {
 
     {/* Tombol Next */}
     {currentPage < totalPages ? (
-      <a href={getUrl(currentPage + 1)} class="px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors">Next</a>
+      <a href={getUrl(currentPage + 1)} class="px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors">Next</a>
     ) : (
-      <span class="px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 cursor-not-allowed">Next</span>
+      <span class="px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest text-slate-300 cursor-not-allowed">Next</span>
     )}
   </nav>
 )}

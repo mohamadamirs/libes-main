@@ -7,15 +7,36 @@ import { ClientRouter } from 'astro:transitions';
 interface Props {
   title: string;
   description?: string;
-  bodyClass?: string; // Memungkinkan kustomisasi class body dari layout turunan
+  bodyClass?: string;
+  image?: string;
+  type?: string;
+  schema?: object; // Prop baru untuk JSON-LD kustom
 }
 
-// Menambahkan fallback title agar seragam
 const {
   title,
-  description = "Wadah literasi digital wong Brebes",
-  bodyClass = "bg-slate-200 min-h-screen font-sans antialiased text-slate-900"
+  description = "Wadah literasi digital wong Brebes. Ruang temu alternatif untuk membaca, berdiskusi, dan bergerak bersama.",
+  bodyClass = "bg-slate-200 min-h-screen font-sans antialiased text-slate-900",
+  image = "/literasi-brebesan-og.jpg",
+  type = "website",
+  schema
 } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.url.origin);
+const formattedTitle = title.includes('Literasi Brebesan') ? title : `${title} - Literasi Brebesan`;
+const socialImageURL = new URL(image, Astro.url.origin);
+
+// JSON-LD data terstruktur (default jika schema tidak dikirim)
+const defaultJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Literasi Brebesan",
+  "alternateName": "LIBES",
+  "url": Astro.url.origin,
+  "description": description
+};
+
+const finalSchema = schema || defaultJsonLd;
 ---
 
 <!doctype html>
@@ -23,11 +44,35 @@ const {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>{title.includes('Literasi Brebesan') ? title : `${title} - Literasi Brebesan`}</title>
+
+    <!-- SEO Dasar -->
+    <title>{formattedTitle}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
     <link rel="icon" href="/favicon.ico" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:title" content={formattedTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={socialImageURL} />
+    <meta property="og:site_name" content="Literasi Brebesan" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.url} />
+    <meta property="twitter:title" content={formattedTitle} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={socialImageURL} />
+
+    <!-- Font & Preconnect -->
     <link rel="preconnect" href="https://fonts.bunny.net" />
     <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800" rel="stylesheet" />
+
+    <!-- Data Terstruktur -->
+    <script type="application/ld+json" set:html={JSON.stringify(finalSchema)} />
+
     <ClientRouter />
     <slot name="head" />
   </head>

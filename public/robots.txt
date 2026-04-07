@@ -1,0 +1,14 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Disallow admin and user dashboard paths to keep them out of search results
+Disallow: /admin/
+Disallow: /user/
+Disallow: /api/
+
+# Host
+Host: https://literasibrebesan.com
+
+# Sitemaps
+Sitemap: https://literasibrebesan.com/sitemap-index.xml

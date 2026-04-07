@@ -70,15 +70,15 @@ const formatDate = (date: any) => {
     <div class="grid grid-cols-3 gap-2 md:gap-4 mb-8 md:mb-12">
       <div class="bg-blue-50 border border-blue-100 p-3 md:p-5 rounded-2xl text-center shadow-sm">
         <span class="block text-xl md:text-3xl font-black text-blue-700">{stats.pending}</span>
-        <span class="text-[9px] md:text-[11px] text-blue-600 font-bold uppercase tracking-widest mt-1 block">Menunggu</span>
+        <span class="text-[11px] md:text-[11px] text-blue-600 font-bold uppercase tracking-widest mt-1 block">Menunggu</span>
       </div>
       <div class="bg-green-50 border border-green-100 p-3 md:p-5 rounded-2xl text-center shadow-sm">
         <span class="block text-xl md:text-3xl font-black text-green-700">{stats.published}</span>
-        <span class="text-[9px] md:text-[11px] text-green-600 font-bold uppercase tracking-widest mt-1 block">Terbit</span>
+        <span class="text-[11px] md:text-[11px] text-green-600 font-bold uppercase tracking-widest mt-1 block">Terbit</span>
       </div>
       <div class="bg-slate-50 border border-slate-200 p-3 md:p-5 rounded-2xl text-center shadow-sm">
         <span class="block text-xl md:text-3xl font-black text-slate-700">{stats.total}</span>
-        <span class="text-[9px] md:text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-1 block">Total</span>
+        <span class="text-[11px] md:text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-1 block">Total</span>
       </div>
     </div>
 
@@ -90,7 +90,7 @@ const formatDate = (date: any) => {
             <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
             Verifikasi Artikel
           </h2>
-          <a href="/admin/posts/create" class="px-4 py-2 bg-blue-600 text-white text-[10px] md:text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-700 transition-all shadow-md shadow-blue-100">
+          <a href="/admin/posts/create" class="px-4 py-2 bg-blue-600 text-white text-[11px] md:text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-700 transition-all shadow-md shadow-blue-100">
             + Buat Artikel
           </a>
         </div>
@@ -110,16 +110,16 @@ const formatDate = (date: any) => {
                     </span>
                   </div>
                   <h3 class="text-sm md:text-base font-bold text-slate-900 line-clamp-2 leading-tight mb-1">{post.title}</h3>
-                  <p class="text-[10px] md:text-xs text-slate-500 mb-4">{post.author} • {formatDate(post.created_at)}</p>
+                  <p class="text-[11px] md:text-xs text-slate-500 mb-4">{post.author} • {formatDate(post.created_at)}</p>
                   <div class="grid grid-cols-3 gap-2">
-                    <a href={`/admin/posts/${post.id}`} class="text-center py-2.5 bg-slate-100 text-slate-700 text-[10px] md:text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-slate-200 transition-colors">BACA</a>
+                    <a href={`/admin/posts/${post.id}`} class="text-center py-2.5 bg-slate-100 text-slate-700 text-[11px] md:text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-slate-200 transition-colors">BACA</a>
                     <form method="POST" action={actions.approvePost} class="m-0">
                       <input type="hidden" name="id" value={post.id} />
-                      <button type="submit" class="w-full text-center py-2.5 bg-blue-600 text-white text-[10px] md:text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-700 transition-colors">TERIMA</button>
+                      <button type="submit" class="w-full text-center py-2.5 bg-blue-600 text-white text-[11px] md:text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-700 transition-colors">TERIMA</button>
                     </form>
                     <form method="POST" action={actions.deletePost} class="m-0" onsubmit="return confirm('Hapus artikel ini selamanya?')">
                       <input type="hidden" name="id" value={post.id} />
-                      <button type="submit" class="w-full text-center py-2.5 bg-red-50 text-red-600 border border-red-100 text-[10px] md:text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-red-100 transition-colors">TOLAK</button>
+                      <button type="submit" class="w-full text-center py-2.5 bg-red-50 text-red-600 border border-red-100 text-[11px] md:text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-red-100 transition-colors">TOLAK</button>
                     </form>
                   </div>
                 </div>
@@ -136,7 +136,7 @@ const formatDate = (date: any) => {
             <span class="w-2 h-2 rounded-full bg-amber-500"></span>
             Kelola Agenda
           </h2>
-          <a href="/admin/agendas/create" class="px-4 py-2 bg-slate-900 text-white text-[10px] md:text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-slate-800 transition-all shadow-md shadow-slate-200">
+          <a href="/admin/agendas/create" class="px-4 py-2 bg-slate-900 text-white text-[11px] md:text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-slate-800 transition-all shadow-md shadow-slate-200">
             + Buat Baru
           </a>
         </div>
@@ -160,14 +160,14 @@ const formatDate = (date: any) => {
                         {agenda.status}
                       </span>
                     </div>
-                    <p class="text-[10px] md:text-xs font-medium text-slate-500">Aksi: {formatDate(agenda.event_date)}</p>
+                    <p class="text-[11px] md:text-xs font-medium text-slate-500">Aksi: {formatDate(agenda.event_date)}</p>
                   </div>
 
                   <div class="flex gap-2 shrink-0">
-                    <a href={`/admin/agendas/${agenda.id}`} class="flex-1 sm:flex-none text-center px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-black tracking-widest rounded-xl transition-colors">EDIT</a>
+                    <a href={`/admin/agendas/${agenda.id}`} class="flex-1 sm:flex-none text-center px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-black tracking-widest rounded-xl transition-colors">EDIT</a>
                     <form method="POST" action={actions.deleteAgenda} class="flex-1 sm:flex-none m-0" onsubmit="return confirm('Hapus agenda ini selamanya?')">
                       <input type="hidden" name="id" value={agenda.id} />
-                      <button type="submit" class="w-full text-center px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 text-[10px] font-black tracking-widest rounded-xl transition-colors">HAPUS</button>
+                      <button type="submit" class="w-full text-center px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 text-[11px] font-black tracking-widest rounded-xl transition-colors">HAPUS</button>
                     </form>
                   </div>
                 </div>

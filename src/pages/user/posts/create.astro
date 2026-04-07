@@ -14,18 +14,18 @@ const { rows: categories } = await sql`SELECT id, name FROM categories ORDER BY 
   <div class="max-w-2xl mx-auto pt-8">
     <header class="mb-10">
       <h1 class="text-3xl font-black uppercase tracking-tighter text-slate-900 leading-none">Tulis Cerita</h1>
-      <p class="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-widest">Bagikan tulisan serumu di sini</p>
+      <p class="text-[11px] font-bold text-slate-400 mt-2 uppercase tracking-widest">Bagikan tulisan serumu di sini</p>
     </header>
 
     <form method="POST" action={actions.createPost} class="space-y-6">
       <div class="group">
-        <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Judul Tulisan</label>
+        <label class="block text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Judul Tulisan</label>
         <input type="text" name="title" required class="w-full px-5 py-4 md:px-6 md:py-5 bg-white border border-slate-200 rounded-[1.5rem] md:rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-slate-900 placeholder:text-slate-300" placeholder="Apa judul ceritamu hari ini?" />
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="group">
-          <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Kategori</label>
+          <label class="block text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Kategori</label>
           <select name="category_id" class="w-full px-5 py-4 md:px-6 md:py-5 bg-white border border-slate-200 rounded-[1.5rem] md:rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-slate-900 appearance-none">
             <option value="">Pilih Kategori (Opsional)</option>
             {categories.map((cat) => (
@@ -36,7 +36,7 @@ const { rows: categories } = await sql`SELECT id, name FROM categories ORDER BY 
       </div>
 
       <div class="group">
-        <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Isi Cerita</label>
+        <label class="block text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Isi Cerita</label>
         <RichTextEditor name="content" />
       </div>
 
@@ -44,22 +44,22 @@ const { rows: categories } = await sql`SELECT id, name FROM categories ORDER BY 
         <div class="flex-1 bg-slate-100 p-2 rounded-[1.5rem] md:rounded-[2rem] flex gap-1">
           <label class="flex-1 cursor-pointer">
             <input type="radio" name="status" value="draft" class="peer hidden" checked />
-            <div class="text-center py-3 rounded-[1.2rem] md:rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-white peer-checked:text-slate-900 peer-checked:shadow-sm transition-all">Simpan Draft</div>
+            <div class="text-center py-3 rounded-[1.2rem] md:rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-white peer-checked:text-slate-900 peer-checked:shadow-sm transition-all">Simpan Draft</div>
           </label>
           <label class="flex-1 cursor-pointer">
             <input type="radio" name="status" value="pending" class="peer hidden" />
-            <div class="text-center py-3 rounded-[1.2rem] md:rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:shadow-lg transition-all">Kirim</div>
+            <div class="text-center py-3 rounded-[1.2rem] md:rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:shadow-lg transition-all">Kirim</div>
           </label>
 
           {user?.role === 'admin' && (
             <label class="flex-1 cursor-pointer">
               <input type="radio" name="status" value="published" class="peer hidden" />
-              <div class="text-center py-3 rounded-[1.2rem] md:rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-green-500 peer-checked:text-white peer-checked:shadow-lg transition-all">Terbitin</div>
+              <div class="text-center py-3 rounded-[1.2rem] md:rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-green-500 peer-checked:text-white peer-checked:shadow-lg transition-all">Terbitin</div>
             </label>
           )}
         </div>
 
-        <button type="submit" class="sm:w-48 bg-slate-900 text-white font-black py-5 rounded-[1.5rem] md:rounded-[2rem] hover:bg-black transition-all shadow-xl shadow-slate-200 uppercase tracking-widest text-[10px] active:scale-95">
+        <button type="submit" class="sm:w-48 bg-slate-900 text-white font-black py-5 rounded-[1.5rem] md:rounded-[2rem] hover:bg-black transition-all shadow-xl shadow-slate-200 uppercase tracking-widest text-[11px] active:scale-95">
           Simpan Tulisan
         </button>
       </div>

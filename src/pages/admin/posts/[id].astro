@@ -33,24 +33,24 @@ const formatDate = (date: any) => {
 <DashboardLayout title="Baca Artikel">
   <div class="pt-6 pb-24 px-4 max-w-lg mx-auto">
 
-    <a href="/admin" class="inline-flex items-center text-[10px] font-bold uppercase text-slate-400 mb-6 hover:text-blue-600">
-      ← Balik ke Dashboard
+    <a href="/admin" class="inline-flex items-center text-[11px] font-bold uppercase text-slate-400 mb-6 hover:text-blue-600">
+      ← Kembali ke Dashboard
     </a>
 
     <div class="bg-white rounded-xl border border-slate-200 p-5 mb-6 shadow-sm overflow-hidden">
 
       <div class="flex items-center justify-between mb-4 pb-4 border-b border-slate-50 gap-2">
         <div class="flex items-center gap-2 flex-wrap">
-          <span class={`text-[9px] font-bold uppercase px-2 py-1 rounded shrink-0 ${
+          <span class={`text-[11px] font-bold uppercase px-2 py-1 rounded shrink-0 ${
             post.status === 'published' ? 'bg-green-50 text-green-600' : 'bg-blue-50 text-blue-600'
           }`}>
             {post.status}
           </span>
-          <span class="text-[9px] font-black uppercase px-2 py-1 bg-slate-100 text-slate-500 rounded shrink-0">
+          <span class="text-[11px] font-black uppercase px-2 py-1 bg-slate-100 text-slate-500 rounded shrink-0">
             {post.category_name || 'Tanpa Kategori'}
           </span>
         </div>
-        <span class="text-[9px] text-slate-400 font-bold uppercase shrink-0">
+        <span class="text-[11px] text-slate-400 font-bold uppercase shrink-0">
           {formatDate(post.created_at)}
         </span>
       </div>
@@ -59,7 +59,7 @@ const formatDate = (date: any) => {
         {post.title}
       </h1>
 
-      <p class="text-[10px] text-slate-500 font-medium mb-6">
+      <p class="text-[11px] text-slate-500 font-medium mb-6">
         Penulis: <span class="text-slate-900">{post.author_name || 'Anonim'}</span>
       </p>
 
@@ -72,7 +72,7 @@ const formatDate = (date: any) => {
       {post.status !== 'published' && (
         <form method="POST" action={actions.approvePost} class="m-0">
           <input type="hidden" name="id" value={post.id} />
-          <button type="submit" class="w-full py-3.5 bg-blue-600 text-white text-[10px] font-bold rounded-xl uppercase tracking-wider shadow-lg shadow-blue-100 active:scale-95 transition-all">
+          <button type="submit" class="w-full py-3.5 bg-blue-600 text-white text-[11px] font-bold rounded-xl uppercase tracking-wider shadow-lg shadow-blue-100 active:scale-95 transition-all">
             Terbitin Sekarang
           </button>
         </form>
@@ -80,7 +80,7 @@ const formatDate = (date: any) => {
 
       <form method="POST" action={actions.deletePost} class="m-0" onsubmit="return confirm('Yakin mau hapus artikel ini?')">
         <input type="hidden" name="id" value={post.id} />
-        <button type="submit" class={`w-full py-3.5 border font-bold text-[10px] rounded-xl uppercase tracking-wider active:scale-95 transition-all ${
+        <button type="submit" class={`w-full py-3.5 border font-bold text-[11px] rounded-xl uppercase tracking-wider active:scale-95 transition-all ${
           post.status === 'published' ? 'col-span-2 bg-red-50 text-red-600 border-red-100' : 'bg-white text-slate-400 border-slate-200'
         }`}>
           Hapus Aja

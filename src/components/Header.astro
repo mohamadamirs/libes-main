@@ -30,7 +30,7 @@ const initial = user?.fullName?.charAt(0) || 'U';
             />
             <div class="flex flex-col leading-tight">
               <span class="font-black text-sm md:text-base uppercase text-slate-900 group-hover:text-blue-600 transition-colors tracking-tight">LIBES</span>
-              <span class="text-[10px] md:text-xs font-bold text-blue-600 uppercase tracking-widest">Brebesan</span>
+              <span class="text-[11px] md:text-xs font-bold text-blue-600 uppercase tracking-widest">Brebesan</span>
             </div>
           </a>
 
@@ -49,7 +49,7 @@ const initial = user?.fullName?.charAt(0) || 'U';
                   Profil
                 </a>
                 <a href={user.role === 'admin' ? '/admin' : '/user'} class="px-2.5 py-1.5 md:px-3 md:py-2 text-[11px] md:text-xs font-bold text-slate-900 hover:bg-slate-50 rounded-xl transition-all uppercase tracking-wider flex items-center gap-1.5 md:gap-2">
-                  <div class="w-5 h-5 md:w-6 md:h-6 rounded-md bg-blue-600 flex items-center justify-center text-white text-[9px] md:text-[10px] font-black uppercase">
+                  <div class="w-5 h-5 md:w-6 md:h-6 rounded-md bg-blue-600 flex items-center justify-center text-white text-[11px] md:text-[11px] font-black uppercase">
                     {initial}
                   </div>
                   Dashboard
@@ -93,7 +93,7 @@ const initial = user?.fullName?.charAt(0) || 'U';
     class="fixed top-20 right-4 md:right-8 w-56 md:w-64 max-h-[calc(100vh-6rem)] bg-white z-[90] translate-x-[150%] transition-transform duration-300 ease-in-out shadow-2xl rounded-3xl border border-slate-100 flex flex-col overflow-y-auto pointer-events-auto"
   >
     <div class="p-4 md:p-6">
-      <span class="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest block mb-3">Menu Utama</span>
+      <span class="text-[11px] md:text-xs font-black text-slate-400 uppercase tracking-widest block mb-3">Menu Utama</span>
       <ul class="flex flex-col gap-1.5 md:gap-2 list-none">
         {navLinks.map((link) => (
           <li>
@@ -106,12 +106,12 @@ const initial = user?.fullName?.charAt(0) || 'U';
         {user ? (
           <div class="space-y-2 md:space-y-3">
             <div class="flex items-center gap-3 px-3 py-2.5 md:px-4 md:py-3 bg-slate-50 rounded-xl">
-              <div class="w-7 h-7 md:w-8 md:h-8 rounded-md bg-blue-600 flex items-center justify-center text-white text-[10px] md:text-sm font-black uppercase shrink-0">
+              <div class="w-7 h-7 md:w-8 md:h-8 rounded-md bg-blue-600 flex items-center justify-center text-white text-[11px] md:text-sm font-black uppercase shrink-0">
                 {initial}
               </div>
               <div class="flex flex-col min-w-0">
                 <span class="text-xs md:text-sm font-bold text-slate-900 truncate uppercase tracking-tight leading-none">{user.fullName.split(' ')[0]}</span>
-                <span class="text-[9px] md:text-xs text-blue-600 font-black uppercase tracking-widest leading-none mt-1">{user.role}</span>
+                <span class="text-[11px] md:text-xs text-blue-600 font-black uppercase tracking-widest leading-none mt-1">{user.role}</span>
               </div>
             </div>
             <div class="grid grid-cols-2 gap-2">

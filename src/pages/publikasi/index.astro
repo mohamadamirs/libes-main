@@ -31,7 +31,7 @@ const formatDate = (date: any) => {
 };
 ---
 
-<Layout title="Publikasi | Literasi Brebesan" description="Kumpulan tulisan dan cerita dari kanca-kanca Brebes.">
+<Layout title="Publikasi | Literasi Brebesan" description="Kumpulan tulisan dan cerita dari teman-teman Brebes.">
   <Header />
 
   <main class="min-h-screen bg-slate-50 relative overflow-hidden pt-26 md:pt-28 pb-20">
@@ -43,14 +43,14 @@ const formatDate = (date: any) => {
       {/* Bagian Header Katalog */}
       <div class="flex flex-col md:flex-row items-start justify-between gap-6 mb-10 md:mb-14">
         <div class="space-y-3 max-w-2xl text-left">
-          <span class="px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border inline-flex items-center justify-center transition-all shadow-sm bg-white text-blue-600 border-blue-200/60">
+          <span class="px-2.5 py-1 rounded-md text-[11px] font-black uppercase tracking-widest border inline-flex items-center justify-center transition-all shadow-sm bg-white text-blue-600 border-blue-200/60">
             Katalog Publikasi
           </span>
           <h1 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-            Karya <span class="text-blue-600 italic font-serif font-light">Kanca</span>
+            Karya <span class="text-blue-600 italic font-serif font-light">Literasi</span>
           </h1>
           <p class="text-slate-500 text-sm leading-relaxed max-w-lg">
-            Kumpulan tulisan, opini, dan cerita dari kanca-kanca. Baca gratis sepuasnya, <strong class="text-slate-700">wajib login</strong> untuk menulis.
+            Kumpulan tulisan, opini, dan cerita dari teman-teman. Baca gratis sepuasnya, <strong class="text-slate-700">wajib login</strong> untuk menulis.
           </p>
         </div>
 
@@ -64,10 +64,10 @@ const formatDate = (date: any) => {
 
       {/* Filter Kategori Minimalis */}
       <div class="flex items-center gap-2 overflow-x-auto pb-4 mb-6 md:mb-8 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
-        <button class="shrink-0 px-4 py-2 bg-slate-900 text-white text-[10px] md:text-xs font-bold rounded-lg shadow-sm transition-all">Semua</button>
-        <button class="shrink-0 px-4 py-2 bg-white text-slate-500 hover:text-slate-900 hover:bg-slate-100 text-[10px] md:text-xs font-medium border border-slate-200 rounded-lg transition-all">Opini</button>
-        <button class="shrink-0 px-4 py-2 bg-white text-slate-500 hover:text-slate-900 hover:bg-slate-100 text-[10px] md:text-xs font-medium border border-slate-200 rounded-lg transition-all">Sastra</button>
-        <button class="shrink-0 px-4 py-2 bg-white text-slate-500 hover:text-slate-900 hover:bg-slate-100 text-[10px] md:text-xs font-medium border border-slate-200 rounded-lg transition-all">Resensi</button>
+        <button class="shrink-0 px-4 py-2 bg-slate-900 text-white text-[11px] md:text-xs font-bold rounded-lg shadow-sm transition-all">Semua</button>
+        <button class="shrink-0 px-4 py-2 bg-white text-slate-500 hover:text-slate-900 hover:bg-slate-100 text-[11px] md:text-xs font-medium border border-slate-200 rounded-lg transition-all">Opini</button>
+        <button class="shrink-0 px-4 py-2 bg-white text-slate-500 hover:text-slate-900 hover:bg-slate-100 text-[11px] md:text-xs font-medium border border-slate-200 rounded-lg transition-all">Sastra</button>
+        <button class="shrink-0 px-4 py-2 bg-white text-slate-500 hover:text-slate-900 hover:bg-slate-100 text-[11px] md:text-xs font-medium border border-slate-200 rounded-lg transition-all">Resensi</button>
       </div>
 
       {posts.length === 0 ? (
@@ -94,7 +94,7 @@ const formatDate = (date: any) => {
                 </p>
 
                 <div class="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
-                  <div class="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">
+                  <div class="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider truncate">
                     <span class="text-slate-600 truncate max-w-[100px]">{post.author_name || "Anonim"}</span>
                     <span class="w-1 h-1 rounded-full bg-slate-300"></span>
                     <span>{formatDate(post.updated_at)}</span>

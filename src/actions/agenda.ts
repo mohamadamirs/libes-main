@@ -1,7 +1,7 @@
 import { sql } from '../lib/db';
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { put } from '@vercel/blob';
+import { put, del } from '@vercel/blob';
 
 export const agendaActions = {
   saveAgenda: defineAction({
@@ -23,7 +23,7 @@ export const agendaActions = {
     handler: async (input, context) => {
       const { user } = context.locals;
       if (!user || user.role !== 'admin') {
-        throw new ActionError({ code: 'UNAUTHORIZED', message: 'Hanya admin!' });
+        throw new ActionError({ code: 'UNAUTHORIZED', message: 'Akses ditolak. Hanya administrator yang diperbolehkan.' });
       }
 
       // --- LOGIKA BARU: TIMPA AGENDA PUBLISHED ---
@@ -38,7 +38,7 @@ export const agendaActions = {
             existing = res.rows;
           }
         } catch (dbError) {
-          throw new ActionError({ code: 'INTERNAL_SERVER_ERROR', message: 'Error ngecek database.' });
+          throw new ActionError({ code: 'INTERNAL_SERVER_ERROR', message: 'Terjadi kesalahan saat mengakses database.' });
         }
 
         if (existing.length > 0) {
@@ -47,13 +47,13 @@ export const agendaActions = {
             try {
               await sql`UPDATE agendas SET status = 'draft' WHERE id = ${existing[0].id}`;
             } catch (e) {
-              throw new ActionError({ code: 'INTERNAL_SERVER_ERROR', message: 'Gagal mengubah agenda lama menjadi draft.' });
+              throw new ActionError({ code: 'INTERNAL_SERVER_ERROR', message: 'Gagal mengubah status agenda lama menjadi draf.' });
             }
           } else {
-            // Kalau tidak dicentang tapi maksain publish, tolak.
+            // Kalau tidak dicentang tapi tetap ingin mempublikasi, tolak.
             throw new ActionError({
               code: 'CONFLICT',
-              message: `Agenda "${existing[0].title}" sedang tayang. Centang opsi timpa agenda jika ingin melanjutkan.`
+              message: `Agenda "${existing[0].title}" sedang ditayangkan. Silakan centang opsi "Timpa Agenda" jika ingin melanjutkan.`
             });
           }
         }
@@ -61,7 +61,7 @@ export const agendaActions = {
 
       let publishTime = null;
       if (input.status === 'scheduled') {
-        if (!input.publish_at) throw new ActionError({ code: 'BAD_REQUEST', message: 'Isi tanggal rilis otomatis.' });
+        if (!input.publish_at) throw new ActionError({ code: 'BAD_REQUEST', message: 'Mohon isi tanggal rilis otomatis.' });
         publishTime = input.publish_at;
       } else if (input.status === 'published') {
         publishTime = new Date().toISOString();
@@ -70,13 +70,29 @@ export const agendaActions = {
       let imageUrl = null;
       if (input.poster && input.poster.size > 0) {
         try {
+          // Jika update, hapus gambar lama dulu jika ada
+          if (input.id) {
+            const { rows } = await sql`SELECT image_url FROM agendas WHERE id = ${input.id}`;
+            if (rows[0]?.image_url) {
+              try {
+                await del(rows[0].image_url, {
+                  token: import.meta.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN,
+                });
+              } catch (delError) {
+                console.error("Gagal menghapus blob lama:", delError);
+                // Lanjut saja, jangan hentikan proses simpan
+              }
+            }
+          }
+
           const blob = await put(`agenda-posters/${Date.now()}-${input.poster.name}`, input.poster, {
             access: 'public',
             token: import.meta.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN,
           });
           imageUrl = blob.url;
         } catch (blobError: any) {
-          throw new ActionError({ code: 'INTERNAL_SERVER_ERROR', message: 'Gagal mengunggah gambar.' });
+          console.error("Blob upload error:", blobError);
+          throw new ActionError({ code: 'INTERNAL_SERVER_ERROR', message: 'Gagal mengunggah poster kegiatan.' });
         }
       }
 
@@ -93,7 +109,8 @@ export const agendaActions = {
           return { success: true };
         }
       } catch (dbError) {
-        throw new ActionError({ code: 'INTERNAL_SERVER_ERROR', message: 'Gagal menyimpan ke database.' });
+        console.error("Save agenda DB error:", dbError);
+        throw new ActionError({ code: 'INTERNAL_SERVER_ERROR', message: 'Gagal menyimpan data agenda ke database.' });
       }
     },
   }),
@@ -103,12 +120,26 @@ export const agendaActions = {
     input: z.object({ id: z.string() }),
     handler: async ({ id }, context) => {
       const { user } = context.locals;
-      if (!user || user.role !== 'admin') throw new ActionError({ code: 'UNAUTHORIZED', message: 'Ditolak' });
+      if (!user || user.role !== 'admin') throw new ActionError({ code: 'UNAUTHORIZED', message: 'Maaf, akses ditolak.' });
+      
       try {
+        // Hapus gambar dari blob storage dulu
+        const { rows } = await sql`SELECT image_url FROM agendas WHERE id = ${id}`;
+        if (rows[0]?.image_url) {
+          try {
+            await del(rows[0].image_url, {
+              token: import.meta.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN,
+            });
+          } catch (delError) {
+            console.error("Gagal menghapus blob saat delete agenda:", delError);
+          }
+        }
+
         await sql`DELETE FROM agendas WHERE id = ${id}`;
         return { success: true };
       } catch (error) {
-        throw new ActionError({ code: 'INTERNAL_SERVER_ERROR', message: 'Gagal hapus.' });
+        console.error("Delete agenda error:", error);
+        throw new ActionError({ code: 'INTERNAL_SERVER_ERROR', message: 'Gagal menghapus agenda.' });
       }
     }
   })

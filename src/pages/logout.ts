@@ -8,7 +8,7 @@ export const POST: APIRoute = ({ cookies, redirect }) => {
   });
 
   // 2. Redirect ke login dengan pesan sukses (optional)
-  return redirect("/login?message=Berhasil keluar, Nyet!");
+  return redirect("/login?message=Anda telah berhasil keluar dari sistem.");
 };
 
 // Kalau ada yang iseng akses lewat browser langsung (GET),

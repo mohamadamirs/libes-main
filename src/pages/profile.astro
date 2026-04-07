@@ -43,15 +43,15 @@ if (!profile) {
         <div>
           <h1 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight uppercase leading-none mb-2">Profil Saya</h1>
           <div class="flex items-center gap-2">
-             <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-indigo-100">
+             <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[11px] font-black uppercase tracking-widest border border-indigo-100">
               {profile.role}
             </span>
-            <p class="text-[10px] text-slate-400 uppercase font-bold tracking-[0.2em]">Member sejak {new Date(profile.created_at).getFullYear()}</p>
+            <p class="text-[11px] text-slate-400 uppercase font-bold tracking-[0.2em]">Member sejak {new Date(profile.created_at).getFullYear()}</p>
           </div>
         </div>
       </div>
       
-      <a href={user.role === 'admin' ? '/admin' : '/user'} class="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-all group bg-white px-5 py-3 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md active:scale-95">
+      <a href={user.role === 'admin' ? '/admin' : '/user'} class="inline-flex items-center text-[11px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-all group bg-white px-5 py-3 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md active:scale-95">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
         Kembali ke Dashboard
       </a>
@@ -75,20 +75,20 @@ if (!profile) {
           <div class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden group">
             <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-indigo-50 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
             
-            <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2 relative z-10">
+            <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2 relative z-10">
               <span class="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-pulse"></span>
               Kontak Utama
             </h3>
             
             <div class="space-y-6 relative z-10">
               <div>
-                <label class="block text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">Email Terdaftar</label>
+                <label class="block text-[11px] font-black text-slate-300 uppercase tracking-widest mb-1">Email Terdaftar</label>
                 <p class="text-[13px] font-bold text-slate-900 break-all leading-relaxed">{profile.email}</p>
-                <p class="text-[9px] text-slate-400 mt-1 italic">* Email tidak dapat diubah</p>
+                <p class="text-[11px] text-slate-400 mt-1 italic">* Email tidak dapat diubah</p>
               </div>
 
               <div>
-                <label class="block text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">Instagram</label>
+                <label class="block text-[11px] font-black text-slate-300 uppercase tracking-widest mb-1">Instagram</label>
                 {isEditing ? (
                   <div class="relative group">
                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 group-focus-within:text-indigo-500 transition-colors">
@@ -110,7 +110,7 @@ if (!profile) {
                     </a>
                   ) : (
                     <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 border-dashed">
-                      <p class="text-[10px] font-bold text-slate-400 italic">Belum ada Instagram</p>
+                      <p class="text-[11px] font-bold text-slate-400 italic">Belum ada Instagram</p>
                     </div>
                   )
                 )}
@@ -124,14 +124,14 @@ if (!profile) {
           <div class="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden group">
             <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-50 rounded-full blur-3xl opacity-50 group-hover:scale-110 transition-transform duration-700"></div>
             
-            <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-2 relative z-10">
+            <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-2 relative z-10">
               <span class="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-pulse"></span>
               Biodata Diri
             </h3>
 
             <div class="space-y-8 relative z-10">
               <div>
-                <label class="block text-[9px] font-black text-slate-300 uppercase tracking-widest mb-2">Nama Lengkap</label>
+                <label class="block text-[11px] font-black text-slate-300 uppercase tracking-widest mb-2">Nama Lengkap</label>
                 {isEditing ? (
                   <input 
                     type="text" 
@@ -147,7 +147,7 @@ if (!profile) {
               </div>
 
               <div>
-                <label class="block text-[9px] font-black text-slate-300 uppercase tracking-widest mb-2">Tentang Saya</label>
+                <label class="block text-[11px] font-black text-slate-300 uppercase tracking-widest mb-2">Tentang Saya</label>
                 {isEditing ? (
                   <textarea 
                     name="bio" 
@@ -167,18 +167,27 @@ if (!profile) {
             <div class="mt-12 pt-8 border-t border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
                <div class="flex items-center gap-2">
                   <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                  <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                  <div class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                      Akun Terdaftar: {new Date(profile.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </div>
                </div>
                
                {isEditing ? (
                  <div class="flex items-center gap-3 w-full sm:w-auto">
-                   <a href="/profile" class="flex-1 sm:flex-none px-6 py-4 bg-slate-100 text-slate-600 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all text-center">Batal</a>
-                   <button type="submit" class="flex-1 sm:flex-none px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all active:scale-95">Simpan Perubahan</button>
+                   <a href="/profile" class="flex-1 sm:flex-none px-6 py-4 bg-slate-100 text-slate-600 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-slate-200 transition-all text-center">Batal</a>
+                   <button id="submit-btn" type="submit" class="flex-1 sm:flex-none px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all active:scale-95 disabled:bg-indigo-400 disabled:cursor-not-allowed">
+                     <span id="btn-text">Simpan Perubahan</span>
+                     <span id="loading-spinner" class="hidden">
+                       <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                       </svg>
+                       <span class="ml-2">Menyimpan...</span>
+                     </span>
+                   </button>
                  </div>
                ) : (
-                 <a href="/profile?edit=true" class="w-full sm:w-auto px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all active:scale-95 text-center">
+                 <a href="/profile?edit=true" class="w-full sm:w-auto px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all active:scale-95 text-center">
                     Edit Profil Saya
                  </a>
                )}
@@ -189,3 +198,19 @@ if (!profile) {
     </form>
   </div>
 </DashboardLayout>
+
+<script>
+  const form = document.querySelector('form');
+  const btn = document.getElementById('submit-btn');
+  const btnText = document.getElementById('btn-text');
+  const spinner = document.getElementById('loading-spinner');
+
+  form?.addEventListener('submit', () => {
+    if (btn) {
+      btn.setAttribute('disabled', 'true');
+      btnText?.classList.add('hidden');
+      spinner?.classList.remove('hidden');
+      spinner?.classList.add('flex', 'items-center', 'justify-center');
+    }
+  });
+</script>
