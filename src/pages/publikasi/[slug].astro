@@ -11,7 +11,9 @@ const { rows } = await sql`
     p.title,
     p.content,
     p.updated_at,
-    pr.full_name as author_name
+    pr.full_name as author_name,
+    pr.instagram as author_instagram,
+    pr.avatar_url as author_avatar
   FROM posts p
   LEFT JOIN profiles pr ON p.user_id = pr.id
   WHERE p.slug = ${slug} AND p.status = 'published'
@@ -57,7 +59,8 @@ const articleSchema = {
   "image": firstImage ? [firstImage] : [new URL("/literasi-brebesan-og.jpg", Astro.url.origin).toString()],
   "author": {
     "@type": "Person",
-    "name": post.author_name || "Anonim"
+    "name": post.author_name || "Anonim",
+    "url": post.author_instagram ? `https://instagram.com/${post.author_instagram.replace('@', '')}` : undefined
   },
   "datePublished": post.updated_at,
   "dateModified": post.updated_at,
@@ -82,7 +85,6 @@ const articleSchema = {
   <Header />
 
   <main class="min-h-screen bg-white pt-26 md:pt-28 pb-16 md:pb-20 overflow-x-hidden">
-    {/* Mengubah px-4 menjadi px-6 di HP agar teks tidak mepet ke pinggir layar */}
     <div class="max-w-3xl mx-auto px-6 sm:px-8 w-full">
 
       <a href="/publikasi" class="inline-flex items-center text-[11px] md:text-xs font-black uppercase tracking-widest text-slate-400 hover:text-blue-600 transition-colors mb-6 md:mb-8">
@@ -91,19 +93,26 @@ const articleSchema = {
       </a>
 
       <header class="mb-8 md:mb-12 w-full break-words">
-        {/* Ukuran judul diperkecil menjadi text-xl di HP agar pas */}
         <h1 class="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-black text-slate-900 leading-snug md:leading-[1.1] tracking-tight mb-6 md:mb-8">
           {post.title}
         </h1>
 
         <div class="flex flex-wrap items-center gap-3 md:gap-4 border-b border-slate-100 pb-6 md:pb-8">
           <div class="flex items-center gap-2.5 md:gap-3">
-            <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-black text-xs md:text-sm uppercase border border-blue-200">
-              {post.author_name ? post.author_name.charAt(0) : "A"}
+            <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-black text-xs md:text-sm uppercase border-2 border-white shadow-sm overflow-hidden">
+              {post.author_avatar ? (
+                <img src={post.author_avatar} alt={post.author_name} class="w-full h-full object-cover" />
+              ) : (
+                post.author_name ? post.author_name.charAt(0) : "U"
+              )}
             </div>
             <div>
               <p class="text-xs md:text-sm font-bold text-slate-900">{post.author_name || "Anonim"}</p>
-              <p class="text-[11px] md:text-[11px] font-black uppercase tracking-widest text-slate-400 mt-0.5">Penulis</p>
+              {post.author_instagram && (
+                <a href={`https://instagram.com/${post.author_instagram.replace('@', '')}`} target="_blank" class="text-[10px] md:text-xs font-bold text-[#833ab4] hover:opacity-70 transition-opacity flex items-center gap-1 uppercase tracking-widest">
+                   @{post.author_instagram.replace('@', '')}
+                </a>
+              )}
             </div>
           </div>
 
@@ -123,7 +132,7 @@ const articleSchema = {
         <h3 class="text-base md:text-xl font-black text-slate-900 mb-2">Punya ide cerita atau opini?</h3>
         <p class="text-slate-600 mb-5 md:mb-6 max-w-md mx-auto text-xs md:text-base">Ruang Literasi Brebesan selalu terbuka buat teman-teman yang mau merawat nalar lewat tulisan.</p>
         <a href="/user/posts/create" class="inline-flex bg-blue-600 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[11px] md:text-xs font-bold uppercase tracking-widest hover:bg-slate-900 transition-all">
-          Tulis Karyamu
+          Suarakan Pikiranmu
         </a>
       </div>
 

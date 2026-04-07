@@ -20,7 +20,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
       // PENTING: Gunakan LEFT JOIN biar kalau profil belum ada tetep bisa masuk
       const { rows } = await sql`
-        SELECT u.id, u.email, p.role, p.full_name
+        SELECT u.id, u.email, p.role, p.full_name, p.avatar_url
         FROM users u
         LEFT JOIN profiles p ON u.id = p.id
         WHERE u.id = ${userId}
@@ -32,6 +32,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
           email: rows[0].email,
           role: rows[0].role || "user", // Default role kalau NULL
           fullName: rows[0].full_name || "User Tanpa Nama",
+          avatarUrl: rows[0].avatar_url,
         };
         console.log("User ketemu di DB! Role:", userData.role);
       } else {

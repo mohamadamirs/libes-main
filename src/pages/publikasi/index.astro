@@ -4,23 +4,63 @@ import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import { sql } from "../../lib/db";
 
-// Narik postingan yang statusnya PUBLISHED
-const { rows: posts } = await sql`
-  SELECT
-    p.title,
-    p.content,
-    p.slug,
-    p.updated_at,
-    pr.full_name as author_name
-  FROM posts p
-  LEFT JOIN profiles pr ON p.user_id = pr.id
-  WHERE p.status = 'published'
-  ORDER BY p.updated_at DESC
+// Ambil kategori aktif dari query param
+const activeCategoryId = Astro.url.searchParams.get("category");
+
+// Ambil SEMUA KATEGORI dari database
+const { rows: categories } = await sql`
+  SELECT id, name, slug FROM categories ORDER BY name ASC
 `;
 
-const truncateText = (text: string | null, length = 120) => {
+// Ambil postingan yang statusnya PUBLISHED
+let posts;
+if (activeCategoryId) {
+  const { rows } = await sql`
+    SELECT
+      p.title,
+      p.content,
+      p.slug,
+      p.updated_at,
+      pr.full_name as author_name,
+      pr.instagram as author_instagram,
+      pr.avatar_url as author_avatar,
+      c.name as category_name
+    FROM posts p
+    LEFT JOIN profiles pr ON p.user_id = pr.id
+    LEFT JOIN categories c ON p.category_id = c.id
+    WHERE p.status = 'published' AND p.category_id = ${activeCategoryId}
+    ORDER BY p.updated_at DESC
+  `;
+  posts = rows;
+} else {
+  const { rows } = await sql`
+    SELECT
+      p.title,
+      p.content,
+      p.slug,
+      p.updated_at,
+      pr.full_name as author_name,
+      pr.instagram as author_instagram,
+      pr.avatar_url as author_avatar,
+      c.name as category_name
+    FROM posts p
+    LEFT JOIN profiles pr ON p.user_id = pr.id
+    LEFT JOIN categories c ON p.category_id = c.id
+    WHERE p.status = 'published'
+    ORDER BY p.updated_at DESC
+  `;
+  posts = rows;
+}
+
+const stripHtml = (html: string) => {
+  if (!html) return "";
+  return html.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim();
+};
+
+const truncateText = (text: string | null, length = 100) => {
   if (!text) return "Tidak ada ringkasan...";
-  return text.length > length ? text.substring(0, length) + "..." : text;
+  const clean = stripHtml(text);
+  return clean.length > length ? clean.substring(0, length) + "..." : clean;
 };
 
 const formatDate = (date: any) => {
@@ -34,74 +74,116 @@ const formatDate = (date: any) => {
 <Layout title="Publikasi | Literasi Brebesan" description="Kumpulan tulisan dan cerita dari teman-teman Brebes.">
   <Header />
 
-  <main class="min-h-screen bg-slate-50 relative overflow-hidden pt-26 md:pt-28 pb-20">
-    {/* Efek Latar Belakang */}
-    <div class="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-[30rem] h-[30rem] bg-blue-400/10 rounded-full blur-3xl pointer-events-none"></div>
+  <main class="min-h-screen bg-slate-50 relative overflow-hidden pt-24 md:pt-32 pb-20">
+    {/* Balik ke biru */}
+    <div class="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-[30rem] h-[30rem] bg-blue-400/5 rounded-full blur-3xl pointer-events-none"></div>
 
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
 
-      {/* Bagian Header Katalog */}
+      {/* Header */}
       <div class="flex flex-col md:flex-row items-start justify-between gap-6 mb-10 md:mb-14">
         <div class="space-y-3 max-w-2xl text-left">
-          <span class="px-2.5 py-1 rounded-md text-[11px] font-black uppercase tracking-widest border inline-flex items-center justify-center transition-all shadow-sm bg-white text-blue-600 border-blue-200/60">
+          <span class="px-2.5 py-1 rounded-md text-[10px] md:text-[11px] font-black uppercase tracking-widest border inline-flex items-center justify-center transition-all shadow-sm bg-white text-blue-600 border-blue-200/60">
             Katalog Publikasi
           </span>
-          <h1 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-            Karya <span class="text-blue-600 italic font-serif font-light">Literasi</span>
+          <h1 class="text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight uppercase">
+            Ruang <span class="text-blue-600 italic font-serif font-light lowercase tracking-normal">Suara</span>
           </h1>
-          <p class="text-slate-500 text-sm leading-relaxed max-w-lg">
+          <p class="text-slate-500 text-xs md:text-base leading-relaxed max-w-lg font-medium">
             Kumpulan tulisan, opini, dan cerita dari teman-teman. Baca gratis sepuasnya, <strong class="text-slate-700">wajib login</strong> untuk menulis.
           </p>
         </div>
 
-        <div class="w-full md:w-auto shrink-0 mt-2 md:mt-6">
-          <a href="/user/posts/create" class="flex items-center justify-center gap-2 bg-slate-900 text-white w-full px-6 py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-slate-900/10 hover:bg-blue-600 transition-all hover:-translate-y-0.5 active:scale-95 group">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 group-hover:rotate-12 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-            Mulai Menulis
+        <div class="w-full md:w-auto shrink-0 md:mt-6">
+          <a href="/user/posts/create" class="flex items-center justify-center gap-2 bg-slate-900 text-white w-full px-6 py-3.5 md:py-4 rounded-xl md:rounded-2xl text-[11px] md:text-xs font-black uppercase tracking-widest shadow-xl shadow-slate-900/10 hover:bg-blue-600 transition-all active:scale-95 group">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            Suarakan Pikiranmu
           </a>
         </div>
       </div>
 
-      {/* Filter Kategori Minimalis */}
-      <div class="flex items-center gap-2 overflow-x-auto pb-4 mb-6 md:mb-8 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
-        <button class="shrink-0 px-4 py-2 bg-slate-900 text-white text-[11px] md:text-xs font-bold rounded-lg shadow-sm transition-all">Semua</button>
-        <button class="shrink-0 px-4 py-2 bg-white text-slate-500 hover:text-slate-900 hover:bg-slate-100 text-[11px] md:text-xs font-medium border border-slate-200 rounded-lg transition-all">Opini</button>
-        <button class="shrink-0 px-4 py-2 bg-white text-slate-500 hover:text-slate-900 hover:bg-slate-100 text-[11px] md:text-xs font-medium border border-slate-200 rounded-lg transition-all">Sastra</button>
-        <button class="shrink-0 px-4 py-2 bg-white text-slate-500 hover:text-slate-900 hover:bg-slate-100 text-[11px] md:text-xs font-medium border border-slate-200 rounded-lg transition-all">Resensi</button>
+      {/* Kategori */}
+      <div class="flex items-center gap-2 overflow-x-auto pb-6 mb-8 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+        <a 
+          href="/publikasi" 
+          class={`shrink-0 px-5 py-2.5 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest transition-all border ${!activeCategoryId ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-200' : 'bg-white text-slate-500 border-slate-200 hover:border-blue-400'}`}
+        >
+          Semua
+        </a>
+        {categories.map((cat) => (
+          <a 
+            href={`/publikasi?category=${cat.id}`} 
+            class={`shrink-0 px-5 py-2.5 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest transition-all border ${activeCategoryId === cat.id ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-200' : 'bg-white text-slate-500 border-slate-200 hover:border-blue-400'}`}
+          >
+            {cat.name}
+          </a>
+        ))}
       </div>
 
       {posts.length === 0 ? (
-        <div class="py-20 text-center border-2 border-dashed border-slate-200 rounded-3xl bg-white/50 px-4">
-          <div class="text-4xl mb-3 opacity-40">📝</div>
-          <h2 class="text-lg md:text-xl font-bold text-slate-900 mb-1">Belum ada tulisan</h2>
-          <p class="text-slate-500 text-sm">Jadilah yang pertama menulis di Literasi Brebesan!</p>
+        <div class="py-24 md:py-32 text-center border-2 border-dashed border-slate-200 rounded-[2.5rem] md:rounded-[3rem] bg-white/50 px-6">
+          <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+             <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </div>
+          <h2 class="text-lg md:text-xl font-black text-slate-900 uppercase tracking-tight mb-2">Belum ada tulisan</h2>
+          <p class="text-slate-500 text-sm md:text-base font-medium max-w-xs mx-auto mb-8">Jadilah yang pertama untuk mengisi ruang suara di kategori ini.</p>
+          <a href="/user/posts/create" class="inline-flex items-center gap-2 text-blue-600 font-black uppercase tracking-widest text-[10px] md:text-xs hover:gap-4 transition-all">Mulai Menulis Sekarang →</a>
         </div>
       ) : (
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
           {posts.map((post) => (
-            <article class="relative bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl hover:shadow-blue-900/5 hover:-translate-y-1 transition-all duration-300 flex flex-col group">
-              {/* Padding dikurangi jadi p-5 agar lebih compact */}
-              <div class="p-5 flex flex-col h-full">
+            <article class="relative bg-white rounded-2xl md:rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-blue-900/5 hover:-translate-y-1.5 transition-all duration-500 flex flex-col group overflow-hidden">
+              <div class="p-5 md:p-8 flex flex-col h-full">
+                
+                <div class="flex items-center justify-between mb-4">
+                   <span class="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[9px] md:text-[10px] font-black uppercase tracking-wider border border-blue-100">
+                      {post.category_name || "Umum"}
+                   </span>
+                   <span class="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                      {formatDate(post.updated_at)}
+                   </span>
+                </div>
 
-                <h2 class="text-base md:text-lg font-black text-slate-900 mb-2 leading-snug group-hover:text-blue-600 transition-colors line-clamp-2">
+                <h2 class="text-base md:text-xl font-black text-slate-900 mb-3 leading-tight group-hover:text-blue-600 transition-colors truncate w-full" title={post.title}>
                   <a href={`/publikasi/${post.slug}`} class="before:absolute before:inset-0 outline-none">
                     {post.title}
                   </a>
                 </h2>
 
-                <p class="text-slate-500 text-sm mb-4 flex-grow line-clamp-2 leading-relaxed">
-                  {truncateText(post.content, 120)}
+                <p class="text-slate-500 text-xs md:text-sm mb-6 flex-grow line-clamp-2 md:line-clamp-3 leading-relaxed font-medium">
+                  {truncateText(post.content, 100)}
                 </p>
 
-                <div class="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
-                  <div class="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider truncate">
-                    <span class="text-slate-600 truncate max-w-[100px]">{post.author_name || "Anonim"}</span>
-                    <span class="w-1 h-1 rounded-full bg-slate-300"></span>
-                    <span>{formatDate(post.updated_at)}</span>
+                <div class="mt-auto pt-5 border-t border-slate-50 flex items-center justify-between">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-100 border-2 border-white shadow-sm flex items-center justify-center text-blue-600 font-black text-[10px] md:text-xs uppercase overflow-hidden shrink-0">
+                      {post.author_avatar ? (
+                        <img src={post.author_avatar} alt={post.author_name} class="w-full h-full object-cover" />
+                      ) : (
+                        post.author_name?.charAt(0) || 'U'
+                      )}
+                    </div>
+                    <div class="flex flex-col min-w-0">
+                      <span class="text-[10px] md:text-[11px] font-black text-slate-900 uppercase tracking-wider truncate">{post.author_name || "Anonim"}</span>
+                      {post.author_instagram && (
+                        <a 
+                          href={`https://instagram.com/${post.author_instagram.replace('@', '')}`} 
+                          target="_blank" 
+                          class="text-[9px] md:text-[10px] font-bold text-[#833ab4] uppercase tracking-widest mt-0.5 hover:opacity-70 transition-opacity flex items-center gap-1 relative z-20"
+                        >
+                          <svg width="20px" height="20px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 md:w-3 md:h-3" fill="currentColor">
+                            <rect x="0" fill="none" width="20" height="20"/>
+                            <g>
+                              <path d="M12.7 10c0-1.5-1.2-2.7-2.7-2.7S7.3 8.5 7.3 10s1.2 2.7 2.7 2.7c1.5 0 2.7-1.2 2.7-2.7zm1.4 0c0 2.3-1.8 4.1-4.1 4.1S5.9 12.3 5.9 10 7.7 5.9 10 5.9s4.1 1.8 4.1 4.1zm1.1-4.3c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .5 1 1zM10 3.4c-1.2 0-3.7-.1-4.7.3-.7.3-1.3.9-1.5 1.6-.4 1-.3 3.5-.3 4.7s-.1 3.7.3 4.7c.2.7.8 1.3 1.5 1.5 1 .4 3.6.3 4.7.3s3.7.1 4.7-.3c.7-.3 1.2-.8 1.5-1.5.4-1.1.3-3.6.3-4.7s.1-3.7-.3-4.7c-.2-.7-.8-1.3-1.5-1.5-1-.5-3.5-.4-4.7-.4zm8 6.6v3.3c0 1.2-.4 2.4-1.3 3.4-.9.9-2.1 1.3-3.4 1.3H6.7c-1.2 0-2.4-.4-3.4-1.3-.8-.9-1.3-2.1-1.3-3.4V10 6.7c0-1.3.5-2.5 1.3-3.4C4.3 2.5 5.5 2 6.7 2h6.6c1.2 0 2.4.4 3.4 1.3.8.9 1.3 2.1 1.3 3.4V10z"/>
+                            </g>
+                          </svg>
+                          @{post.author_instagram.replace('@', '')}
+                        </a>
+                      )}
+                    </div>
                   </div>
-
-                  <div class="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors shrink-0">
-                    <svg class="w-3 h-3 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>
+                  <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm border border-slate-100 group-hover:border-blue-600">
+                    <svg class="w-3.5 h-3.5 md:w-4 md:h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>
                   </div>
                 </div>
 
@@ -115,3 +197,13 @@ const formatDate = (date: any) => {
 
   <Footer />
 </Layout>
+
+<style>
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>

@@ -36,7 +36,8 @@ CREATE TABLE "profiles" (
 	"bio" text,
 	"role" text DEFAULT 'user' NOT NULL,
 	"created_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	"instagram" text
+	"instagram" text,
+	"avatar_url" text
 );
 CREATE TABLE "users" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),

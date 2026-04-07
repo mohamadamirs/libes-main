@@ -1,22 +1,19 @@
-import { google } from "googleapis"; // Mengimpor library googleapis untuk berinteraksi dengan Google APIs
+import { google } from "googleapis";
 
-// Mengatur autentikasi JWT (JSON Web Token) untuk akun layanan Google.
 const googleEmail = import.meta.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
 const googleKey = import.meta.env.GOOGLE_PRIVATE_KEY || process.env.GOOGLE_PRIVATE_KEY;
 
 if (!googleEmail || !googleKey) {
-  console.error("❌ ERROR: Google Drive environment variables (GOOGLE_SERVICE_ACCOUNT_EMAIL or GOOGLE_PRIVATE_KEY) are missing!");
+  console.error("❌ ERROR: Google Drive environment variables missing!");
 }
 
 const auth = new google.auth.JWT({
-  email: googleEmail, // Email akun layanan
-  key: googleKey ? googleKey.replace(/\\n/g, "\n") : undefined, // Kunci privat
-  scopes: ["https://www.googleapis.com/auth/drive.readonly"], // Scope akses: hanya membaca Google Drive
+  email: googleEmail,
+  key: googleKey ? googleKey.replace(/\\n/g, "\n") : undefined,
+  scopes: ["https://www.googleapis.com/auth/drive.readonly"],
 });
 
-// Menginisialisasi objek Google Drive API
 const drive = google.drive({ version: "v3", auth });
-
 const ROOT_ID = import.meta.env.GOOGLE_DRIVE_ROOT_FOLDER_ID || process.env.GOOGLE_DRIVE_ROOT_FOLDER_ID;
 
 export interface DriveItem {
@@ -26,23 +23,48 @@ export interface DriveItem {
   webContentLink?: string;
 }
 
+// --- MEKANISME CACHE SEDERHANA ---
+const CACHE = new Map<string, { data: any; expiry: number }>();
+const CACHE_TTL = 1000 * 60 * 60; // 1 Jam
+
+function getCachedData(key: string) {
+  const cached = CACHE.get(key);
+  if (cached && cached.expiry > Date.now()) {
+    console.log(`[DRIVE CACHE] Hit: ${key}`);
+    return cached.data;
+  }
+  return null;
+}
+
+function setCachedData(key: string, data: any) {
+  CACHE.set(key, { data, expiry: Date.now() + CACHE_TTL });
+}
+
 export async function getFolders(parentId: string): Promise<DriveItem[]> {
+  const cacheKey = `folders_${parentId}`;
+  const cached = getCachedData(cacheKey);
+  if (cached) return cached;
+
   const res = await drive.files.list({
     q: `'${parentId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
     fields: "files(id, name)",
     orderBy: "name desc",
   });
-  return (res.data.files as DriveItem[]) || [];
+  
+  const folders = (res.data.files as DriveItem[]) || [];
+  setCachedData(cacheKey, folders);
+  return folders;
 }
 
-/**
- * Mengambil daftar file media di dalam folder tertentu dari Google Drive.
- */
 export async function getMediaFiles(
   folderId: string,
   pageToken?: string | null,
   limit: number = 4,
 ): Promise<{ files: DriveItem[]; nextPageToken: string | null }> {
+  const cacheKey = `media_${folderId}_${pageToken || 'first'}_${limit}`;
+  const cached = getCachedData(cacheKey);
+  if (cached) return cached;
+
   try {
     const response = await drive.files.list({
       q: `'${folderId}' in parents and trashed = false`,
@@ -51,13 +73,42 @@ export async function getMediaFiles(
       pageToken: pageToken || undefined,
     });
 
-    return {
+    const result = {
       files: (response.data.files as DriveItem[]) || [],
       nextPageToken: response.data.nextPageToken || null,
     };
+    
+    setCachedData(cacheKey, result);
+    return result;
   } catch (error) {
     console.error("Error fetching media files:", error);
     throw error;
+  }
+}
+
+/**
+ * Mengambil foto terbaru secara global (diurutkan berdasarkan waktu pembuatan)
+ */
+export async function getLatestMedia(limit: number = 4): Promise<DriveItem[]> {
+  const cacheKey = `latest_media_${limit}`;
+  const cached = getCachedData(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const res = await drive.files.list({
+      // Mencari semua file gambar yang tidak ada di sampah
+      q: "mimeType contains 'image/' and trashed = false",
+      fields: "files(id, name, webContentLink)",
+      orderBy: "createdTime desc",
+      pageSize: limit,
+    });
+    
+    const files = (res.data.files as DriveItem[]) || [];
+    setCachedData(cacheKey, files);
+    return files;
+  } catch (error) {
+    console.error("Error fetching latest media:", error);
+    return [];
   }
 }
 

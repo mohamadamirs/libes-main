@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
+    "@astrojs/preact": "^5.1.1",
     "@astrojs/vercel": "10.0.2",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.2.2",
@@ -23,6 +24,7 @@
     "jose": "^6.2.2",
     "marked": "^17.0.5",
     "pg": "^8.20.0",
+    "preact": "^10.29.1",
     "resend": "^6.10.0",
     "sanitize-html": "^2.17.2",
     "typescript": "^5.9.3",

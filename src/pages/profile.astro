@@ -8,14 +8,28 @@ const { user } = Astro.locals;
 if (!user) return Astro.redirect("/login");
 
 const isEditing = Astro.url.searchParams.get("edit") === "true";
+const isChangingPassword = Astro.url.searchParams.get("password") === "true";
 
 // Proses Update Profil
 const result = Astro.getActionResult(actions.updateProfile);
 if (result && !result.error) {
-  return Astro.redirect("/profile");
+  return Astro.redirect("/profile?msg=Profil berhasil diperbarui");
 }
 
-const errorMessage = result?.error?.message;
+// Proses Update Avatar
+const avatarResult = Astro.getActionResult(actions.updateAvatar);
+if (avatarResult && !avatarResult.error) {
+  return Astro.redirect("/profile?msg=Foto profil berhasil diperbarui");
+}
+
+// Proses Ganti Password
+const passwordResult = Astro.getActionResult(actions.changePassword);
+if (passwordResult && !passwordResult.error) {
+  return Astro.redirect("/profile?msg=Password berhasil diganti");
+}
+
+const errorMessage = result?.error?.message || avatarResult?.error?.message || passwordResult?.error?.message;
+const successMsg = Astro.url.searchParams.get("msg");
 
 // Ambil data profil lengkap dari database
 const { rows: profiles } = await sql`
@@ -34,12 +48,40 @@ if (!profile) {
 ---
 
 <DashboardLayout title="Profil Saya">
-  <div class="max-w-4xl mx-auto px-4 sm:px-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
+  <div class="max-w-4xl mx-auto px-4 sm:px-0 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
+    
+    <!-- Notifikasi -->
+    {successMsg && (
+      <div class="bg-emerald-50 border-l-4 border-emerald-500 text-emerald-700 p-4 mb-8 rounded-r-xl text-sm font-semibold animate-in fade-in slide-in-from-top-4 duration-300">
+        {successMsg}
+      </div>
+    )}
+
+    {errorMessage && (
+      <div class="bg-rose-50 border-l-4 border-rose-500 text-rose-700 p-4 mb-8 rounded-r-xl text-sm font-semibold animate-in fade-in slide-in-from-top-4 duration-300">
+        {errorMessage}
+      </div>
+    )}
+
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
       <div class="flex items-center gap-5">
-        <div class="w-16 h-16 md:w-20 md:h-20 bg-indigo-600 rounded-[2rem] flex items-center justify-center text-white text-2xl md:text-3xl font-black shadow-xl shadow-indigo-100 uppercase ring-4 ring-white">
-          {profile.full_name?.charAt(0) || 'U'}
+        <div class="relative group">
+          <div class="w-20 h-20 md:w-24 md:h-24 bg-indigo-600 rounded-[2.5rem] flex items-center justify-center text-white text-3xl md:text-4xl font-black shadow-xl shadow-indigo-100 uppercase ring-4 ring-white overflow-hidden">
+            {profile.avatar_url ? (
+              <img src={profile.avatar_url} alt={profile.full_name} class="w-full h-full object-cover" />
+            ) : (
+              profile.full_name?.charAt(0) || 'U'
+            )}
+          </div>
+          
+          <label class="absolute bottom-0 right-0 w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg cursor-pointer hover:bg-slate-900 transition-colors border-2 border-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <form method="POST" action={actions.updateAvatar} enctype="multipart/form-data" class="hidden">
+               <input type="file" name="avatar" accept="image/*" onchange="this.form.submit()" />
+            </form>
+          </label>
         </div>
+
         <div>
           <h1 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight uppercase leading-none mb-2">Profil Saya</h1>
           <div class="flex items-center gap-2">
@@ -53,154 +95,169 @@ if (!profile) {
       
       <a href={user.role === 'admin' ? '/admin' : '/user'} class="inline-flex items-center text-[11px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-all group bg-white px-5 py-3 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md active:scale-95">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        Kembali ke Dashboard
+        Dashboard
       </a>
     </div>
 
-    {errorMessage && (
-      <div class="bg-rose-50 border-l-4 border-rose-500 text-rose-700 p-4 mb-8 rounded-r-xl text-sm font-semibold animate-in fade-in slide-in-from-top-4 duration-300">
-        <div class="flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-          </svg>
-          {errorMessage}
-        </div>
-      </div>
-    )}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Sidebar Info -->
+      <div class="md:col-span-1 space-y-6">
+        <div class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden group">
+          <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2 relative z-10">
+            <span class="w-1.5 h-1.5 bg-indigo-600 rounded-full"></span>
+            Akun & Keamanan
+          </h3>
+          
+          <div class="space-y-6 relative z-10">
+            <div>
+              <label class="block text-[11px] font-black text-slate-300 uppercase tracking-widest mb-1">Email</label>
+              <p class="text-[13px] font-bold text-slate-900 break-all leading-relaxed">{profile.email}</p>
+            </div>
 
-    <form method="POST" action={actions.updateProfile}>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <!-- Sidebar Info -->
-        <div class="md:col-span-1 space-y-6">
-          <div class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden group">
-            <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-indigo-50 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            
-            <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2 relative z-10">
-              <span class="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-pulse"></span>
-              Kontak Utama
-            </h3>
-            
-            <div class="space-y-6 relative z-10">
-              <div>
-                <label class="block text-[11px] font-black text-slate-300 uppercase tracking-widest mb-1">Email Terdaftar</label>
-                <p class="text-[13px] font-bold text-slate-900 break-all leading-relaxed">{profile.email}</p>
-                <p class="text-[11px] text-slate-400 mt-1 italic">* Email tidak dapat diubah</p>
-              </div>
-
-              <div>
-                <label class="block text-[11px] font-black text-slate-300 uppercase tracking-widest mb-1">Instagram</label>
-                {isEditing ? (
-                  <div class="relative group">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 group-focus-within:text-indigo-500 transition-colors">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            <div>
+              <label class="block text-[11px] font-black text-slate-300 uppercase tracking-widest mb-1">Instagram</label>
+              {isEditing ? (
+                <form method="POST" action={actions.updateProfile} id="profile-form">
+                  <input type="hidden" name="fullName" value={profile.full_name} id="hidden-name" />
+                  <input type="hidden" name="bio" value={profile.bio} id="hidden-bio" />
+                  <div class="relative group mt-2">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 group-focus-within:text-pink-500 transition-colors">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
                     </span>
                     <input 
                       type="text" 
                       name="instagram" 
                       value={profile.instagram} 
                       placeholder="Username IG"
-                      class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 focus:bg-white outline-none transition-all font-bold text-slate-800 text-xs" 
+                      class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-pink-100 focus:border-pink-500 focus:bg-white outline-none transition-all font-bold text-slate-800 text-xs" 
                     />
                   </div>
+                </form>
+              ) : (
+                profile.instagram ? (
+                  <a href={`https://instagram.com/${profile.instagram.replace('@', '')}`} target="_blank" class="flex items-center gap-2 text-xs font-bold text-pink-600 hover:text-pink-700 transition-colors bg-pink-50/50 p-3 rounded-xl border border-pink-100/50 mt-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    @{profile.instagram.replace('@', '')}
+                  </a>
                 ) : (
-                  profile.instagram ? (
-                    <a href={`https://instagram.com/${profile.instagram.replace('@', '')}`} target="_blank" class="flex items-center gap-2 text-xs font-bold text-pink-600 hover:text-pink-700 transition-colors bg-pink-50/50 p-3 rounded-xl border border-pink-100/50">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-                      @{profile.instagram.replace('@', '')}
-                    </a>
-                  ) : (
-                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 border-dashed">
-                      <p class="text-[11px] font-bold text-slate-400 italic">Belum ada Instagram</p>
+                  <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 border-dashed mt-2">
+                    <p class="text-[11px] font-bold text-slate-400 italic">Belum ada Instagram</p>
+                  </div>
+                )
+              )}
+            </div>
+
+            <div class="pt-4 border-t border-slate-50">
+               {isChangingPassword ? (
+                 <form method="POST" action={actions.changePassword} class="space-y-4">
+                    <div>
+                      <input type="password" name="currentPassword" placeholder="Password Saat Ini" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:ring-4 focus:ring-blue-100 outline-none" />
                     </div>
-                  )
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="md:col-span-2 space-y-6">
-          <div class="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden group">
-            <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-50 rounded-full blur-3xl opacity-50 group-hover:scale-110 transition-transform duration-700"></div>
-            
-            <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-2 relative z-10">
-              <span class="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-pulse"></span>
-              Biodata Diri
-            </h3>
-
-            <div class="space-y-8 relative z-10">
-              <div>
-                <label class="block text-[11px] font-black text-slate-300 uppercase tracking-widest mb-2">Nama Lengkap</label>
-                {isEditing ? (
-                  <input 
-                    type="text" 
-                    name="fullName" 
-                    value={profile.full_name} 
-                    required 
-                    minlength="3"
-                    class="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 focus:bg-white outline-none transition-all font-black text-slate-900 text-xl md:text-2xl uppercase tracking-tight" 
-                  />
-                ) : (
-                  <p class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-none uppercase">{profile.full_name}</p>
-                )}
-              </div>
-
-              <div>
-                <label class="block text-[11px] font-black text-slate-300 uppercase tracking-widest mb-2">Tentang Saya</label>
-                {isEditing ? (
-                  <textarea 
-                    name="bio" 
-                    rows="4" 
-                    maxlength="200"
-                    placeholder="Ceritakan sedikit tentang diri Anda..."
-                    class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-[2rem] focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 focus:bg-white outline-none transition-all font-medium text-slate-600 text-sm md:text-base leading-relaxed"
-                  >{profile.bio}</textarea>
-                ) : (
-                  <div class="bg-slate-50/50 p-6 rounded-3xl border border-slate-100 italic text-slate-600 text-sm md:text-base leading-relaxed font-medium">
-                    "{profile.bio || 'Penulis di Literasi Brebesan yang lebih suka bercerita lewat tulisan daripada biografi singkat.'}"
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div class="mt-12 pt-8 border-t border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
-               <div class="flex items-center gap-2">
-                  <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                  <div class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                     Akun Terdaftar: {new Date(profile.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
-                  </div>
-               </div>
-               
-               {isEditing ? (
-                 <div class="flex items-center gap-3 w-full sm:w-auto">
-                   <a href="/profile" class="flex-1 sm:flex-none px-6 py-4 bg-slate-100 text-slate-600 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-slate-200 transition-all text-center">Batal</a>
-                   <button id="submit-btn" type="submit" class="flex-1 sm:flex-none px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all active:scale-95 disabled:bg-indigo-400 disabled:cursor-not-allowed">
-                     <span id="btn-text">Simpan Perubahan</span>
-                     <span id="loading-spinner" class="hidden">
-                       <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                       </svg>
-                       <span class="ml-2">Menyimpan...</span>
-                     </span>
-                   </button>
-                 </div>
+                    <div>
+                      <input type="password" name="newPassword" placeholder="Password Baru" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:ring-4 focus:ring-blue-100 outline-none" />
+                    </div>
+                    <div>
+                      <input type="password" name="confirmPassword" placeholder="Konfirmasi Password" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:ring-4 focus:ring-blue-100 outline-none" />
+                    </div>
+                    <div class="flex gap-2">
+                      <a href="/profile" class="flex-1 text-center py-2 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all">Batal</a>
+                      <button type="submit" class="flex-1 py-2 bg-blue-600 text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all">Simpan</button>
+                    </div>
+                 </form>
                ) : (
-                 <a href="/profile?edit=true" class="w-full sm:w-auto px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all active:scale-95 text-center">
-                    Edit Profil Saya
+                 <a href="/profile?password=true" class="inline-flex items-center gap-2 text-[11px] font-black text-blue-600 hover:text-slate-900 transition-colors uppercase tracking-widest">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    Ganti Password
                  </a>
                )}
             </div>
           </div>
         </div>
       </div>
-    </form>
+
+      <!-- Main Content -->
+      <div class="md:col-span-2 space-y-6">
+        <div class="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden group">
+          <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-2 relative z-10">
+            <span class="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-pulse"></span>
+            Biodata Diri
+          </h3>
+
+          <div class="space-y-8 relative z-10">
+            <div>
+              <label class="block text-[11px] font-black text-slate-300 uppercase tracking-widest mb-2">Nama Lengkap</label>
+              {isEditing ? (
+                <input 
+                  type="text" 
+                  name="fullName" 
+                  form="profile-form"
+                  value={profile.full_name} 
+                  required 
+                  minlength="3"
+                  class="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 focus:bg-white outline-none transition-all font-black text-slate-900 text-xl md:text-2xl uppercase tracking-tight" 
+                  oninput="document.getElementById('hidden-name').value = this.value"
+                />
+              ) : (
+                <p class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-none uppercase">{profile.full_name}</p>
+              )}
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-black text-slate-300 uppercase tracking-widest mb-2">Tentang Saya</label>
+              {isEditing ? (
+                <textarea 
+                  name="bio" 
+                  form="profile-form"
+                  rows="4" 
+                  maxlength="200"
+                  placeholder="Ceritakan sedikit tentang diri Anda..."
+                  class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-[2rem] focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 focus:bg-white outline-none transition-all font-medium text-slate-600 text-sm md:text-base leading-relaxed"
+                  oninput="document.getElementById('hidden-bio').value = this.value"
+                >{profile.bio}</textarea>
+              ) : (
+                <div class="bg-slate-50/50 p-6 rounded-3xl border border-slate-100 italic text-slate-600 text-sm md:text-base leading-relaxed font-medium">
+                  "{profile.bio || 'Penulis di Literasi Brebesan yang lebih suka bercerita lewat tulisan daripada biografi singkat.'}"
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div class="mt-12 pt-8 border-t border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
+             <div class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                   Akun Terdaftar: {new Date(profile.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </div>
+             </div>
+             
+             {isEditing ? (
+               <div class="flex items-center gap-3 w-full sm:w-auto">
+                 <a href="/profile" class="flex-1 sm:flex-none px-6 py-4 bg-slate-100 text-slate-600 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-slate-200 transition-all text-center">Batal</a>
+                 <button type="submit" form="profile-form" id="submit-btn" class="flex-1 sm:flex-none px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all active:scale-95 disabled:bg-indigo-400 disabled:cursor-not-allowed">
+                   <span id="btn-text">Simpan Perubahan</span>
+                   <span id="loading-spinner" class="hidden">
+                     <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                     </svg>
+                     <span class="ml-2">Menyimpan...</span>
+                   </span>
+                 </button>
+               </div>
+             ) : (
+               <a href="/profile?edit=true" class="w-full sm:w-auto px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all active:scale-95 text-center">
+                  Edit Profil Saya
+               </a>
+             )}
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </DashboardLayout>
 
 <script>
-  const form = document.querySelector('form');
+  const form = document.getElementById('profile-form') as HTMLFormElement;
   const btn = document.getElementById('submit-btn');
   const btnText = document.getElementById('btn-text');
   const spinner = document.getElementById('loading-spinner');

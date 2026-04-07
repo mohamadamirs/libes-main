@@ -75,8 +75,53 @@ const finalSchema = schema || defaultJsonLd;
 
     <ClientRouter />
     <slot name="head" />
+    <style is:global>
+      /* Global Progress Bar Style */
+      #nprogress {
+        pointer-events: none;
+      }
+      #nprogress .bar {
+        background: #2563eb; /* blue-600 */
+        position: fixed;
+        z-index: 9999;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+      }
+      .nprogress-pulse {
+        display: block;
+        position: absolute;
+        right: 0px;
+        width: 100px;
+        height: 100%;
+        box-shadow: 0 0 10px #2563eb, 0 0 5px #2563eb;
+        opacity: 1.0;
+        transform: rotate(3deg) translate(0px, -4px);
+      }
+    </style>
   </head>
   <body class={bodyClass}>
+    <div id="nprogress" class="hidden"><div class="bar" role="bar"><div class="nprogress-pulse"></div></div></div>
+    
+    <script>
+      // Logic for Global Progress Bar
+      document.addEventListener('astro:before-preparation', () => {
+        const nprogress = document.getElementById('nprogress');
+        if (nprogress) nprogress.classList.remove('hidden');
+      });
+
+      document.addEventListener('astro:page-load', () => {
+        const nprogress = document.getElementById('nprogress');
+        if (nprogress) nprogress.classList.add('hidden');
+      });
+      
+      // Handle navigation errors/cancellation
+      document.addEventListener('astro:after-preparation', () => {
+        // Preparation finished, but page-load hasn't fired yet. 
+        // We keep it visible until page-load.
+      });
+    </script>
     <slot />
   </body>
 </html>

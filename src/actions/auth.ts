@@ -244,14 +244,60 @@ export const authActions = {
         `;
 
         return { success: true };
-      } catch (e: any) {
+        } catch (e: any) {
         if (e instanceof ActionError) throw e;
         console.error("Reset password error:", e);
         throw new ActionError({
           code: "INTERNAL_SERVER_ERROR",
-          message: e.message || "Gagal mereset password.",
+          message: "Gagal mereset password.",
         });
-      }
-    },
-  }),
-};
+        }
+        },
+        }),
+
+        createUser: defineAction({
+        accept: "form",
+        input: z.object({
+        fullName: z.string().min(3, "Nama minimal 3 karakter."),
+        email: z.string().email("Format email tidak valid."),
+        password: z.string().min(6, "Password minimal 6 karakter."),
+        role: z.enum(["user", "admin"]).default("user"),
+        }),
+        handler: async (input, context) => {
+        const { user: currentUser } = context.locals;
+        if (!currentUser || currentUser.role !== "admin") {
+        throw new ActionError({
+          code: "UNAUTHORIZED",
+          message: "Hanya administrator yang dapat membuat user baru.",
+        });
+        }
+
+        try {
+        const { rows: existingUser } =
+          await sql`SELECT id FROM users WHERE email = ${input.email}`;
+        if (existingUser.length > 0) {
+          throw new ActionError({
+            code: "CONFLICT",
+            message: "Email sudah terdaftar.",
+          });
+        }
+
+        const userId = uuidv4();
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(input.password, salt);
+
+        await sql`INSERT INTO users (id, email, password_hash) VALUES (${userId}, ${input.email}, ${hashedPassword})`;
+        await sql`INSERT INTO profiles (id, full_name, role) VALUES (${userId}, ${input.fullName}, ${input.role})`;
+
+        return { success: true };
+        } catch (e: any) {
+        if (e instanceof ActionError) throw e;
+        console.error("Admin Create User error:", e);
+        throw new ActionError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Gagal membuat user baru.",
+        });
+        }
+        },
+        }),
+        };
