@@ -77,7 +77,7 @@ export default function AgendaIsland() {
             <img
               src={displayAgenda.image_url || "/literasi-brebesan.webp"}
               alt={displayAgenda.title}
-              className="w-full h-auto max-h-[210px] md:max-h-[400px] object-cover md:object-contain bg-slate-50 transition-all duration-700"
+              className="w-full h-auto max-h-[210px] md:max-h-[450px] object-cover md:object-contain bg-slate-50 transition-all duration-700"
             />
           </div>
         </div>
