@@ -66,7 +66,7 @@ export default function AgendaIsland() {
     event_time: '09:00 - Selesai',
     location: 'Taman Monumen Juang Brebes',
     wa_link: 'https://wa.me/628993986415',
-    image_url: '/literasi-brebesan.webp'
+    image_url: '/kegiatan.webp'
   };
 
   return (
@@ -75,7 +75,7 @@ export default function AgendaIsland() {
         <div className="w-1/2 md:w-1/3 shrink-0 flex justify-center">
           <div className="relative w-full max-w-[180px] md:max-w-[280px] rounded-xl md:rounded-2xl overflow-hidden shadow-lg bg-white border border-slate-200">
             <img
-              src={displayAgenda.image_url || "/literasi-brebesan-og.jpg"}
+              src={displayAgenda.image_url || "/literasi-brebesan.webp"}
               alt={displayAgenda.title}
               className="w-full h-auto max-h-[250px] md:max-h-[400px] object-cover md:object-contain bg-slate-50 transition-all duration-700"
             />
