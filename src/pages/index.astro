@@ -2,6 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 import Header from "../components/Header.astro";
 import Hero from "../components/main/Hero.astro";
+import About from "../components/main/About.astro";
+import Stats from "../components/main/Stats.astro";
 import Agenda from "../components/main/Agenda.astro";
 import LatestPosts from "../components/main/LatestPosts.astro";
 import GaleriGrid from "../components/main/GaleriGrid.astro";
@@ -11,10 +13,10 @@ import Footer from "../components/Footer.astro";
 const homeSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "Literasi Brebesan",
-  "alternateName": ["LIBES", "Literasi Brebes"],
+  "name": "Komunitas Literasi Brebesan",
+  "alternateName": ["LIBES", "Komunitas Literasi Brebes", "Literasi Brebes"],
   "url": Astro.url.origin,
-  "description": "Wadah literasi digital wong Brebes. Ruang temu alternatif untuk membaca, berdiskusi, dan bergerak bersama merawat nalar di Kabupaten Brebes.",
+  "description": "Komunitas Literasi Brebes (Literasi Brebesan). Ruang temu alternatif untuk membaca, berdiskusi, dan bergerak bersama merawat nalar di Kabupaten Brebes.",
   "potentialAction": {
     "@type": "SearchAction",
     "target": {
@@ -27,13 +29,15 @@ const homeSchema = {
 ---
 
 <Layout 
-  title="Literasi Brebesan - Merawat Nalar, Menjalin Kedekatan" 
-  description="Wadah literasi digital wong Brebes. Ruang temu alternatif untuk membaca, berdiskusi, dan bergerak bersama merawat nalar di Kabupaten Brebes."
+  title="komunitas literasi brebesan - Membaca, Berdaya, Bergerak nyata" 
+  description="Komunitas Literasi Brebes (Literasi Brebesan). Ruang temu alternatif untuk membaca, berdiskusi, dan bergerak bersama merawat nalar di Kabupaten Brebes."
   schema={homeSchema}
 >
   <Header />
   <main>
     <Hero />
+    <About />
+    <Stats />
     <Agenda />
     <LatestPosts />
     <GaleriGrid />
