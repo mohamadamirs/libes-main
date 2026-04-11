@@ -36,7 +36,7 @@ export const GET: APIRoute = async ({ url: requestUrl }) => {
 
     // --- Halaman Statis ---
     const staticPages = [
-      { path: '', changefreq: 'daily', priority: '1.0' },
+      { path: '/', changefreq: 'daily', priority: '1.0' },
       { path: '/publikasi', changefreq: 'daily', priority: '0.9' },
       { path: '/dokumentasi', changefreq: 'weekly', priority: '0.8' },
     ];

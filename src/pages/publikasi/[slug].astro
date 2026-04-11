@@ -89,10 +89,16 @@ const articleSchema = {
   <main class="min-h-screen bg-white pt-26 md:pt-32 pb-16 md:pb-20 overflow-x-hidden">
     <div class="max-w-4xl mx-auto px-6 sm:px-8 w-full">
 
-      <a href="/publikasi" class="inline-flex items-center text-[11px] md:text-xs font-black uppercase tracking-widest text-slate-400 hover:text-blue-600 transition-colors mb-10 group">
-        <svg class="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-        Kembali ke Etalase
-      </a>
+      <nav class="flex items-center gap-2 text-[10px] md:text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mb-8 overflow-x-auto whitespace-nowrap scrollbar-hide">
+        <a href="/" class="hover:text-blue-600 transition-colors flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+          Beranda
+        </a>
+        <span class="text-slate-200">/</span>
+        <a href="/publikasi" class="hover:text-blue-600 transition-colors">Publikasi</a>
+        <span class="text-slate-200">/</span>
+        <span class="text-slate-900 truncate max-w-[150px] md:max-w-xs">{post.title}</span>
+      </nav>
 
       <header class="mb-12 md:mb-16 w-full">
         <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.1] tracking-tight mb-10 break-words">
