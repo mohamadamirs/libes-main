@@ -6,8 +6,13 @@ export const SECRET = new TextEncoder().encode(
   authSecret,
 );
 
-export async function createSessionToken(userId: string) {
-  return await new SignJWT({ userId })
+export async function createSessionToken(payload: { 
+  userId: string, 
+  role: string, 
+  fullName: string, 
+  avatarUrl?: string | null 
+}) {
+  return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("24h")

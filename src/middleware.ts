@@ -11,25 +11,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (token) {
     try {
       const { payload } = await jwtVerify(token, SECRET);
-      const userId = payload.userId as string;
-
-      // PENTING: Gunakan LEFT JOIN biar kalau profil belum ada tetep bisa masuk
-      const { rows } = await sql`
-        SELECT u.id, u.email, p.role, p.full_name, p.avatar_url
-        FROM users u
-        LEFT JOIN profiles p ON u.id = p.id
-        WHERE u.id = ${userId}
-      `;
-
-      if (rows.length > 0) {
-        userData = {
-          id: rows[0].id,
-          email: rows[0].email,
-          role: rows[0].role || "user", // Default role kalau NULL
-          fullName: rows[0].full_name || "User Tanpa Nama",
-          avatarUrl: rows[0].avatar_url,
-        };
-      }
+      
+      // Data diambil langsung dari payload JWT tanpa ke Database!
+      userData = {
+        id: payload.userId as string,
+        role: payload.role as string,
+        fullName: payload.fullName as string,
+        avatarUrl: payload.avatarUrl as string | undefined,
+      };
     } catch (e: any) {
       cookies.delete("session", { path: "/" });
     }

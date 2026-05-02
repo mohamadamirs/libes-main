@@ -17,7 +17,7 @@ export const authActions = {
     handler: async (input, context) => {
       try {
         const { rows } = await sql`
-          SELECT u.id, u.email, u.password_hash, p.role
+          SELECT u.id, u.email, u.password_hash, p.role, p.full_name, p.avatar_url
           FROM users u
           LEFT JOIN profiles p ON u.id = p.id
           WHERE u.email = ${input.email}
@@ -41,7 +41,12 @@ export const authActions = {
           });
         }
 
-        const token = await createSessionToken(user.id);
+        const token = await createSessionToken({
+          userId: user.id,
+          role: user.role || "user",
+          fullName: user.full_name || "User",
+          avatarUrl: user.avatar_url
+        });
         context.cookies.set("session", token, {
           path: "/",
           httpOnly: true,
@@ -86,7 +91,12 @@ export const authActions = {
         await sql`INSERT INTO users (id, email, password_hash) VALUES (${userId}, ${input.email}, ${hashedPassword})`;
         await sql`INSERT INTO profiles (id, full_name, role) VALUES (${userId}, ${input.fullName}, 'user')`;
 
-        const token = await createSessionToken(userId);
+        const token = await createSessionToken({
+          userId: userId,
+          role: "user",
+          fullName: input.fullName,
+          avatarUrl: null
+        });
         context.cookies.set("session", token, {
           path: "/",
           httpOnly: true,

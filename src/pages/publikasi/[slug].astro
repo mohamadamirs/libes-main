@@ -110,6 +110,9 @@ const finalSchema = {
   "@context": "https://schema.org",
   "@graph": [articleSchema, breadcrumbSchema]
 };
+// OPTIMASI: Edge Caching (SWR)
+// Cache selama 5 menit, update di background. Cocok untuk artikel.
+Astro.response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=86400');
 ---
 
 <Layout 

@@ -17,7 +17,7 @@ const homeSchema = {
   "alternateName": ["LIBES", "Komunitas Literasi Brebes", "Literasi Brebes"],
   "url": Astro.url.origin,
   "logo": new URL("/literasi-brebesan.webp", Astro.url.origin).toString(),
-  "description": "Komunitas Literasi Brebes (Literasi Brebesan) adalah wadah independen di Kabupaten Brebes yang berfokus pada pengembangan budaya membaca, diskusi kritis, dan aksi sosial nyata.",
+  "description": "Komunitas Literasi Brebesan adalah wadah independen di Kabupaten Brebes yang berfokus pada pengembangan budaya membaca, diskusi kritis, dan aksi sosial nyata.",
   "address": {
     "@type": "PostalAddress",
     "addressLocality": "Brebes",
@@ -28,6 +28,10 @@ const homeSchema = {
     "https://www.instagram.com/literasibrebesan"
   ]
 };
+
+// OPTIMASI: Edge Caching (SWR)
+// Halaman akan di-cache selama 1 menit, dan tetap bisa diakses meskipun expired (update background)
+Astro.response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=3600');
 ---
 
 <Layout 
