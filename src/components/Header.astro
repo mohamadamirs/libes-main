@@ -180,7 +180,7 @@ const initial = user?.fullName?.charAt(0) || 'U';
                 )}
               </div>
               <div class="flex flex-col min-w-0">
-                <span class="text-xs md:text-sm font-bold text-slate-900 truncate uppercase tracking-tight leading-none">{user.fullName.split(' ')[0]}</span>
+                <span class="text-xs md:text-sm font-bold text-slate-900 truncate uppercase tracking-tight leading-none">{user?.fullName?.split(' ')[0] || 'User'}</span>
                 <span class="text-[11px] md:text-xs text-blue-600 font-black uppercase tracking-wider leading-none mt-1">{user.role}</span>
               </div>
             </div>

@@ -18,12 +18,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
     try {
       const { payload } = await jwtVerify(token, SECRET);
       
-      // Data diambil langsung dari payload JWT tanpa ke Database!
+      // Data diambil langsung dari payload JWT!
+      // Tambahkan default fallback agar tidak crash jika ada token lama (legacy)
       userData = {
-        id: payload.userId as string,
-        role: payload.role as string,
-        fullName: payload.fullName as string,
-        avatarUrl: payload.avatarUrl as string | undefined,
+        id: (payload.userId as string) || "",
+        role: (payload.role as string) || "user",
+        fullName: (payload.fullName as string) || "User",
+        avatarUrl: (payload.avatarUrl as string) || undefined,
       };
     } catch (e: any) {
       cookies.delete("session", { path: "/" });
