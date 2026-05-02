@@ -22,24 +22,18 @@ const {
   schema
 } = Astro.props;
 
-const siteUrl = Astro.site || new URL('https://literasibrebesan.my.id');
-const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+const siteUrl = "https://literasibrebesan.my.id";
+const canonicalURL = siteUrl + Astro.url.pathname;
 const formattedTitle = title.includes('Literasi Brebesan') ? title : `${title} - Literasi Brebesan`;
 
-// Pastikan Image URL selalu absolute (Wajib untuk WhatsApp/FB)
-let socialImageURL;
-if (image && image.startsWith('http')) {
-  socialImageURL = new URL(image);
-} else {
-  socialImageURL = new URL(image || '/literasi-brebesan-og.jpg', siteUrl);
-}
+// URL Gambar Sosial (Absolute)
+const socialImageURL = image && image.startsWith('http') ? image : `${siteUrl}${image || '/literasi-brebesan-og.jpg'}`;
 
 // JSON-LD data terstruktur (default jika schema tidak dikirim)
 const defaultJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "Komunitas Literasi Brebesan",
-  "alternateName": "LIBES",
+  "name": "Literasi Brebesan",
   "url": siteUrl,
   "description": description
 };

@@ -69,18 +69,15 @@ const articleSchema = {
   "publisher": {
     "@type": "Organization",
     "name": "Literasi Brebesan",
-    "logo": {
-      "@type": "ImageObject",
-      "url": new URL("/literasi-brebesan.webp", Astro.url.origin).toString()
-    }
+    "logo": "https://literasibrebesan.my.id/literasi-brebesan.webp"
   },
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": Astro.url.href
+    "@id": `https://literasibrebesan.my.id/publikasi/${slug}`
   }
 };
 
-// 2. JSON-LD Breadcrumbs (Sangat penting agar Google tahu posisi halaman ini)
+// 2. JSON-LD Breadcrumbs
 const breadcrumbSchema = {
   "@type": "BreadcrumbList",
   "itemListElement": [
@@ -88,19 +85,19 @@ const breadcrumbSchema = {
       "@type": "ListItem",
       "position": 1,
       "name": "Beranda",
-      "item": Astro.url.origin
+      "item": "https://literasibrebesan.my.id"
     },
     {
       "@type": "ListItem",
       "position": 2,
       "name": "Publikasi",
-      "item": `${Astro.url.origin}/publikasi`
+      "item": "https://literasibrebesan.my.id/publikasi"
     },
     {
       "@type": "ListItem",
       "position": 3,
       "name": post.title,
-      "item": Astro.url.href
+      "item": `https://literasibrebesan.my.id/publikasi/${slug}`
     }
   ]
 };
@@ -110,9 +107,6 @@ const finalSchema = {
   "@context": "https://schema.org",
   "@graph": [articleSchema, breadcrumbSchema]
 };
-// OPTIMASI: Edge Caching (SWR)
-// Cache selama 5 menit, update di background. Cocok untuk artikel.
-Astro.response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=86400');
 ---
 
 <Layout 
