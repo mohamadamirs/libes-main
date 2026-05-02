@@ -13,50 +13,28 @@ const isChangingPassword = Astro.url.searchParams.get("password") === "true";
 // Proses Update Profil
 const result = Astro.getActionResult(actions.updateProfile);
 if (result && !result.error) {
-  return Astro.redirect("/profile?msg=Profil berhasil diperbarui");
+  return Astro.redirect("/profile?success=Profil Anda berhasil diperbarui.");
 }
 
 // Proses Update Avatar
 const avatarResult = Astro.getActionResult(actions.updateAvatar);
 if (avatarResult && !avatarResult.error) {
-  return Astro.redirect("/profile?msg=Foto profil berhasil diperbarui");
+  return Astro.redirect("/profile?success=Foto profil berhasil diperbarui.");
 }
 
 // Proses Ganti Password
 const passwordResult = Astro.getActionResult(actions.changePassword);
 if (passwordResult && !passwordResult.error) {
-  return Astro.redirect("/profile?msg=Password berhasil diganti");
+  return Astro.redirect("/profile?success=Password Anda berhasil diganti.");
 }
 
 const errorMessage = result?.error?.message || avatarResult?.error?.message || passwordResult?.error?.message;
-const successMsg = Astro.url.searchParams.get("msg");
-
-// Ambil data profil lengkap dari database
-const { rows: profiles } = await sql`
-  SELECT p.*, u.email 
-  FROM profiles p 
-  JOIN users u ON p.id = u.id 
-  WHERE p.id = ${user.id}
-`;
-
-const profile = profiles[0];
-
-// Fallback jika profil belum ada
-if (!profile) {
-  return Astro.redirect("/dashboard");
-}
 ---
 
 <DashboardLayout title="Profil Saya">
   <div class="max-w-4xl mx-auto px-4 sm:px-0 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
     
-    <!-- Notifikasi -->
-    {successMsg && (
-      <div class="bg-emerald-50 border-l-4 border-emerald-500 text-emerald-700 p-4 mb-8 rounded-r-xl text-sm font-semibold animate-in fade-in slide-in-from-top-4 duration-300">
-        {successMsg}
-      </div>
-    )}
-
+    <!-- Error Notifikasi (Jika ada) -->
     {errorMessage && (
       <div class="bg-rose-50 border-l-4 border-rose-500 text-rose-700 p-4 mb-8 rounded-r-xl text-sm font-semibold animate-in fade-in slide-in-from-top-4 duration-300">
         {errorMessage}

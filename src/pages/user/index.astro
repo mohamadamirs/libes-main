@@ -3,6 +3,7 @@ import DashboardLayout from "../../layouts/DashboardLayout.astro";
 import { sql } from "../../lib/db";
 import { actions } from "astro:actions";
 import Pagination from "../../components/Pagination.astro";
+import UserPostCard from "../../components/posts/UserPostCard";
 
 const { user } = Astro.locals;
 
@@ -26,17 +27,6 @@ const { rows: posts } = await sql`
   ORDER BY created_at DESC
   LIMIT ${limit} OFFSET ${offset}
 `;
-
-const getStatusBadge = (status: string) => {
-  switch (status) {
-    case 'published':
-      return { label: 'Terbit', classes: 'bg-emerald-50 text-emerald-600 border-emerald-100' };
-    case 'pending':
-      return { label: 'Menunggu', classes: 'bg-amber-50 text-amber-600 border-amber-100' };
-    default:
-      return { label: 'Draft', classes: 'bg-slate-50 text-slate-500 border-slate-200' };
-  }
-};
 ---
 
 <DashboardLayout title="Dashboard">
@@ -44,29 +34,29 @@ const getStatusBadge = (status: string) => {
     <!-- Header Section -->
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 mb-8 md:mb-10">
       <div>
-        <h1 class="text-2xl md:text-4xl font-black text-slate-900 tracking-tight uppercase leading-none">Ruang Dashboard</h1>
-        <p class="text-[10px] md:text-sm font-bold text-slate-400 uppercase tracking-widest mt-2 md:mt-3">
+        <h1 class="text-2xl md:text-4xl font-black text-slate-900 tracking-tight leading-none">Ruang Dashboard</h1>
+        <p class="text-[10px] md:text-sm font-bold text-slate-400 mt-2 md:mt-3">
           Selamat datang kembali, <span class="text-blue-600">{user?.fullName}</span>
         </p>
       </div>
-      <a href="/user/posts/create" class="inline-flex items-center justify-center gap-2 md:gap-3 bg-blue-600 text-white px-6 py-3.5 md:px-8 md:py-4 rounded-xl md:rounded-2xl font-black shadow-xl shadow-blue-200 hover:bg-slate-900 hover:-translate-y-1 transition-all active:scale-95 uppercase tracking-widest text-[10px] md:text-[11px]">
+      <a href="/user/posts/create" class="inline-flex items-center justify-center gap-2 md:gap-3 bg-blue-600 text-white px-6 py-3.5 md:px-8 md:py-4 rounded-xl md:rounded-2xl font-black shadow-xl shadow-blue-200 hover:bg-slate-900 hover:-translate-y-1 transition-all active:scale-95 uppercase tracking-wider text-[10px] md:text-[11px]">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         Tulis Cerita Baru
       </a>
     </div>
 
-    <!-- Stats Card (Glassmorphism inspired) -->
+    <!-- Stats Card -->
     <div class="relative overflow-hidden bg-slate-900 rounded-2xl md:rounded-[2.5rem] p-6 md:p-12 mb-8 md:mb-12 shadow-2xl shadow-slate-200 group">
       <div class="absolute top-0 right-0 w-48 h-48 md:w-64 md:h-64 bg-blue-600/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-600/30 transition-colors"></div>
       <div class="absolute bottom-0 left-0 w-24 h-24 md:w-32 md:h-32 bg-indigo-600/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2"></div>
       
       <div class="relative z-10 grid grid-cols-1 md:grid-cols-2 items-center gap-6 md:gap-8">
         <div>
-          <span class="inline-block px-2 py-0.5 md:px-3 md:py-1 bg-white/10 rounded-full text-[9px] md:text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-3 md:mb-4">Aktivitas Menulis</span>
+          <span class="inline-block px-2 py-0.5 md:px-3 md:py-1 bg-white/10 rounded-full text-[9px] md:text-[10px] font-black text-blue-400 mb-3 md:mb-4">Aktivitas Menulis</span>
           <h2 class="text-white text-base md:text-xl font-bold leading-relaxed mb-1 md:mb-2">Suaramu telah terdengar sebanyak</h2>
           <div class="flex items-baseline gap-2 md:gap-3">
             <span class="text-5xl md:text-7xl font-black text-white tracking-tighter leading-none">{totalPosts}</span>
-            <span class="text-lg md:text-xl font-bold text-slate-400 uppercase tracking-widest">Postingan</span>
+            <span class="text-lg md:text-xl font-bold text-slate-400">Postingan</span>
           </div>
         </div>
         <div class="hidden md:flex justify-end">
@@ -78,70 +68,29 @@ const getStatusBadge = (status: string) => {
     </div>
 
     <!-- Post List -->
-    <div class="space-y-4 md:space-y-6">
-      <div class="flex items-center justify-between px-1 md:px-2">
-          <h3 class="text-[10px] md:text-sm font-black text-slate-900 uppercase tracking-widest">Arsip Tulisan Anda</h3>
+    <div class="space-y-4 md:space-y-6" id="arsip-tulisan">
+      <div class="flex items-center justify-between px-1 md:px-2 scroll-mt-24">
+          <h3 class="text-[10px] md:text-sm font-black text-slate-900">Arsip Tulisan Anda</h3>
           <div class="h-px flex-1 bg-slate-100 mx-4 md:mx-6 hidden sm:block"></div>
-          <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">Urutkan: Terbaru</span>
+          <span class="text-[9px] md:text-[10px] font-bold text-slate-400 whitespace-nowrap">Urutkan: Terbaru</span>
       </div>
 
       {posts.length === 0 ? (
         <div class="py-16 md:py-32 text-center bg-white border-2 border-dashed border-slate-100 rounded-2xl md:rounded-[3rem] px-6">
           <div class="w-12 h-12 md:w-16 md:h-16 bg-slate-50 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-4 md:mb-6">
-             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:w-8 md:h-8 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:w-8 md:h-8 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </div>
           <p class="text-xs md:text-base font-bold text-slate-400 max-w-xs mx-auto mb-6 md:mb-8">Belum ada cerita yang ditulis. Mulai suarakan pikiranmu hari ini!</p>
-          <a href="/user/posts/create" class="inline-flex items-center gap-2 text-blue-600 font-black uppercase tracking-widest text-[10px] md:text-xs hover:gap-4 transition-all">Tulis Sekarang →</a>
+          <a href="/user/posts/create" class="inline-flex items-center gap-2 text-blue-600 font-black text-[10px] md:text-xs hover:gap-4 transition-all">Tulis Sekarang →</a>
         </div>
       ) : (
         <>
           <div class="grid grid-cols-1 gap-3 md:gap-4">
-            {posts.map((post) => {
-              const badge = getStatusBadge(post.status);
-              return (
-                <div class="bg-white p-4 md:p-6 rounded-xl md:rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:border-blue-200 transition-all group flex items-center justify-between gap-4 md:gap-6">
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-2 md:gap-3 mb-1.5 md:mb-2">
-                       <span class={`px-2 py-0.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-wider border ${badge.classes}`}>
-                          {badge.label}
-                       </span>
-                       <span class="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                          {new Date(post.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                       </span>
-                    </div>
-                    <a href={`/user/posts/edit/${post.id}`} class="block">
-                      <h4 class="font-black text-sm md:text-lg text-slate-900 truncate group-hover:text-blue-600 transition-colors uppercase tracking-tight">
-                          {post.title}
-                      </h4>
-                    </a>
-
-                    {post.status === 'draft' && post.rejection_reason && (
-                      <div class="mt-2 bg-amber-50 border border-amber-100 rounded-xl p-3">
-                        <p class="text-[10px] md:text-xs font-bold text-amber-700">
-                          <span class="uppercase tracking-widest text-[9px] block mb-1">Catatan Admin:</span>
-                          "{post.rejection_reason}"
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
-                    <a href={`/user/posts/edit/${post.id}`} class="w-9 h-9 md:w-12 md:h-12 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl md:rounded-2xl transition-all border border-transparent hover:border-blue-100" title="Edit Tulisan">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </a>
-
-                    <form action={actions.deletePost} method="POST" onsubmit="return confirm('Yakin tulisan ini ingin dihapus?')" class="m-0">
-                      <input type="hidden" name="id" value={post.id} />
-                      <button type="submit" class="w-9 h-9 md:w-12 md:h-12 flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl md:rounded-2xl transition-all border border-transparent hover:border-rose-100 cursor-pointer" title="Hapus Tulisan">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              );
-            })}
+            {posts.map((post) => (
+              <UserPostCard client:load post={post} />
+            ))}
           </div>
-          <Pagination currentPage={page} totalPages={totalPages} paramName="page" />
+          <Pagination currentPage={page} totalPages={totalPages} paramName="page" anchor="arsip-tulisan" />
         </>
       )}
     </div>

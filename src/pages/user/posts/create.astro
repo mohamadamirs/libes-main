@@ -6,6 +6,9 @@ import RichTextEditor from "../../../components/RichTextEditor.astro";
 
 const { user } = Astro.locals;
 
+const result = Astro.getActionResult(actions.createPost);
+if (result && !result.error) return Astro.redirect('/user?success=Tulisan berhasil disimpan! Tunggu review admin ya.');
+
 // Ambil daftar kategori untuk dropdown
 const { rows: categories } = await sql`SELECT id, name FROM categories ORDER BY name ASC`;
 ---

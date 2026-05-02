@@ -119,15 +119,15 @@ const formatDate = (date: any) => {
 const getTabUrl = (tab: string) => `/admin?tab=${tab}`;
 ---
 
-<DashboardLayout title="Admin Console">
+<DashboardLayout title="Dashboard Admin">
   <div class="pb-24 px-4 md:px-8 max-w-5xl mx-auto">
 
     <!-- Header & Navigation Badges -->
     <header class="mb-8">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
-          <h1 class="text-3xl font-black text-slate-900 tracking-tighter uppercase leading-none">Dashboard Admin</h1>
-          <p class="text-xs font-bold text-slate-400 mt-2 uppercase tracking-wider">Sistem Manajemen Literasi Brebesan</p>
+          <h1 class="text-3xl font-black text-slate-900 tracking-tighter leading-none">Dashboard Admin</h1>
+          <p class="text-xs font-bold text-slate-400 mt-2 tracking-wider">Sistem Manajemen Literasi Brebesan</p>
         </div>
         
         <nav class="flex p-1 bg-slate-100 rounded-2xl md:rounded-full w-fit border border-slate-200">
@@ -139,7 +139,7 @@ const getTabUrl = (tab: string) => `/admin?tab=${tab}`;
           ].map((tab) => (
             <a 
               href={getTabUrl(tab.id)} 
-              class={`relative px-5 py-2.5 rounded-xl md:rounded-full text-[10px] font-black uppercase tracking-wider transition-colors duration-300 z-10 ${activeTab === tab.id ? 'text-white' : 'text-slate-500 hover:text-slate-900'}`}
+              class={`relative px-5 py-2.5 rounded-xl md:rounded-full text-[10px] font-black tracking-wider transition-colors duration-300 z-10 ${activeTab === tab.id ? 'text-white' : 'text-slate-500 hover:text-slate-900'}`}
             >
               {activeTab === tab.id && (
                 <div 
@@ -167,7 +167,7 @@ const getTabUrl = (tab: string) => `/admin?tab=${tab}`;
             activeTab === 'users' ? 'text-indigo-700' :
             'text-slate-700'
           }`}>{stats.val1}</span>
-          <span class="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-slate-500">{stats.label1}</span>
+          <span class="text-[9px] md:text-[10px] font-black text-slate-500">{stats.label1}</span>
         </div>
         
         <div class={`p-4 md:p-6 rounded-3xl border shadow-sm transition-all duration-500 ${
@@ -182,12 +182,12 @@ const getTabUrl = (tab: string) => `/admin?tab=${tab}`;
             activeTab === 'users' ? 'text-emerald-700' :
             'text-slate-700'
           }`}>{stats.val2}</span>
-          <span class="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-slate-500">{stats.label2}</span>
+          <span class="text-[9px] md:text-[10px] font-black text-slate-500">{stats.label2}</span>
         </div>
 
         <div class="p-4 md:p-6 rounded-3xl bg-white border border-slate-200 shadow-sm">
           <span class="block text-2xl md:text-4xl font-black text-slate-900 mb-1">{stats.val3}</span>
-          <span class="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-slate-400">{stats.label3}</span>
+          <span class="text-[9px] md:text-[10px] font-black text-slate-400">{stats.label3}</span>
         </div>
       </div>
     </header>
@@ -195,12 +195,12 @@ const getTabUrl = (tab: string) => `/admin?tab=${tab}`;
     {/* --- MAIN CONTENT AREA --- */}
     <div class="space-y-6">
       <div class="flex items-center justify-between">
-        <h2 class="text-sm font-black uppercase tracking-widest text-slate-800">
-          Kelola {activeTab === 'articles' ? 'Artikel' : activeTab === 'agendas' ? 'Agenda' : 'User'}
+        <h2 class="text-sm font-black text-slate-800">
+          Kelola {activeTab === 'articles' ? 'Artikel' : activeTab === 'agendas' ? 'Agenda' : activeTab === 'users' ? 'User' : 'Settings'}
         </h2>
-        {activeTab === 'articles' && <a href="/admin/posts/create" class="text-[10px] font-black uppercase tracking-widest bg-blue-600 text-white px-4 py-2 rounded-xl">+ Artikel</a>}
-        {activeTab === 'agendas' && <a href="/admin/agendas/create" class="text-[10px] font-black uppercase tracking-widest bg-amber-500 text-white px-4 py-2 rounded-xl">+ Agenda</a>}
-        {activeTab === 'users' && <a href="/admin/users/create" class="text-[10px] font-black uppercase tracking-widest bg-indigo-600 text-white px-4 py-2 rounded-xl">+ User</a>}
+        {activeTab === 'articles' && <a href="/admin/posts/create" class="text-[10px] font-black bg-blue-600 text-white px-4 py-2 rounded-xl">+ Artikel Baru</a>}
+        {activeTab === 'agendas' && <a href="/admin/agendas/create" class="text-[10px] font-black bg-amber-500 text-white px-4 py-2 rounded-xl">+ Agenda Baru</a>}
+        {activeTab === 'users' && <a href="/admin/users/create" class="text-[10px] font-black bg-indigo-600 text-white px-4 py-2 rounded-xl">+ User Baru</a>}
       </div>
 
       <div class="flex flex-col gap-3">

@@ -3,15 +3,16 @@ interface Props {
   currentPage: number;
   totalPages: number;
   paramName: string;
+  anchor?: string; // Prop baru untuk ID anchor
 }
 
-const { currentPage, totalPages, paramName } = Astro.props;
+const { currentPage, totalPages, paramName, anchor = "" } = Astro.props;
 
 // Fungsi untuk mempertahankan parameter URL lain (misal ?pPage=1&aPage=2)
 const getUrl = (page: number) => {
   const url = new URL(Astro.url);
   url.searchParams.set(paramName, page.toString());
-  return url.pathname + url.search;
+  return url.pathname + url.search + (anchor ? `#${anchor}` : "");
 };
 
 // Hitung rentang angka (max 4 angka berurutan)

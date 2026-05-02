@@ -65,6 +65,7 @@ export const postActions = {
       content: z.string().optional(),
       status: z.enum(["draft", "pending", "published"]),
       category_id: z.string().uuid("Kategori tidak valid").optional().nullable(),
+      rejection_reason: z.string().optional().nullable(),
     }),
     handler: async (input, context) => {
       const user = context.locals.user;
@@ -82,7 +83,7 @@ export const postActions = {
         if (user.role === "admin") {
           await sql`
             UPDATE posts
-            SET title = ${input.title}, content = ${safeContent}, status = ${input.status}, slug = ${newSlug}, category_id = ${input.category_id || null}, updated_at = NOW(), rejection_reason = NULL
+            SET title = ${input.title}, content = ${safeContent}, status = ${input.status}, slug = ${newSlug}, category_id = ${input.category_id || null}, updated_at = NOW(), rejection_reason = ${input.rejection_reason || null}
             WHERE id = ${input.id}
           `;
         } else {

@@ -15,25 +15,25 @@ if (result && !result.error) return Astro.redirect('/admin');
 ---
 
 <DashboardLayout title="Buat Artikel">
-  <div class="max-w-2xl mx-auto pt-8">
-    <header class="mb-10">
+  <div class="max-w-2xl mx-auto pt-6 md:pt-8 px-4 sm:px-0">
+    <header class="mb-8 md:mb-10">
       <div class="flex items-center gap-2 mb-2">
-         <a href="/admin" class="text-[11px] font-black uppercase tracking-widest text-blue-600 hover:underline">← Kembali</a>
+         <a href="/admin" class="text-[10px] font-black uppercase tracking-wider text-blue-600 hover:underline">← Kembali</a>
       </div>
-      <h1 class="text-3xl font-black uppercase tracking-tighter text-slate-900 leading-none">Buat Artikel</h1>
-      <p class="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-2">Panel khusus Admin buat nulis konten</p>
+      <h1 class="text-2xl md:text-3xl font-black text-slate-900 leading-tight">Buat Artikel</h1>
+      <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1 md:mt-2">Panel khusus Admin buat nulis konten</p>
     </header>
 
-    <form method="POST" action={actions.createPost} class="space-y-6">
+    <form method="POST" action={actions.createPost} class="space-y-6 md:space-y-8">
       <div class="group">
-        <label class="block text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Judul Artikel</label>
-        <input type="text" name="title" required class="w-full px-6 py-5 bg-white border border-slate-200 rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-slate-900 placeholder:text-slate-300" placeholder="Apa judul artikel hari ini?" />
+        <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Judul Artikel</label>
+        <input type="text" name="title" required class="w-full px-5 py-4 md:px-6 md:py-5 bg-white border border-slate-200 rounded-2xl md:rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-slate-900 placeholder:text-slate-300" placeholder="Apa judul artikel hari ini?" />
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="group">
-          <label class="block text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Kategori</label>
-          <select name="category_id" class="w-full px-6 py-5 bg-white border border-slate-200 rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-slate-900 appearance-none">
+          <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Kategori</label>
+          <select name="category_id" class="w-full px-5 py-4 md:px-6 md:py-5 bg-white border border-slate-200 rounded-2xl md:rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-slate-900 appearance-none">
             <option value="">Pilih Kategori (Opsional)</option>
             {categories.map((cat) => (
               <option value={cat.id}>{cat.name}</option>
@@ -43,24 +43,24 @@ if (result && !result.error) return Astro.redirect('/admin');
       </div>
 
       <div class="group">
-        <label class="block text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Isi Konten</label>
+        <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Isi Konten</label>
         <RichTextEditor name="content" />
       </div>
 
       <div class="flex flex-col sm:flex-row gap-4 pt-4">
-        <div class="flex-1 bg-slate-100 p-2 rounded-[2rem] flex gap-1">
+        <div class="flex-1 bg-slate-100 p-1.5 rounded-2xl md:rounded-[2rem] flex gap-1">
           <label class="flex-1 cursor-pointer">
             <input type="radio" name="status" value="draft" class="peer hidden" checked />
-            <div class="text-center py-3 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-white peer-checked:text-slate-900 peer-checked:shadow-sm transition-all">Draft</div>
+            <div class="text-center py-2.5 md:py-3.5 rounded-xl md:rounded-[1.5rem] text-[10px] font-black uppercase tracking-wider text-slate-400 peer-checked:bg-white peer-checked:text-slate-900 peer-checked:shadow-sm transition-all">Draft</div>
           </label>
           
           <label class="flex-1 cursor-pointer">
             <input type="radio" name="status" value="published" class="peer hidden" />
-            <div class="text-center py-3 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-green-500 peer-checked:text-white peer-checked:shadow-lg transition-all">Publish</div>
+            <div class="text-center py-2.5 md:py-3.5 rounded-xl md:rounded-[1.5rem] text-[10px] font-black uppercase tracking-wider text-slate-400 peer-checked:bg-green-500 peer-checked:text-white peer-checked:shadow-lg transition-all">Publish</div>
           </label>
         </div>
 
-        <button type="submit" class="sm:w-48 bg-slate-900 text-white font-black py-5 rounded-[2rem] hover:bg-black transition-all shadow-xl shadow-slate-200 uppercase tracking-widest text-[11px] active:scale-95">
+        <button type="submit" class="w-full sm:w-48 bg-slate-900 text-white font-black py-4 md:py-5 rounded-2xl md:rounded-[2rem] hover:bg-black transition-all shadow-xl shadow-slate-200 uppercase tracking-wider text-[11px] active:scale-95">
           Simpan Artikel
         </button>
       </div>
