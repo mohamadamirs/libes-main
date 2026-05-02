@@ -80,38 +80,34 @@ export const GET: APIRoute = async ({ url: requestUrl }) => {
       });
     });
 
-    // Konstruksi XML yang bersih tanpa spasi di awal
-    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((url) => `  <url>
+    // Konstruksi XML yang SANGAT BERSIH (Tanpa spasi/newline di awal)
+    const xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>';
+    const urlSetStart = '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+    const urlSetEnd = '</urlset>';
+
+    const urlEntries = urls.map((url) => `  <url>
     <loc>${url.loc}</loc>
     <lastmod>${url.lastmod}</lastmod>
     <changefreq>${url.changefreq}</changefreq>
     <priority>${url.priority}</priority>
-  </url>`).join('\n')}
-</urlset>`.trim();
+  </url>`).join('\n');
+
+    const sitemap = `${xmlHeader}\n${urlSetStart}\n${urlEntries}\n${urlSetEnd}`;
 
     return new Response(sitemap, {
       status: 200,
       headers: {
-        'Content-Type': 'application/xml; charset=utf-8',
+        'Content-Type': 'application/xml',
         'X-Content-Type-Options': 'nosniff',
         'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=600',
       },
     });
   } catch (error) {
     console.error("Gagal generate sitemap:", error);
-    // Kembalikan sitemap minimal jika error agar crawler tidak bingung
-    return new Response(`<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${baseUrl}</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-</urlset>`, {
-      status: 200, // Tetap 200 agar Google bisa baca sitemap darurat ini
+    // Sitemap darurat super bersih
+    const emergencySitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>https://literasibrebesan.my.id</loc>\n    <priority>1.0</priority>\n  </url>\n</urlset>';
+    return new Response(emergencySitemap, {
+      status: 200,
       headers: { 'Content-Type': 'application/xml' },
     });
   }
