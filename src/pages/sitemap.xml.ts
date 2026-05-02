@@ -1,114 +1,49 @@
 import type { APIRoute } from 'astro';
 import { sql } from '../lib/db';
 
-export const GET: APIRoute = async ({ url: requestUrl }) => {
-  // Gunakan origin dari request atau hardcode domain produksi
+export const prerender = true;
+
+export const GET: APIRoute = async () => {
   const baseUrl = 'https://literasibrebesan.my.id';
 
   try {
-    // 1. Ambil semua artikel (Posts) yang sudah di-publish
-    const { rows: posts } = await sql`
-      SELECT slug, updated_at
-      FROM posts
-      WHERE status = 'published'
-      ORDER BY updated_at DESC
-    `;
+    const { rows: posts } = await sql`SELECT slug, updated_at FROM posts WHERE status = 'published' ORDER BY updated_at DESC`;
+    const { rows: profiles } = await sql`SELECT p.id, MAX(po.updated_at) as last_updated FROM profiles p JOIN posts po ON p.id = po.user_id WHERE po.status = 'published' GROUP BY p.id`;
+    const { rows: agendas } = await sql`SELECT id, updated_at FROM agendas WHERE status = 'published' ORDER BY updated_at DESC`;
 
-    // 2. Ambil profil penulis yang aktif (minimal punya 1 post published)
-    const { rows: profiles } = await sql`
-      SELECT p.id, MAX(po.updated_at) as last_updated
-      FROM profiles p
-      JOIN posts po ON p.id = po.user_id
-      WHERE po.status = 'published'
-      GROUP BY p.id
-    `;
+    const urls: string[] = [];
 
-    // 3. Ambil Agenda yang sudah di-publish
-    const { rows: agendas } = await sql`
-      SELECT id, updated_at
-      FROM agendas
-      WHERE status = 'published'
-      ORDER BY updated_at DESC
-    `;
-
-    // Struktur Data Sitemap
-    const urls: { loc: string; lastmod: string; changefreq: string; priority: string }[] = [];
-
-    // --- Halaman Statis ---
-    const staticPages = [
-      { path: '/', changefreq: 'daily', priority: '1.0' },
-      { path: '/publikasi', changefreq: 'daily', priority: '0.9' },
-      { path: '/dokumentasi', changefreq: 'weekly', priority: '0.8' },
-    ];
-
-    staticPages.forEach(page => {
-      urls.push({
-        loc: `${baseUrl}${page.path}`,
-        lastmod: new Date().toISOString(),
-        changefreq: page.changefreq,
-        priority: page.priority
-      });
+    // Static
+    ['/', '/publikasi', '/dokumentasi'].forEach(path => {
+      urls.push(`<url><loc>${baseUrl}${path}</loc><lastmod>${new Date().toISOString()}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>`);
     });
 
-    // --- Halaman Dinamis: Artikel (Posts) ---
-    posts.forEach((post) => {
-      urls.push({
-        loc: `${baseUrl}/publikasi/${post.slug}`,
-        lastmod: new Date(post.updated_at).toISOString(),
-        changefreq: 'monthly',
-        priority: '0.7',
-      });
+    // Posts
+    posts.forEach(post => {
+      urls.push(`<url><loc>${baseUrl}/publikasi/${post.slug}</loc><lastmod>${new Date(post.updated_at).toISOString()}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`);
     });
 
-    // --- Halaman Dinamis: Agenda ---
-    agendas.forEach((agenda) => {
-      urls.push({
-        loc: `${baseUrl}/#agenda`, // Karena agenda biasanya tampil di Home (ID anchor) atau halaman khusus
-        lastmod: new Date(agenda.updated_at).toISOString(),
-        changefreq: 'weekly',
-        priority: '0.6',
-      });
+    // Agendas
+    agendas.forEach(agenda => {
+      urls.push(`<url><loc>${baseUrl}/#agenda</loc><lastmod>${new Date(agenda.updated_at).toISOString()}</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>`);
     });
 
-    // --- Halaman Dinamis: Profil Penulis ---
-    profiles.forEach((profile) => {
-      urls.push({
-        loc: `${baseUrl}/p/${profile.id}`,
-        lastmod: new Date(profile.last_updated).toISOString(),
-        changefreq: 'weekly',
-        priority: '0.5',
-      });
+    // Profiles
+    profiles.forEach(profile => {
+      urls.push(`<url><loc>${baseUrl}/p/${profile.id}</loc><lastmod>${new Date(profile.last_updated).toISOString()}</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>`);
     });
 
-    // Konstruksi XML yang SANGAT BERSIH (Tanpa spasi/newline di awal)
-    const xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>';
-    const urlSetStart = '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-    const urlSetEnd = '</urlset>';
-
-    const urlEntries = urls.map((url) => `  <url>
-    <loc>${url.loc}</loc>
-    <lastmod>${url.lastmod}</lastmod>
-    <changefreq>${url.changefreq}</changefreq>
-    <priority>${url.priority}</priority>
-  </url>`).join('\n');
-
-    const sitemap = `${xmlHeader}\n${urlSetStart}\n${urlEntries}\n${urlSetEnd}`;
+    const sitemap = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.join('')}</urlset>`;
 
     return new Response(sitemap, {
       status: 200,
       headers: {
         'Content-Type': 'application/xml',
-        'X-Content-Type-Options': 'nosniff',
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=600',
+        'Cache-Control': 'public, s-maxage=3600',
       },
     });
   } catch (error) {
-    console.error("Gagal generate sitemap:", error);
-    // Sitemap darurat super bersih
-    const emergencySitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>https://literasibrebesan.my.id</loc>\n    <priority>1.0</priority>\n  </url>\n</urlset>';
-    return new Response(emergencySitemap, {
-      status: 200,
-      headers: { 'Content-Type': 'application/xml' },
-    });
+    const emergency = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${baseUrl}</loc><priority>1.0</priority></url></urlset>`;
+    return new Response(emergency, { status: 200, headers: { 'Content-Type': 'application/xml' } });
   }
 };
