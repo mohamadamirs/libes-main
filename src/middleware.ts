@@ -6,9 +6,8 @@ import { SECRET } from "./lib/jwt";
 export const onRequest = defineMiddleware(async (context, next) => {
   const { cookies, url, redirect, locals } = context;
 
-  // 1. BYPASS SEO & STATIC FILES (Agar Google Bot tidak diblokir)
-  const isSeoPath = url.pathname.includes('/sitemap.xml') || url.pathname.includes('/robots.txt');
-  if (isSeoPath) {
+  // 1. BYPASS SEO & STATIC FILES
+  if (url.pathname === '/sitemap.xml' || url.pathname === '/robots.txt') {
     return next();
   }
 
