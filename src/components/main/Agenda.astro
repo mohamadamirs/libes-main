@@ -1,23 +1,5 @@
 ---
-import { sql } from '../../lib/db';
 import AgendaIsland from './AgendaIsland';
-
-/* ====================================================================
-   1. TRIK LAZY EVALUATION (AUTO-SWAP STATUS)
-   ==================================================================== */
-const { rows: readyToPublish } = await sql`
-  SELECT id FROM agendas
-  WHERE status = 'scheduled'
-    AND publish_at <= CURRENT_TIMESTAMP
-  ORDER BY publish_at ASC
-  LIMIT 1
-`;
-
-if (readyToPublish.length > 0) {
-  const newAgendaId = readyToPublish[0].id;
-  await sql`UPDATE agendas SET status = 'draft' WHERE status = 'published'`;
-  await sql`UPDATE agendas SET status = 'published', publish_at = NULL WHERE id = ${newAgendaId}`;
-}
 ---
 
 <section id="agenda" class="py-16 md:py-24 bg-white relative overflow-hidden border-t border-slate-50 scroll-mt-20 md:scroll-mt-28">
@@ -30,7 +12,7 @@ if (readyToPublish.length > 0) {
         <span class="text-[11px] md:text-xs font-black uppercase tracking-widest text-amber-700 leading-none">Agenda Terdekat</span>
       </div>
       <h2 class="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight uppercase leading-tight">
-        Ruang <span class="text-blue-600 italic font-serif font-light lowercase tracking-normal">temu</span>
+        Ruang <span class="text-blue-600 font-bold lowercase tracking-normal">temu</span>
       </h2>
       <p class="mt-3 md:mt-4 text-slate-500 font-medium max-w-xl text-sm md:text-lg leading-relaxed">
         Merawat nalar lewat diskusi dan aksi nyata bersama kawan-kolektif di Brebes.

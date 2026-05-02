@@ -108,10 +108,10 @@ const { name, value = "", placeholder = "Tulis ceritamu di sini..." } = Astro.pr
                   input.onchange = async () => {
                     const file = input.files[0];
                     if (file) {
-                      const range = this.quill.getSelection();
+                      const range = quill.getSelection(true);
                       
-                      // Beri placeholder loading (opsional, tapi bagus untuk UX)
-                      this.quill.insertText(range.index, 'Mengunggah gambar...', 'italic', true);
+                      // Beri placeholder loading
+                      quill.insertText(range.index, 'Mengunggah gambar...', 'italic', true);
                       
                       const formData = new FormData();
                       formData.append('image', file);
@@ -121,21 +121,25 @@ const { name, value = "", placeholder = "Tulis ceritamu di sini..." } = Astro.pr
                           method: 'POST',
                           body: formData
                         });
+                        
                         const data = await res.json();
                         
                         // Hapus teks loading
-                        this.quill.deleteText(range.index, 20);
+                        quill.deleteText(range.index, 20);
 
                         if (res.ok && data.url) {
                           // Masukkan gambar beneran
-                          this.quill.insertEmbed(range.index, 'image', data.url);
+                          quill.insertEmbed(range.index, 'image', data.url);
+                          // Pindahkan kursor ke setelah gambar
+                          quill.setSelection(range.index + 1);
                         } else {
+                          console.error('Upload error data:', data);
                           alert('Gagal mengunggah gambar: ' + (data.error || 'Unknown error'));
                         }
                       } catch (error) {
-                        this.quill.deleteText(range.index, 20);
+                        quill.deleteText(range.index, 20);
                         alert('Terjadi kesalahan saat mengunggah.');
-                        console.error(error);
+                        console.error('Fetch error:', error);
                       }
                     }
                   };

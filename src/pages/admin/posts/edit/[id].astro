@@ -1,0 +1,112 @@
+---
+import DashboardLayout from "../../../../layouts/DashboardLayout.astro";
+import { actions } from "astro:actions";
+import { sql } from "../../../../lib/db";
+import RichTextEditor from "../../../../components/RichTextEditor.astro";
+
+const { id } = Astro.params;
+const { user } = Astro.locals;
+
+// Proteksi Admin
+if (user?.role !== 'admin') return Astro.redirect('/user');
+
+// Ambil data dari DB (Admin bisa edit postingan siapa saja)
+const { rows } = await sql`
+  SELECT p.*, pr.full_name as author_name 
+  FROM posts p
+  JOIN profiles pr ON p.user_id = pr.id
+  WHERE p.id = ${id}
+`;
+const post = rows[0];
+
+// Ambil daftar kategori untuk dropdown
+const { rows: categories } = await sql`SELECT id, name FROM categories ORDER BY name ASC`;
+
+if (!post) return Astro.redirect('/admin?error=Postingan tidak ditemukan');
+
+const formatDate = (date: any) => {
+  return new Date(date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+};
+---
+
+<DashboardLayout title="Edit Artikel - Admin">
+  <div class="max-w-4xl mx-auto px-4 py-6 md:py-8 pb-24">
+    <header class="mb-6 md:mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
+      <div>
+        <a href="/admin" class="inline-flex items-center text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-blue-600 transition-colors mb-3 md:mb-4 group">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+          Kembali ke Dashboard Admin
+        </a>
+        <h1 class="text-2xl md:text-4xl font-black uppercase tracking-tighter text-slate-900 leading-none">Moderasi Artikel</h1>
+        <p class="text-[10px] md:text-sm font-bold text-slate-400 mt-2 md:mt-3 uppercase tracking-widest leading-none">
+          Penulis: {post.author_name} • Dibuat: {formatDate(post.created_at)}
+        </p>
+      </div>
+    </header>
+
+    <form method="POST" action={actions.updatePost} class="space-y-6 md:space-y-8 bg-white p-5 md:p-10 rounded-2xl md:rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100">
+      <input type="hidden" name="id" value={post.id} />
+
+      <!-- Title Input -->
+      <div class="group">
+        <label class="flex items-center gap-2 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 md:mb-3 group-focus-within:text-blue-600 transition-colors">
+          Judul Artikel
+        </label>
+        <input 
+          type="text" 
+          name="title" 
+          value={post.title}
+          required 
+          class="w-full px-0 py-3 md:py-4 bg-transparent border-b-2 border-slate-100 focus:border-blue-600 outline-none transition-all font-black text-xl md:text-3xl text-slate-900" 
+        />
+      </div>
+
+      <!-- Category Selection -->
+      <div class="group">
+        <label class="flex items-center gap-2 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 md:mb-3 group-focus-within:text-blue-600 transition-colors">
+          Kategori
+        </label>
+        <select name="category_id" class="w-full px-4 py-3 md:px-5 md:py-4 bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl outline-none font-bold text-slate-700 text-xs md:text-base cursor-pointer">
+          <option value="">Pilih Kategori</option>
+          {categories.map((cat) => (
+            <option value={cat.id} selected={cat.id === post.category_id}>{cat.name}</option>
+          ))}
+        </select>
+      </div>
+
+      <!-- Content Editor -->
+      <div class="group">
+        <label class="flex items-center gap-2 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 md:mb-3 group-focus-within:text-blue-600 transition-colors">
+          Konten Artikel
+        </label>
+        <div class="rounded-xl md:rounded-2xl overflow-hidden border border-slate-200 focus-within:border-blue-500 transition-all">
+          <RichTextEditor name="content" value={post.content} />
+        </div>
+      </div>
+
+      <!-- Action Section -->
+      <div class="pt-4 md:pt-6 border-t border-slate-100 flex flex-col lg:flex-row items-center gap-4 md:gap-6">
+        <div class="w-full lg:flex-1 bg-slate-50 p-1 rounded-xl md:rounded-2xl flex gap-1">
+          <label class="flex-1 cursor-pointer">
+            <input type="radio" name="status" value="draft" class="peer hidden" checked={post.status === 'draft'} />
+            <div class="text-center py-2.5 md:py-3 rounded-lg md:rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-white peer-checked:text-slate-900 peer-checked:shadow-sm transition-all">Draft</div>
+          </label>
+          <label class="flex-1 cursor-pointer">
+            <input type="radio" name="status" value="pending" class="peer hidden" checked={post.status === 'pending'} />
+            <div class="text-center py-2.5 md:py-3 rounded-lg md:rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-amber-500 peer-checked:text-white peer-checked:shadow-lg transition-all">Pending</div>
+          </label>
+          <label class="flex-1 cursor-pointer">
+            <input type="radio" name="status" value="published" class="peer hidden" checked={post.status === 'published'} />
+            <div class="text-center py-2.5 md:py-3 rounded-lg md:rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-emerald-500 peer-checked:text-white peer-checked:shadow-lg transition-all">Terbitkan</div>
+          </label>
+        </div>
+
+        <button type="submit" class="w-full lg:w-auto px-8 md:px-10 bg-blue-600 text-white font-black py-3.5 md:py-4 rounded-xl md:rounded-2xl hover:bg-slate-900 transition-all shadow-xl shadow-blue-100 uppercase tracking-widest text-[10px] md:text-[11px] active:scale-95 flex items-center justify-center gap-2">
+          Simpan Moderasi
+        </button>
+      </div>
+    </form>
+  </div>
+</DashboardLayout>

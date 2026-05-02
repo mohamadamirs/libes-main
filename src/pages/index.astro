@@ -12,25 +12,27 @@ import Footer from "../components/Footer.astro";
 // JSON-LD untuk Beranda
 const homeSchema = {
   "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "Komunitas Literasi Brebesan",
+  "@type": "Organization",
+  "name": "Literasi Brebesan",
   "alternateName": ["LIBES", "Komunitas Literasi Brebes", "Literasi Brebes"],
   "url": Astro.url.origin,
-  "description": "Komunitas Literasi Brebes (Literasi Brebesan). Ruang temu alternatif untuk membaca, berdiskusi, dan bergerak bersama merawat nalar di Kabupaten Brebes.",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": {
-      "@type": "EntryPoint",
-      "urlTemplate": `${Astro.url.origin}/publikasi?search={search_term_string}`
-    },
-    "query-input": "required name=search_term_string"
-  }
+  "logo": new URL("/literasi-brebesan.webp", Astro.url.origin).toString(),
+  "description": "Komunitas Literasi Brebes (Literasi Brebesan) adalah wadah independen di Kabupaten Brebes yang berfokus pada pengembangan budaya membaca, diskusi kritis, dan aksi sosial nyata.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Brebes",
+    "addressRegion": "Jawa Tengah",
+    "addressCountry": "ID"
+  },
+  "sameAs": [
+    "https://www.instagram.com/literasibrebesan"
+  ]
 };
 ---
 
 <Layout 
-  title="Komunitas Literasi Brebesan - Membaca, Berdaya, Bergerak Nyata" 
-  description="Komunitas Literasi Brebes (Literasi Brebesan). Ruang temu alternatif untuk membaca, berdiskusi, dan bergerak bersama merawat nalar di Kabupaten Brebes."
+  title="Literasi Brebesan | Komunitas Literasi & Ruang Baca Gratis di Brebes" 
+  description="Wadah Komunitas Literasi di Brebes. Nikmati ruang diskusi, lapak baca buku gratis, dan aksi nyata untuk merawat nalar. Selamat datang di Literasi Brebesan!"
   schema={homeSchema}
 >
   <Header />

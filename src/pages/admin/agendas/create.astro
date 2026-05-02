@@ -27,7 +27,7 @@ if (result && !result.error) {
       <div class="flex items-center justify-center md:justify-start gap-2 mb-2">
          <a href="/admin" class="text-[11px] md:text-xs font-black uppercase tracking-widest text-blue-600 hover:underline">← Dasbor Admin</a>
       </div>
-      <h1 class="text-3xl md:text-4xl font-black italic uppercase tracking-tighter text-slate-900">Agenda Baru</h1>
+      <h1 class="text-3xl md:text-4xl font-black uppercase tracking-tighter text-slate-900">Agenda Baru</h1>
       <p class="text-xs md:text-sm font-bold text-slate-400 mt-1 uppercase tracking-widest">Literasi Brebesan</p>
     </header>
 
@@ -88,11 +88,11 @@ if (result && !result.error) {
         </div>
 
         {hasConflict && (
-          <div id="conflict-alert" class="hidden p-4 bg-amber-50 border border-amber-200 rounded-2xl transition-all">
+          <div id="conflict-alert" class="hidden p-4 bg-amber-50 border border-amber-200 rounded-2xl transition-all overflow-hidden">
             <div class="flex items-start gap-3">
               <div class="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center text-white shrink-0 shadow-sm font-black text-sm">!</div>
-              <div>
-                <p class="text-xs font-bold text-amber-900 leading-tight mb-2">Agenda <span class="underline">"{conflict[0].title}"</span> sedang tayang.</p>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-bold text-amber-900 leading-tight mb-2 break-words">Agenda <span class="underline">"{conflict[0].title}"</span> sedang tayang.</p>
                 <label class="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" name="override_published" id="override-checkbox" class="w-4 h-4 accent-amber-600 rounded" />
                   <span class="text-[11px] font-black uppercase tracking-wider text-slate-700">Otomatis ubah yang lama jadi Draft</span>

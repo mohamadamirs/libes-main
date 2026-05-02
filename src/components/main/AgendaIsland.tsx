@@ -60,11 +60,11 @@ export default function AgendaIsland() {
 
   const displayAgenda = agenda || {
     id: 'fallback',
-    title: 'Lapak Baca Mingguan',
-    description: 'Agenda rutin mingguan Literasi Brebesan. Mari merawat nalar dan menjalin kedekatan melalui lapak baca gratis dan diskusi santai. Terbuka untuk umum.',
-    event_date: 'Setiap Hari Minggu',
-    event_time: '09:00 - Selesai',
-    location: 'Taman Monumen Juang Brebes dan Sekitarnya ( Chat Wa )',
+    title: 'Buka Lapak Buku Gratiss...',
+    description: 'Mari merawat nalar dan menjalin kedekatan melalui lapak baca gratis dan diskusi santai. Terbuka untuk umum se-Kabupaten Brebes.',
+    event_date: 'Setiap Hari Minggu pagi',
+    event_time: '09:00',
+    location: 'Nomaden (Pindah-pindah)',
     wa_link: 'https://wa.me/628993986415',
     image_url: '/kegiatan.webp'
   };
@@ -83,7 +83,7 @@ export default function AgendaIsland() {
         </div>
 
         <div className="w-full md:w-2/3 space-y-4 md:space-y-6 min-w-0">
-          <h3 className="text-lg md:text-2xl lg:text-3xl font-black text-slate-900 leading-tight uppercase tracking-tight break-words">
+          <h3 className="text-lg md:text-2xl lg:text-3xl font-black text-slate-900 leading-tight tracking-tight break-words">
             {displayAgenda.title}
           </h3>
           <p className="text-xs md:text-sm lg:text-base text-slate-600 leading-relaxed break-words line-clamp-3 md:line-clamp-none">

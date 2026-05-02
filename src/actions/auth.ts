@@ -299,4 +299,66 @@ export const authActions = {
       }
     },
   }),
+
+  updateUser: defineAction({
+    accept: "form",
+    input: z.object({
+      id: z.string().uuid(),
+      fullName: z.string().min(3, "Nama minimal 3 karakter."),
+      email: z.string().email("Format email tidak valid."),
+      role: z.enum(["user", "admin"]),
+      password: z.string().min(6).optional().or(z.literal("")),
+    }),
+    handler: async (input, context) => {
+      const { user: currentUser } = context.locals;
+      if (!currentUser || currentUser.role !== "admin") {
+        throw new ActionError({ code: "UNAUTHORIZED", message: "Akses ditolak." });
+      }
+
+      try {
+        // Update User (Email)
+        await sql`UPDATE users SET email = ${input.email} WHERE id = ${input.id}`;
+        
+        // Update Profile (Name & Role)
+        await sql`UPDATE profiles SET full_name = ${input.fullName}, role = ${input.role} WHERE id = ${input.id}`;
+
+        // Update Password if provided
+        if (input.password && input.password.length >= 6) {
+          const salt = await bcrypt.genSalt(10);
+          const hashedPassword = await bcrypt.hash(input.password, salt);
+          await sql`UPDATE users SET password_hash = ${hashedPassword} WHERE id = ${input.id}`;
+        }
+
+        return { success: true };
+      } catch (e: any) {
+        console.error("Admin Update User error:", e);
+        throw new ActionError({ code: "INTERNAL_SERVER_ERROR", message: "Gagal memperbarui user." });
+      }
+    },
+  }),
+
+  deleteUser: defineAction({
+    accept: "form",
+    input: z.object({ id: z.string().uuid() }),
+    handler: async (input, context) => {
+      const { user: currentUser } = context.locals;
+      if (!currentUser || currentUser.role !== "admin") {
+        throw new ActionError({ code: "UNAUTHORIZED", message: "Akses ditolak." });
+      }
+
+      // Mencegah admin menghapus dirinya sendiri
+      if (currentUser.id === input.id) {
+        throw new ActionError({ code: "BAD_REQUEST", message: "Anda tidak dapat menghapus akun Anda sendiri." });
+      }
+
+      try {
+        // Karena CASCADE, menghapus users akan menghapus profiles & posts secara otomatis
+        await sql`DELETE FROM users WHERE id = ${input.id}`;
+        return { success: true };
+      } catch (e: any) {
+        console.error("Admin Delete User error:", e);
+        throw new ActionError({ code: "INTERNAL_SERVER_ERROR", message: "Gagal menghapus user." });
+      }
+    },
+  }),
 };

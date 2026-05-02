@@ -142,5 +142,27 @@ export const agendaActions = {
         throw new ActionError({ code: 'INTERNAL_SERVER_ERROR', message: 'Gagal menghapus agenda.' });
       }
     }
+  }),
+
+  quickPublishAgenda: defineAction({
+    accept: 'form',
+    input: z.object({ id: z.string() }),
+    handler: async ({ id }, context) => {
+      const { user } = context.locals;
+      if (!user || user.role !== 'admin') throw new ActionError({ code: 'UNAUTHORIZED', message: 'Akses ditolak.' });
+
+      try {
+        // 1. Ubah SEMUA yang statusnya published menjadi draft (reset)
+        await sql`UPDATE agendas SET status = 'draft' WHERE status = 'published'`;
+        
+        // 2. Terbitkan agenda yang dipilih
+        await sql`UPDATE agendas SET status = 'published', publish_at = NULL WHERE id = ${id}`;
+        
+        return { success: true };
+      } catch (error) {
+        console.error("Quick publish error:", error);
+        throw new ActionError({ code: 'INTERNAL_SERVER_ERROR', message: 'Gagal menerbitkan agenda secara instan.' });
+      }
+    }
   })
 };

@@ -24,7 +24,14 @@ const {
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const formattedTitle = title.includes('Literasi Brebesan') ? title : `${title} - Literasi Brebesan`;
-const socialImageURL = new URL(image, Astro.site);
+
+// Pastikan Image URL selalu absolute (Wajib untuk WhatsApp/FB)
+let socialImageURL;
+if (image.startsWith('http')) {
+  socialImageURL = new URL(image);
+} else {
+  socialImageURL = new URL(image, Astro.site);
+}
 
 // JSON-LD data terstruktur (default jika schema tidak dikirim)
 const defaultJsonLd = {

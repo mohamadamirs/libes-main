@@ -20,3 +20,9 @@
     letter-spacing: -0.02em; /* Membuat heading terlihat lebih modern */
   }
 }
+
+/* Custom View Transitions */
+::view-transition-group(admin-tab-indicator) {
+  animation-timing-function: ease-in-out;
+  animation-duration: 0.35s;
+}

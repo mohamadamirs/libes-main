@@ -6,6 +6,15 @@ import { v4 as uuidv4 } from "uuid";
 import { generateSlug } from "../lib/utils";
 import sanitizeHtml from "sanitize-html";
 
+const sanitizeOptions = {
+  allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'h1', 'h2', 'blockquote']),
+  allowedAttributes: {
+    ...sanitizeHtml.defaults.allowedAttributes,
+    'img': ['src', 'alt', 'class', 'width', 'height'],
+  },
+  allowedSchemes: ['http', 'https', 'data'],
+};
+
 export const postActions = {
   createPost: defineAction({
     accept: "form",
@@ -30,12 +39,12 @@ export const postActions = {
 
       const id = uuidv4();
       const slug = generateSlug(input.title);
-      const safeContent = sanitizeHtml(input.content || "");
+      const safeContent = sanitizeHtml(input.content || "", sanitizeOptions);
 
       try {
         await sql`
-          INSERT INTO posts (id, title, content, status, user_id, slug, updated_at, category_id)
-          VALUES (${id}, ${input.title}, ${safeContent}, ${finalStatus}, ${user.id}, ${slug}, NOW(), ${input.category_id || null})
+          INSERT INTO posts (id, title, content, status, user_id, slug, updated_at, category_id, rejection_reason)
+          VALUES (${id}, ${input.title}, ${safeContent}, ${finalStatus}, ${user.id}, ${slug}, NOW(), ${input.category_id || null}, NULL)
         `;
         return { success: true };
       } catch (e: any) {
@@ -67,13 +76,13 @@ export const postActions = {
       }
 
       const newSlug = generateSlug(input.title);
-      const safeContent = sanitizeHtml(input.content || "");
+      const safeContent = sanitizeHtml(input.content || "", sanitizeOptions);
 
       try {
         if (user.role === "admin") {
           await sql`
             UPDATE posts
-            SET title = ${input.title}, content = ${safeContent}, status = ${input.status}, slug = ${newSlug}, category_id = ${input.category_id || null}, updated_at = NOW()
+            SET title = ${input.title}, content = ${safeContent}, status = ${input.status}, slug = ${newSlug}, category_id = ${input.category_id || null}, updated_at = NOW(), rejection_reason = NULL
             WHERE id = ${input.id}
           `;
         } else {
@@ -81,7 +90,7 @@ export const postActions = {
             input.status === "published" ? "pending" : input.status;
           await sql`
             UPDATE posts
-            SET title = ${input.title}, content = ${safeContent}, status = ${finalStatus}, slug = ${newSlug}, category_id = ${input.category_id || null}, updated_at = NOW()
+            SET title = ${input.title}, content = ${safeContent}, status = ${finalStatus}, slug = ${newSlug}, category_id = ${input.category_id || null}, updated_at = NOW(), rejection_reason = NULL
             WHERE id = ${input.id} AND user_id = ${user.id}
           `;
         }
@@ -138,13 +147,45 @@ export const postActions = {
       }
 
       try {
-        await sql`UPDATE posts SET status = 'published', updated_at = NOW() WHERE id = ${input.id}`;
+        await sql`UPDATE posts SET status = 'published', updated_at = NOW(), rejection_reason = NULL WHERE id = ${input.id}`;
         return { success: true };
       } catch (e: any) {
         console.error("Approve post error:", e);
         throw new ActionError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Gagal menyetujui tulisan.",
+        });
+      }
+    },
+  }),
+
+  rejectPost: defineAction({
+    accept: "form",
+    input: z.object({ 
+      id: z.string().uuid(),
+      reason: z.string().min(5, "Berikan alasan minimal 5 karakter")
+    }),
+    handler: async (input, context) => {
+      const user = context.locals.user;
+      if (!user || user.role !== "admin") {
+        throw new ActionError({
+          code: "FORBIDDEN",
+          message: "Akses ditolak.",
+        });
+      }
+
+      try {
+        await sql`
+          UPDATE posts 
+          SET status = 'draft', rejection_reason = ${input.reason}, updated_at = NOW() 
+          WHERE id = ${input.id}
+        `;
+        return { success: true };
+      } catch (e: any) {
+        console.error("Reject post error:", e);
+        throw new ActionError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Gagal menolak tulisan.",
         });
       }
     },

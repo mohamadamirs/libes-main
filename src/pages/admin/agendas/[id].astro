@@ -2,6 +2,7 @@
 import DashboardLayout from "../../../layouts/DashboardLayout.astro";
 import { sql } from "../../../lib/db";
 import { actions } from "astro:actions";
+import AgendaStatusManager from "../../../components/admin/AgendaStatusManager";
 
 const { id } = Astro.params;
 const { user } = Astro.locals;
@@ -34,11 +35,11 @@ if (result && !result.error) return Astro.redirect('/admin');
     </header>
 
     {hasConflict && (
-      <div class="mb-8 p-5 bg-rose-50 border-2 border-rose-100 rounded-[2rem] flex items-center gap-4">
+      <div class="mb-8 p-5 bg-rose-50 border-2 border-rose-100 rounded-[2rem] flex items-center gap-4 overflow-hidden">
         <div class="w-10 h-10 bg-rose-500 rounded-full flex items-center justify-center text-white shrink-0 shadow-lg shadow-rose-200">!</div>
-        <div>
+        <div class="min-w-0 flex-1">
           <p class="text-[11px] font-black uppercase text-rose-500 tracking-widest">Peringatan Penting</p>
-          <p class="text-xs font-bold text-rose-900 leading-tight">Agenda <span class="underline">"{conflict[0].title}"</span> sedang tayang. Ubah agenda tersebut ke Draft jika ingin menerbitkan yang ini.</p>
+          <p class="text-xs font-bold text-rose-900 leading-tight break-words">Agenda <span class="underline">"{conflict[0].title}"</span> sedang tayang. Ubah agenda tersebut ke Draft jika ingin menerbitkan yang ini.</p>
         </div>
       </div>
     )}
@@ -82,19 +83,11 @@ if (result && !result.error) return Astro.redirect('/admin');
         <input type="url" name="wa_link" value={agenda.wa_link} required class="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-[2rem] font-bold text-slate-700" />
       </div>
 
-      <div class="bg-slate-100 p-6 rounded-[2rem] space-y-4">
-        <label class="block text-[11px] font-black uppercase text-slate-900 text-center">Update Status</label>
-        <div class="flex bg-white p-2 rounded-full gap-1 border border-slate-200">
-          <label class="flex-1 cursor-pointer">
-            <input type="radio" name="status" value="draft" class="peer hidden" checked={agenda.status === 'draft'} id="status-draft" />
-            <div class="text-center py-3 rounded-full text-[11px] font-black uppercase text-slate-400 peer-checked:bg-slate-100 peer-checked:text-slate-900 transition-all">Draft</div>
-          </label>
-          <label class="flex-1 cursor-pointer">
-            <input type="radio" name="status" value="published" class="peer hidden" checked={agenda.status === 'published'} id="status-published" />
-            <div class="text-center py-3 rounded-full text-[11px] font-black uppercase text-slate-400 peer-checked:bg-blue-600 peer-checked:text-white transition-all">Publish</div>
-          </label>
-        </div>
-      </div>
+      <AgendaStatusManager 
+        client:load 
+        initialStatus={agenda.status} 
+        initialPublishAt={agenda.publish_at} 
+      />
 
       <button type="submit" class="w-full bg-slate-900 text-white font-black py-6 rounded-[2rem] uppercase tracking-widest text-[11px] shadow-xl shadow-slate-200">Simpan Perubahan</button>
 

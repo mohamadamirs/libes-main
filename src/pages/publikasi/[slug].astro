@@ -49,13 +49,13 @@ const extractFirstImage = (html: string) => {
   return match ? match[1] : null;
 };
 
-const metaDescription = stripHtml(post.content).substring(0, 155);
+const metaDescription = stripHtml(post.content).substring(0, 160);
 const firstImage = extractFirstImage(post.content);
 
-// JSON-LD untuk Artikel
+// 1. JSON-LD Artikel
 const articleSchema = {
-  "@context": "https://schema.org",
   "@type": "Article",
+  "@id": `${Astro.url.href}#article`,
   "headline": post.title,
   "description": metaDescription,
   "image": firstImage ? [firstImage] : [new URL("/literasi-brebesan-og.jpg", Astro.url.origin).toString()],
@@ -73,15 +73,50 @@ const articleSchema = {
       "@type": "ImageObject",
       "url": new URL("/literasi-brebesan.webp", Astro.url.origin).toString()
     }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": Astro.url.href
   }
+};
+
+// 2. JSON-LD Breadcrumbs (Sangat penting agar Google tahu posisi halaman ini)
+const breadcrumbSchema = {
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Beranda",
+      "item": Astro.url.origin
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Publikasi",
+      "item": `${Astro.url.origin}/publikasi`
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": post.title,
+      "item": Astro.url.href
+    }
+  ]
+};
+
+// Gabungkan dalam satu Graph
+const finalSchema = {
+  "@context": "https://schema.org",
+  "@graph": [articleSchema, breadcrumbSchema]
 };
 ---
 
 <Layout 
-  title={`${post.title} | Literasi Brebesan`} 
+  title={`${post.title}`} 
   description={metaDescription}
   type="article"
-  schema={articleSchema}
+  schema={finalSchema}
   image={firstImage || "/literasi-brebesan-og.jpg"}
 >
   <Header />
@@ -131,16 +166,23 @@ const articleSchema = {
             <div class="text-right">
               <p class="text-sm font-black text-slate-900 uppercase tracking-tight">{formatDate(post.updated_at)}</p>
               <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1">Dipublikasikan</p>
+              
+              {/* Tombol Bagikan */}
+              <a 
+                href={`https://api.whatsapp.com/send?text=${encodeURIComponent(post.title + ' - ' + Astro.url.href)}`}
+                target="_blank"
+                class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-slate-900 text-white rounded-full text-[10px] font-black uppercase tracking-[0.15em] hover:bg-blue-600 hover:-translate-y-0.5 transition-all shadow-lg shadow-slate-200 active:scale-95 group"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                </svg>
+                Bagikan
+              </a>
             </div>
           </div>
         </div>
       </header>
-
-      {firstImage && (
-        <div class="mb-12 md:mb-16 -mx-6 sm:mx-0">
-          <img src={firstImage} alt={post.title} class="w-full aspect-video object-cover rounded-none sm:rounded-[3rem] shadow-2xl shadow-slate-200" />
-        </div>
-      )}
 
       <article class="prose prose-slate prose-lg md:prose-xl w-full max-w-none break-words overflow-x-hidden prose-headings:font-black prose-headings:tracking-tight prose-p:leading-[1.8] prose-p:text-slate-700 prose-a:text-blue-600 prose-a:font-bold prose-img:rounded-3xl prose-img:shadow-xl prose-blockquote:border-l-4 prose-blockquote:border-blue-600 prose-blockquote:bg-blue-50/50 prose-blockquote:p-8 prose-blockquote:rounded-r-3xl prose-blockquote:italic" set:html={post.content}>
       </article>
