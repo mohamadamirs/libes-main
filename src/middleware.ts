@@ -7,7 +7,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const { cookies, url, redirect, locals } = context;
 
   // 1. BYPASS SEO & STATIC FILES (Agar Google Bot tidak diblokir)
-  if (url.pathname === '/sitemap.xml' || url.pathname === '/robots.txt') {
+  const isSeoPath = url.pathname.includes('/sitemap.xml') || url.pathname.includes('/robots.txt');
+  if (isSeoPath) {
     return next();
   }
 
