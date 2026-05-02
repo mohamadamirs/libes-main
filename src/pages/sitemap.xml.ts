@@ -1,8 +1,6 @@
 import type { APIRoute } from 'astro';
 import { sql } from '../lib/db';
 
-export const prerender = true;
-
 export const GET: APIRoute = async () => {
   const baseUrl = 'https://literasibrebesan.my.id';
 
@@ -11,39 +9,43 @@ export const GET: APIRoute = async () => {
     const { rows: profiles } = await sql`SELECT p.id, MAX(po.updated_at) as last_updated FROM profiles p JOIN posts po ON p.id = po.user_id WHERE po.status = 'published' GROUP BY p.id`;
     const { rows: agendas } = await sql`SELECT id, updated_at FROM agendas WHERE status = 'published' ORDER BY updated_at DESC`;
 
-    const urls: string[] = [];
+    let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
 
-    // Static
-    ['/', '/publikasi', '/dokumentasi'].forEach(path => {
-      urls.push(`<url><loc>${baseUrl}${path}</loc><lastmod>${new Date().toISOString()}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>`);
+    // Home
+    xml += `  <url>\n    <loc>${baseUrl}/</loc>\n    <lastmod>${new Date().toISOString()}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>1.0</priority>\n  </url>\n`;
+
+    // Static Pages
+    ['/publikasi', '/dokumentasi'].forEach(path => {
+      xml += `  <url>\n    <loc>${baseUrl}${path}</loc>\n    <lastmod>${new Date().toISOString()}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
     });
 
     // Posts
     posts.forEach(post => {
-      urls.push(`<url><loc>${baseUrl}/publikasi/${post.slug}</loc><lastmod>${new Date(post.updated_at).toISOString()}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`);
+      xml += `  <url>\n    <loc>${baseUrl}/publikasi/${post.slug}</loc>\n    <lastmod>${new Date(post.updated_at).toISOString()}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
     });
 
     // Agendas
     agendas.forEach(agenda => {
-      urls.push(`<url><loc>${baseUrl}/#agenda</loc><lastmod>${new Date(agenda.updated_at).toISOString()}</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>`);
+      xml += `  <url>\n    <loc>${baseUrl}/#agenda</loc>\n    <lastmod>${new Date(agenda.updated_at).toISOString()}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
     });
 
-    // Profiles
-    profiles.forEach(profile => {
-      urls.push(`<url><loc>${baseUrl}/p/${profile.id}</loc><lastmod>${new Date(profile.last_updated).toISOString()}</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>`);
-    });
+    xml += '</urlset>';
 
-    const sitemap = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.join('')}</urlset>`;
-
-    return new Response(sitemap, {
+    return new Response(xml, {
       status: 200,
       headers: {
-        'Content-Type': 'application/xml',
-        'Cache-Control': 'public, s-maxage=3600',
-      },
+        'Content-Type': 'application/xml; charset=utf-8',
+        'X-Content-Type-Options': 'nosniff',
+        'Cache-Control': 'public, s-maxage=3600'
+      }
     });
   } catch (error) {
-    const emergency = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${baseUrl}</loc><priority>1.0</priority></url></urlset>`;
-    return new Response(emergency, { status: 200, headers: { 'Content-Type': 'application/xml' } });
+    console.error("Sitemap error:", error);
+    const emergency = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>${baseUrl}/</loc>\n    <priority>1.0</priority>\n  </url>\n</urlset>`;
+    return new Response(emergency, { 
+      status: 200, 
+      headers: { 'Content-Type': 'application/xml; charset=utf-8' } 
+    });
   }
 };
