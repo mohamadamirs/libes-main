@@ -21,7 +21,7 @@ const totalPages = Math.ceil(totalPosts / limit);
 
 // Ambil data postingan dengan Limit & Offset
 const { rows: posts } = await sql`
-  SELECT id, title, created_at, status, rejection_reason
+  SELECT id, title, slug, created_at, status, rejection_reason
   FROM posts
   WHERE user_id = ${user?.id}
   ORDER BY created_at DESC

@@ -9,9 +9,12 @@ const { rows: posts } = await sql`
     p.updated_at, 
     p.user_id,
     pr.full_name as author_name,
-    pr.avatar_url as author_avatar
+    pr.avatar_url as author_avatar,
+    pr.instagram as author_instagram,
+    c.name as category_name
   FROM posts p
   LEFT JOIN profiles pr ON p.user_id = pr.id
+  LEFT JOIN categories c ON p.category_id = c.id
   WHERE p.status = 'published'
   ORDER BY p.updated_at DESC
   LIMIT 3
@@ -22,7 +25,7 @@ const stripHtml = (html: string) => {
   return html.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim();
 };
 
-const truncateText = (text: string | null, length = 100) => {
+const truncateText = (text: string | null, length = 110) => {
   if (!text) return "";
   const clean = stripHtml(text);
   if (clean.length <= length) return clean;
@@ -33,6 +36,19 @@ const truncateTitle = (text: string | null, length = 55) => {
   if (!text) return "";
   if (text.length <= length) return text;
   return text.substring(0, length).trim() + "...";
+};
+
+const formatDate = (date: any) => {
+  if (!date) return "";
+  return new Date(date).toLocaleDateString("id-ID", {
+    year: "numeric", month: "short", day: "numeric",
+  });
+};
+
+const extractFirstImage = (html: string) => {
+  if (!html) return null;
+  const match = html.match(/<img[^>]+src="([^">]+)"/);
+  return match ? match[1] : null;
 };
 ---
 
@@ -51,40 +67,82 @@ const truncateTitle = (text: string | null, length = 55) => {
       </p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-      {posts.map((post) => (
-        <article class="group relative flex flex-col bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-purple-900/5 hover:-translate-y-2 transition-all duration-500">
-          <div class="flex-1">
-            <h3 class="text-base md:text-xl font-black text-slate-900 mb-3 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2 break-words w-full min-h-[3rem] md:min-h-[3.5rem]" title={post.title}>
-              <a href={`/publikasi/${post.slug}`} class="before:absolute before:inset-0 outline-none">
-                {truncateTitle(post.title, 55)}
-              </a>
-            </h3>
-            <p class="text-slate-500 text-xs md:text-sm leading-relaxed mb-6 line-clamp-2 font-medium break-words flex-grow">
-              {truncateText(post.content, 90)}
-            </p>
-          </div>
-
-          <div class="pt-5 border-t border-slate-100 flex items-center justify-between relative z-20">
-            <div class="flex items-center gap-3">
-              <a href={`/p/${post.user_id}`} class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-black text-[10px] md:text-xs uppercase overflow-hidden border-2 border-white shadow-sm hover:scale-110 transition-transform">
-                {post.author_avatar ? (
-                  <img src={post.author_avatar} alt={post.author_name} class="w-full h-full object-cover" />
-                ) : (
-                  post.author_name?.charAt(0) || 'U'
-                )}
-              </a>
-              <div class="flex flex-col">
-                <a href={`/p/${post.user_id}`} class="text-[10px] md:text-[11px] font-black text-slate-900 tracking-wider hover:text-blue-600 transition-colors">{post.author_name || "Anonim"}</a>
-                <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Penulis</span>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
+      {posts.map((post) => {
+        const firstImage = extractFirstImage(post.content);
+        
+        return (
+          <article class="relative bg-white rounded-2xl md:rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-blue-900/5 hover:-translate-y-1.5 transition-all duration-500 flex flex-col group overflow-hidden">
+            <div class="p-5 md:p-8 flex flex-col h-full">
+              
+              <div class="flex items-center justify-between mb-4">
+                 <span class="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[9px] md:text-[10px] font-black uppercase tracking-wider border border-blue-100">
+                    {post.category_name || "Umum"}
+                 </span>
+                 <span class="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                    {formatDate(post.updated_at)}
+                 </span>
               </div>
+
+              <h3 class="text-base md:text-xl font-black text-slate-900 mb-3 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2 break-words w-full" title={post.title}>
+                <a href={`/publikasi/${post.slug}`} class="before:absolute before:inset-0 outline-none">
+                  {truncateTitle(post.title, 55)}
+                </a>
+              </h3>
+
+              {firstImage && (
+                <div class="my-4 relative aspect-[16/9] overflow-hidden rounded-xl md:rounded-2xl border border-slate-50 shadow-sm">
+                  <img 
+                    src={firstImage} 
+                    alt={post.title}
+                    class="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              )}
+
+              <p class="text-slate-500 text-xs md:text-sm mb-6 flex-grow line-clamp-3 leading-relaxed font-medium break-words">
+                {truncateText(post.content, 110)}
+              </p>
+
+              <div class="mt-auto pt-5 border-t border-slate-50 flex items-center justify-between relative z-20">
+                <div class="flex items-center gap-3 min-w-0">
+                  <a href={`/p/${post.user_id}`} class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-100 border-2 border-white shadow-sm flex items-center justify-center text-blue-600 font-black text-[10px] md:text-xs uppercase overflow-hidden shrink-0 hover:scale-110 transition-transform">
+                    {post.author_avatar ? (
+                      <img src={post.author_avatar} alt={post.author_name || 'Author'} class="w-full h-full object-cover" />
+                    ) : (
+                      post.author_name?.charAt(0) || 'U'
+                    )}
+                  </a>
+                  <div class="flex flex-col min-w-0">
+                    <a href={`/p/${post.user_id}`} class="text-[10px] md:text-[11px] font-black text-slate-900 tracking-wider truncate hover:text-blue-600 transition-colors">{post.author_name || "Anonim"}</a>
+                    {post.author_instagram && (
+                      <a 
+                        href={`https://instagram.com/${post.author_instagram.replace('@', '')}`} 
+                        target="_blank" 
+                        class="text-[9px] md:text-[10px] font-bold text-[#e1306c] tracking-widest mt-0.5 hover:opacity-70 transition-opacity flex items-center gap-1"
+                      >
+                        <span class="sr-only">Instagram</span>
+                        <svg width="20px" height="20px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 md:w-3 md:h-3" fill="currentColor">
+                          <rect x="0" fill="none" width="20" height="20"/>
+                          <g>
+                            <path d="M12.7 10c0-1.5-1.2-2.7-2.7-2.7S7.3 8.5 7.3 10s1.2 2.7 2.7 2.7c1.5 0 2.7-1.2 2.7-2.7zm1.4 0c0 2.3-1.8 4.1-4.1 4.1S5.9 12.3 5.9 10 7.7 5.9 10 5.9s4.1 1.8 4.1 4.1zm1.1-4.3c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .5 1 1zM10 3.4c-1.2 0-3.7-.1-4.7.3-.7.3-1.3.9-1.5 1.6-.4 1-.3 3.5-.3 4.7s-.1 3.7.3 4.7c.2.7.8 1.3 1.5 1.5 1 .4 3.6.3 4.7.3s3.7.1 4.7-.3c.7-.3 1.2-.8 1.5-1.5.4-1.1.3-3.6.3-4.7s.1-3.7-.3-4.7c-.2-.7-.8-1.3-1.5-1.5-1-.5-3.5-.4-4.7-.4zm8 6.6v3.3c0 1.2-.4 2.4-1.3 3.4-.9.9-2.1 1.3-3.4 1.3H6.7c-1.2 0-2.4-.4-3.4-1.3-.8-.9-1.3-2.1-1.3-3.4V10 6.7c0-1.3.5-2.5 1.3-3.4C4.3 2.5 5.5 2 6.7 2h6.6c1.2 0 2.4.4 3.4 1.3.8.9 1.3 2.1 1.3 3.4V10z"/>
+                          </g>
+                        </svg>
+                        @{post.author_instagram.replace('@', '')}
+                      </a>
+                    )}
+                  </div>
+                </div>
+                <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm border border-slate-100 group-hover:border-blue-600">
+                  <svg class="w-3.5 h-3.5 md:w-4 md:h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>
+                </div>
+              </div>
+
             </div>
-            <div class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all shadow-sm">
-              <svg class="w-3.5 h-3.5 md:w-4 md:h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>
-            </div>
-          </div>
-        </article>
-      ))}
+          </article>
+        );
+      })}
     </div>
 
     <div class="mt-12 text-left">

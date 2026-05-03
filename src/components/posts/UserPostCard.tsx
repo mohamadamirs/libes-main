@@ -14,6 +14,7 @@ interface Props {
 
 export default function UserPostCard({ post }: Props) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isRejectionModalOpen, setIsRejectionModalOpen] = useState(false);
   const deleteFormRef = useRef<HTMLFormElement>(null);
 
   const formatDate = (date: any) => {
@@ -41,12 +42,23 @@ export default function UserPostCard({ post }: Props) {
   };
 
   return (
-    <div class={`bg-white p-4 md:p-6 rounded-xl md:rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:border-blue-200 transition-all group flex items-center justify-between gap-4 md:gap-6 animate-fade-in-up ${isDeleteModalOpen ? 'z-[100] relative' : 'relative z-0'}`}>
+    <div class={`bg-white p-4 md:p-6 rounded-xl md:rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:border-blue-200 transition-all group flex items-center justify-between gap-4 md:gap-6 animate-fade-in-up ${isDeleteModalOpen || isRejectionModalOpen ? 'z-[100] relative' : 'relative z-0'}`}>
       <div class="flex-1 min-w-0">
         <div class="flex items-center gap-2 md:gap-3 mb-1.5 md:mb-2">
            <span class={`px-2 py-0.5 rounded-full text-[8px] md:text-[9px] font-black border ${badge.classes}`}>
               {badge.label}
            </span>
+           
+           {post.status === 'draft' && post.rejection_reason && (
+             <button 
+               onClick={() => setIsRejectionModalOpen(true)}
+               class="flex items-center gap-1.5 px-2 py-0.5 bg-amber-500 text-white rounded-full text-[8px] md:text-[9px] font-black animate-pulse hover:bg-slate-900 transition-colors shadow-lg shadow-amber-200"
+             >
+               <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+               REVISI
+             </button>
+           )}
+
            <span class="text-[9px] md:text-[10px] text-slate-400 font-bold">
               {formatDate(post.created_at)}
            </span>
@@ -65,17 +77,6 @@ export default function UserPostCard({ post }: Props) {
               )}
           </h4>
         </a>
-
-        {post.status === 'draft' && post.rejection_reason && (
-          <div class="mt-3 bg-amber-50 border border-amber-100 rounded-2xl p-4">
-            <span class="text-[9px] font-black text-amber-600 block mb-2">Catatan Admin:</span>
-            <div class="max-h-32 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-amber-200 scrollbar-track-transparent">
-              <p class="text-[11px] md:text-xs font-medium text-amber-800 leading-relaxed break-words whitespace-pre-wrap">
-                {post.rejection_reason}
-              </p>
-            </div>
-          </div>
-        )}
       </div>
 
       <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
@@ -106,6 +107,18 @@ export default function UserPostCard({ post }: Props) {
         description={`Apakah Anda yakin ingin menghapus "${post.title}"? Tindakan ini tidak dapat dibatalkan.`}
         confirmText="Ya, Hapus Sekarang"
         variant="danger"
+      />
+
+      {/* Rejection Reason Modal */}
+      <AdminModal
+        isOpen={isRejectionModalOpen}
+        onClose={() => setIsRejectionModalOpen(false)}
+        onConfirm={() => setIsRejectionModalOpen(false)}
+        title="Catatan Revisi Admin"
+        description={post.rejection_reason || ""}
+        confirmText="Saya Mengerti"
+        cancelText=""
+        variant="warning"
       />
     </div>
   );
