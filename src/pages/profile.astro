@@ -28,6 +28,17 @@ if (passwordResult && !passwordResult.error) {
   return Astro.redirect("/profile?success=Password Anda berhasil diganti.");
 }
 
+// Ambil Data Profil
+const { rows } = await sql`
+  SELECT p.*, u.email 
+  FROM profiles p 
+  JOIN users u ON p.id = u.id 
+  WHERE p.id = ${user.id}
+`;
+const profile = rows[0];
+
+if (!profile) return Astro.redirect("/login");
+
 const errorMessage = result?.error?.message || avatarResult?.error?.message || passwordResult?.error?.message;
 ---
 
