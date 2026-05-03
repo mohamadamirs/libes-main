@@ -9,7 +9,7 @@ export const GET: APIRoute = async () => {
     // 1. Fetch data
     const { rows: posts } = await sql`SELECT slug, updated_at FROM posts WHERE status = 'published' ORDER BY updated_at DESC`;
     const { rows: profiles } = await sql`SELECT id, created_at FROM profiles ORDER BY created_at DESC`;
-    const { rows: latestAgenda } = await sql`SELECT updated_at FROM agendas WHERE status = 'published' ORDER BY updated_at DESC LIMIT 1`;
+    const { rows: latestAgenda } = await sql`SELECT created_at FROM agendas WHERE status = 'published' ORDER BY created_at DESC LIMIT 1`;
 
     // Calculate dynamic lastmod for Home
     let homeLastMod = today;
@@ -18,7 +18,7 @@ export const GET: APIRoute = async () => {
       if (latestPostDate > homeLastMod) homeLastMod = latestPostDate;
     }
     if (latestAgenda.length > 0) {
-      const agendaDate = new Date(latestAgenda[0].updated_at).toISOString().split('T')[0];
+      const agendaDate = new Date(latestAgenda[0].created_at).toISOString().split('T')[0];
       if (agendaDate > homeLastMod) homeLastMod = agendaDate;
     }
 
