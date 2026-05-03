@@ -114,107 +114,95 @@ const finalSchema = {
   description={metaDescription}
   type="article"
   schema={finalSchema}
-  image={firstImage || "/literasi-brebesan-og.jpg"}
+  image={firstImage ? (firstImage.startsWith('http') ? firstImage : `${Astro.url.origin}${firstImage}`) : "/literasi-brebesan-og.jpg"}
 >
   <Header />
 
   <main class="min-h-screen bg-white pt-26 md:pt-32 pb-16 md:pb-20 overflow-x-hidden text-left">
     <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
       
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-16 items-start">
+      {/* Container Single Column - Fokus Baca */}
+      <div class="max-w-3xl mx-auto space-y-10 md:space-y-14">
         
-        {/* Kolom Kiri: Konten Utama (Approx 70%) */}
-        <div class="lg:col-span-8 space-y-10 md:space-y-14">
-          
-          <nav class="flex items-center gap-2 text-[10px] md:text-[11px] font-black uppercase tracking-wider text-slate-400 overflow-x-auto whitespace-nowrap scrollbar-hide">
-            <a href="/" class="hover:text-blue-600 transition-colors flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-              Beranda
-            </a>
-            <span class="text-slate-200">/</span>
-            <a href="/publikasi" class="hover:text-blue-600 transition-colors">Publikasi</a>
-            <span class="text-slate-200">/</span>
-            <span class="text-slate-900 truncate max-w-[150px] md:max-w-xs">{post.title}</span>
-          </nav>
+        <nav class="flex items-center gap-2 text-[10px] md:text-[11px] font-black uppercase tracking-wider text-slate-400 overflow-x-auto whitespace-nowrap scrollbar-hide">
+          <a href="/" class="hover:text-blue-600 transition-colors flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            Beranda
+          </a>
+          <span class="text-slate-200">/</span>
+          <a href="/publikasi" class="hover:text-blue-600 transition-colors">Publikasi</a>
+          <span class="text-slate-200">/</span>
+          <span class="text-slate-900 truncate max-w-[150px] md:max-w-xs">{post.title}</span>
+        </nav>
 
-          <header class="w-full">
-            <h1 class="text-xl sm:text-2xl md:text-4xl font-black text-slate-900 leading-tight mb-8 break-words">
-              {post.title}
-            </h1>
+        <header class="w-full">
+          <h1 class="text-xl sm:text-2xl md:text-4xl font-black text-slate-900 leading-tight mb-8 break-words">
+            {post.title}
+          </h1>
 
-            <div class="flex flex-wrap items-center justify-between gap-6 py-6 border-y border-slate-100">
-              <div class="flex items-center gap-4">
-                <a href={`/p/${post.user_id}`} class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-black text-sm md:text-base border-2 border-white shadow-lg overflow-hidden hover:rotate-3 transition-transform">
-                  {post.author_avatar ? (
-                    <img src={post.author_avatar} alt={post.author_name} class="w-full h-full object-cover" />
-                  ) : (
-                    post.author_name ? post.author_name.charAt(0) : "U"
-                  )}
+          <div class="flex flex-wrap items-center justify-between gap-6 py-6 border-y border-slate-100">
+            <div class="flex items-center gap-4">
+              <a href={`/p/${post.user_id}`} class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-black text-sm md:text-base border-2 border-white shadow-lg overflow-hidden hover:rotate-3 transition-transform">
+                {post.author_avatar ? (
+                  <img src={post.author_avatar} alt={post.author_name} class="w-full h-full object-cover" />
+                ) : (
+                  post.author_name ? post.author_name.charAt(0) : "U"
+                )}
+              </a>
+              <div>
+                <a href={`/p/${post.user_id}`} class="text-sm md:text-base font-black text-slate-900 hover:text-blue-600 transition-colors block">
+                  {post.author_name || "Anonim"}
                 </a>
-                <div>
-                  <a href={`/p/${post.user_id}`} class="text-sm md:text-base font-black text-slate-900 hover:text-blue-600 transition-colors block">
-                    {post.author_name || "Anonim"}
+                {post.author_instagram && (
+                  <a href={`https://instagram.com/${post.author_instagram.replace('@', '')}`} target="_blank" class="text-[10px] md:text-xs font-bold text-[#e1306c] hover:opacity-70 transition-opacity flex items-center gap-1 mt-1">
+                     <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.332 3.608 1.308.975.975 1.247 2.242 1.308 3.607.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.061 1.365-.333 2.633-1.308 3.608-.975.975-2.242 1.247-3.607 1.308-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.061-2.633-.333-3.608-1.308-.975-.975-1.247-2.242-1.308-3.607-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.062-1.366.332-2.633 1.308-3.608.975-.975 2.242-1.247 3.607-1.308 1.266-.058 1.646-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                     @{post.author_instagram.replace('@', '')}
                   </a>
-                  {post.author_instagram && (
-                    <a href={`https://instagram.com/${post.author_instagram.replace('@', '')}`} target="_blank" class="text-[10px] md:text-xs font-bold text-[#e1306c] hover:opacity-70 transition-opacity flex items-center gap-1 mt-1">
-                       <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.332 3.608 1.308.975.975 1.247 2.242 1.308 3.607.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.061 1.365-.333 2.633-1.308 3.608-.975.975-2.242 1.247-3.607 1.308-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.061-2.633-.333-3.608-1.308-.975-.975-1.247-2.242-1.308-3.607-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.062-1.366.332-2.633 1.308-3.608.975-.975 2.242-1.247 3.607-1.308 1.266-.058 1.646-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                       @{post.author_instagram.replace('@', '')}
-                    </a>
-                  )}
-                </div>
-              </div>
-
-              <div class="flex items-center gap-6">
-                <div class="text-right">
-                  <p class="text-sm font-black text-slate-900">{formatDate(post.updated_at)}</p>
-                  <p class="text-[10px] font-black text-slate-400 mt-1">Dipublikasikan</p>
-                  
-                  {/* Tombol Bagikan */}
-                  <a 
-                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(post.title + ' - ' + Astro.url.href)}`}
-                    target="_blank"
-                    class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-slate-900 text-white rounded-full text-[10px] font-black hover:bg-blue-600 hover:-translate-y-0.5 transition-all shadow-lg shadow-slate-200 active:scale-95 group"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-                      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-                    </svg>
-                    Bagikan
-                  </a>
-                </div>
+                )}
               </div>
             </div>
-          </header>
 
-          <article class="prose prose-slate prose-sm md:prose-base w-full max-w-none break-words overflow-x-hidden prose-headings:font-black prose-p:leading-relaxed prose-p:text-slate-900 prose-p:font-medium prose-a:text-blue-600 prose-a:font-bold prose-img:rounded-2xl prose-img:shadow-xl prose-blockquote:border-l-4 prose-blockquote:border-blue-600 prose-blockquote:bg-blue-50/50 prose-blockquote:p-8 prose-blockquote:rounded-r-2xl prose-blockquote:italic" set:html={post.content}>
-          </article>
+            <div class="flex items-center gap-6">
+              <div class="text-right">
+                <p class="text-sm font-black text-slate-900">{formatDate(post.updated_at)}</p>
+                <p class="text-[10px] font-black text-slate-400 mt-1">Dipublikasikan</p>
+                
+                {/* Tombol Bagikan */}
+                <a 
+                  href={`https://api.whatsapp.com/send?text=${encodeURIComponent(post.title + ' - ' + Astro.url.href)}`}
+                  target="_blank"
+                  class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-slate-900 text-white rounded-full text-[10px] font-black hover:bg-blue-600 hover:-translate-y-0.5 transition-all shadow-lg shadow-slate-200 active:scale-95 group"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                  </svg>
+                  Bagikan
+                </a>
+              </div>
+            </div>
+          </div>
+        </header>
 
-          <div class="p-10 md:p-16 bg-slate-900 rounded-[3rem] text-center relative overflow-hidden shadow-2xl shadow-blue-100 mt-12">
-            <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.2),transparent)]"></div>
-            <h3 class="text-2xl md:text-3xl font-black text-white mb-4 relative z-10">Ada cerita atau sekadar ingin berbagi?</h3>
-            <p class="text-slate-400 mb-10 max-w-lg mx-auto text-sm md:text-base relative z-10 font-medium">Ruang Literasi Brebesan terbuka untuk siapa saja yang ingin berbagi pengalaman, opini ringan, atau cerita sehari-hari. Mari merawat nalar bersama.</p>
-            <a href="/user/posts/create" class="inline-flex bg-blue-600 text-white px-10 py-4 rounded-2xl text-xs font-black hover:bg-white hover:text-slate-900 transition-all shadow-xl shadow-blue-500/20 relative z-10 active:scale-95">
+        <article class="prose prose-slate prose-sm md:prose-base w-full max-w-none break-words overflow-x-hidden prose-headings:font-black prose-p:leading-relaxed prose-p:text-slate-900 prose-p:font-medium prose-a:text-blue-600 prose-a:font-bold prose-img:rounded-2xl prose-img:shadow-xl prose-blockquote:border-l-4 prose-blockquote:border-blue-600 prose-blockquote:bg-blue-50/50 prose-blockquote:p-8 prose-blockquote:rounded-r-2xl prose-blockquote:italic" set:html={post.content}>
+        </article>
+
+        {/* Section CTA - True Blue Glassmorphism */}
+        <div class="p-10 md:p-16 bg-blue-600/[0.03] backdrop-blur-xl border border-blue-200/30 rounded-[3rem] text-center relative overflow-hidden shadow-xl shadow-blue-900/[0.02] mt-12 group">
+          {/* Subtle Decorative Blobs - Reduced opacity for a cleaner look */}
+          <div class="absolute -top-20 -right-20 w-80 h-80 bg-blue-500/[0.07] rounded-full blur-[100px] group-hover:scale-110 transition-transform duration-1000"></div>
+          <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-indigo-500/[0.07] rounded-full blur-[100px] group-hover:scale-110 transition-transform duration-1000"></div>
+          
+          <div class="relative z-10">
+            <h3 class="text-2xl md:text-3xl font-black text-slate-900 mb-4 tracking-tight">Ada cerita atau sekadar ingin berbagi?</h3>
+            <p class="text-slate-600 mb-10 max-w-lg mx-auto text-sm md:text-base font-medium leading-relaxed">
+              Ruang Literasi Brebesan terbuka untuk siapa saja yang ingin berbagi pengalaman, opini ringan, atau cerita sehari-hari. Mari merawat nalar bersama.
+            </p>
+            <a href="/user/posts/create" class="inline-flex bg-blue-600 text-white px-10 py-4 rounded-2xl text-xs font-black hover:bg-blue-700 hover:scale-105 transition-all shadow-xl shadow-blue-200 active:scale-95">
               Tulis Sekarang
             </a>
           </div>
         </div>
-
-        {/* Kolom Kanan: Sidebar (Reserved 30%) */}
-        <aside class="hidden lg:block lg:col-span-4 sticky top-32 space-y-8">
-          <div class="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100">
-             <h4 class="text-sm font-black text-slate-900 uppercase tracking-wider mb-4 pl-1">Sisi Samping</h4>
-             <div class="h-px bg-slate-200 w-full mb-6"></div>
-             <p class="text-xs text-slate-400 leading-relaxed font-medium">
-                Area ini disiapkan untuk konten tambahan seperti artikel terkait, iklan komunitas, atau informasi pendukung lainnya.
-             </p>
-          </div>
-          
-          {/* Placeholder for future features */}
-          <div class="p-8 border-2 border-dashed border-slate-100 rounded-[2.5rem] flex items-center justify-center min-h-[200px]">
-             <span class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Coming Soon</span>
-          </div>
-        </aside>
-
       </div>
     </div>
   </main>

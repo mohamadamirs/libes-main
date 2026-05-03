@@ -3,6 +3,9 @@ import Layout from "../../layouts/Layout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import { sql } from "../../lib/db";
+import PublicationList from "../../components/main/PublicationList";
+import CategoryScroll from "../../components/main/CategoryScroll";
+import ScrollToTop from "../../components/ScrollToTop";
 
 // Ambil kategori aktif dari query param
 const activeCategoryId = Astro.url.searchParams.get("category");
@@ -12,8 +15,8 @@ const { rows: categories } = await sql`
   SELECT id, name, slug FROM categories ORDER BY name ASC
 `;
 
-// Ambil postingan yang statusnya PUBLISHED
-let posts;
+// Ambil 9 postingan pertama untuk SSR awal
+let initialPosts;
 if (activeCategoryId) {
   const { rows } = await sql`
     SELECT
@@ -31,8 +34,9 @@ if (activeCategoryId) {
     LEFT JOIN categories c ON p.category_id = c.id
     WHERE p.status = 'published' AND p.category_id = ${activeCategoryId}
     ORDER BY p.updated_at DESC
+    LIMIT 9
   `;
-  posts = rows;
+  initialPosts = rows;
 } else {
   const { rows } = await sql`
     SELECT
@@ -50,34 +54,10 @@ if (activeCategoryId) {
     LEFT JOIN categories c ON p.category_id = c.id
     WHERE p.status = 'published'
     ORDER BY p.updated_at DESC
+    LIMIT 9
   `;
-  posts = rows;
+  initialPosts = rows;
 }
-
-const stripHtml = (html: string) => {
-  if (!html) return "";
-  return html.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim();
-};
-
-const truncateText = (text: string | null, length = 100) => {
-  if (!text) return "";
-  const clean = stripHtml(text);
-  if (clean.length <= length) return clean;
-  return clean.substring(0, length).trim() + "...";
-};
-
-const truncateTitle = (text: string | null, length = 50) => {
-  if (!text) return "";
-  if (text.length <= length) return text;
-  return text.substring(0, length).trim() + "...";
-};
-
-const formatDate = (date: any) => {
-  if (!date) return "";
-  return new Date(date).toLocaleDateString("id-ID", {
-    year: "numeric", month: "short", day: "numeric",
-  });
-};
 ---
 
 <Layout title="Publikasi | Literasi Brebesan" description="Kumpulan tulisan dan cerita dari teman-teman Brebes.">
@@ -111,8 +91,8 @@ const formatDate = (date: any) => {
         </div>
       </div>
 
-      {/* Kategori */}
-      <div class="flex items-center gap-2 overflow-x-auto pb-6 mb-8 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+      {/* Kategori dengan Custom Scrollbar React */}
+      <CategoryScroll client:load>
         <a 
           href="/publikasi" 
           class={`shrink-0 px-5 py-2.5 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest transition-all border ${!activeCategoryId ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-200' : 'bg-white text-slate-500 border-slate-200 hover:border-blue-400'}`}
@@ -127,84 +107,15 @@ const formatDate = (date: any) => {
             {cat.name}
           </a>
         ))}
-      </div>
+      </CategoryScroll>
 
-      {posts.length === 0 ? (
-        <div class="py-24 md:py-32 text-center border-2 border-dashed border-slate-200 rounded-[2.5rem] md:rounded-[3rem] bg-white/50 px-6">
-          <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-             <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          </div>
-          <h2 class="text-lg md:text-xl font-black text-slate-900 tracking-tight mb-2">Belum ada tulisan</h2>
-          <p class="text-slate-500 text-sm md:text-base font-medium max-w-xs mx-auto mb-8">Jadilah yang pertama untuk mengisi ruang cerita di kategori ini.</p>
-          <a href="/user/posts/create" class="inline-flex items-center gap-2 text-blue-600 font-black uppercase tracking-widest text-[10px] md:text-xs hover:gap-4 transition-all">Mulai Menulis →</a>
-        </div>
-      ) : (
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
-          {posts.map((post) => (
-            <article class="relative bg-white rounded-2xl md:rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-blue-900/5 hover:-translate-y-1.5 transition-all duration-500 flex flex-col group overflow-hidden">
-              <div class="p-5 md:p-8 flex flex-col h-full">
-                
-                <div class="flex items-center justify-between mb-4">
-                   <span class="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[9px] md:text-[10px] font-black uppercase tracking-wider border border-blue-100">
-                      {post.category_name || "Umum"}
-                   </span>
-                   <span class="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                      {formatDate(post.updated_at)}
-                   </span>
-                </div>
-
-                <h2 class="text-base md:text-xl font-black text-slate-900 mb-3 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2 break-words w-full min-h-[3rem] md:min-h-[3.5rem]" title={post.title}>
-                  <a href={`/publikasi/${post.slug}`} class="before:absolute before:inset-0 outline-none">
-                    {truncateTitle(post.title, 55)}
-                  </a>
-                </h2>
-
-                <p class="text-slate-500 text-xs md:text-sm mb-6 flex-grow line-clamp-3 leading-relaxed font-medium break-words">
-                  {truncateText(post.content, 110)}
-                </p>
-
-                <div class="mt-auto pt-5 border-t border-slate-50 flex items-center justify-between relative z-20">
-                  <div class="flex items-center gap-3 min-w-0">
-                    <a href={`/p/${post.user_id}`} class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-100 border-2 border-white shadow-sm flex items-center justify-center text-blue-600 font-black text-[10px] md:text-xs uppercase overflow-hidden shrink-0 hover:scale-110 transition-transform">
-                      {post.author_avatar ? (
-                        <img src={post.author_avatar} alt={post.author_name} class="w-full h-full object-cover" />
-                      ) : (
-                        post.author_name?.charAt(0) || 'U'
-                      )}
-                    </a>
-                    <div class="flex flex-col min-w-0">
-                      <a href={`/p/${post.user_id}`} class="text-[10px] md:text-[11px] font-black text-slate-900 tracking-wider truncate hover:text-blue-600 transition-colors">{post.author_name || "Anonim"}</a>
-                      {post.author_instagram && (
-                        <a 
-                          href={`https://instagram.com/${post.author_instagram.replace('@', '')}`} 
-                          target="_blank" 
-                          class="text-[9px] md:text-[10px] font-bold text-[#e1306c] tracking-widest mt-0.5 hover:opacity-70 transition-opacity flex items-center gap-1"
-                        >
-                          <svg width="20px" height="20px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 md:w-3 md:h-3" fill="currentColor">
-                            <rect x="0" fill="none" width="20" height="20"/>
-                            <g>
-                              <path d="M12.7 10c0-1.5-1.2-2.7-2.7-2.7S7.3 8.5 7.3 10s1.2 2.7 2.7 2.7c1.5 0 2.7-1.2 2.7-2.7zm1.4 0c0 2.3-1.8 4.1-4.1 4.1S5.9 12.3 5.9 10 7.7 5.9 10 5.9s4.1 1.8 4.1 4.1zm1.1-4.3c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .5 1 1zM10 3.4c-1.2 0-3.7-.1-4.7.3-.7.3-1.3.9-1.5 1.6-.4 1-.3 3.5-.3 4.7s-.1 3.7.3 4.7c.2.7.8 1.3 1.5 1.5 1 .4 3.6.3 4.7.3s3.7.1 4.7-.3c.7-.3 1.2-.8 1.5-1.5.4-1.1.3-3.6.3-4.7s.1-3.7-.3-4.7c-.2-.7-.8-1.3-1.5-1.5-1-.5-3.5-.4-4.7-.4zm8 6.6v3.3c0 1.2-.4 2.4-1.3 3.4-.9.9-2.1 1.3-3.4 1.3H6.7c-1.2 0-2.4-.4-3.4-1.3-.8-.9-1.3-2.1-1.3-3.4V10 6.7c0-1.3.5-2.5 1.3-3.4C4.3 2.5 5.5 2 6.7 2h6.6c1.2 0 2.4.4 3.4 1.3.8.9 1.3 2.1 1.3 3.4V10z"/>
-                            </g>
-                          </svg>
-                          @{post.author_instagram.replace('@', '')}
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                  <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm border border-slate-100 group-hover:border-blue-600">
-                    <svg class="w-3.5 h-3.5 md:w-4 md:h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>
-                  </div>
-                </div>
-
-              </div>
-            </article>
-          ))}
-        </div>
-      )}
+      {/* List Publikasi dengan Load More */}
+      <PublicationList client:load initialPosts={initialPosts} categoryId={activeCategoryId} />
     </div>
   </main>
 
   <Footer />
+  <ScrollToTop client:load />
 </Layout>
 
 <style>

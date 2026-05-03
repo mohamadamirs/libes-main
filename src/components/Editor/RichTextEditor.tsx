@@ -63,35 +63,43 @@ export default function RichTextEditor({ name, value = "", placeholder = "Tulis 
   }, []);
 
   return (
-    <div className="rich-text-container space-y-4">
-      {/* Tabs Header */}
-      <div className="flex p-1 bg-slate-100 rounded-xl w-fit border border-slate-200">
-        <button
-          type="button"
-          onClick={() => setActiveTab('write')}
-          className={`px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${
-            activeTab === 'write' 
-              ? 'bg-blue-600 text-white shadow-md' 
-              : 'text-slate-500 hover:text-slate-900'
-          }`}
-        >
-          Ketik
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab('preview')}
-          className={`px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${
-            activeTab === 'preview' 
-              ? 'bg-blue-600 text-white shadow-md' 
-              : 'text-slate-500 hover:text-slate-900'
-          }`}
-        >
-          Preview
-        </button>
+    <div className="rich-text-container space-y-0">
+      {/* Unified Sticky Control Header - Top Part (Tabs) */}
+      <div className="sticky top-[68px] md:top-[80px] z-[45] -mx-1 px-1">
+        <div className="bg-blue-50 backdrop-blur-md border border-blue-100/50 border-b-0 rounded-t-2xl md:rounded-t-[2rem] p-2 md:p-3 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.05)]">
+          {/* Tabs Header */}
+          <div className="flex p-1 bg-white/60 rounded-xl w-fit border border-blue-100/20">
+            <button
+              type="button"
+              onClick={() => setActiveTab('write')}
+              className={`px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${
+                activeTab === 'write' 
+                  ? 'bg-blue-600 text-white shadow-md' 
+                  : 'text-slate-500 hover:text-slate-900'
+              }`}
+            >
+              Ketik
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('preview')}
+              className={`px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${
+                activeTab === 'preview' 
+                  ? 'bg-blue-600 text-white shadow-md' 
+                  : 'text-slate-500 hover:text-slate-900'
+              }`}
+            >
+              Preview
+            </button>
+          </div>
+          
+          {/* Quill Toolbar will be 'pushed' into this visual space via CSS top adjustment if needed, 
+              or we can let it stack naturally. For better unity, we keep the background here. */}
+        </div>
       </div>
 
       {/* Editor / Preview Area */}
-      <div className="bg-white border border-slate-200 rounded-[2rem] overflow-hidden min-h-[400px]">
+      <div className="bg-white border border-slate-200 rounded-[2rem] min-h-[400px]">
         {/* Mode Ketik (Quill) - Kita gunakan hidden agar instance Quill tidak hancur saat pindah tab */}
         <div className={activeTab === 'write' ? 'block' : 'hidden'}>
           <div ref={quillRef} className="quill-editor-inner"></div>
@@ -99,9 +107,9 @@ export default function RichTextEditor({ name, value = "", placeholder = "Tulis 
 
         {/* Mode Preview (Prose) */}
         {activeTab === 'preview' && (
-          <div className="p-8 md:p-12 animate-in fade-in duration-300">
+          <div className="p-8 md:p-12 animate-in fade-in duration-300 rounded-[2rem]">
             <article 
-              className="prose prose-slate prose-lg md:prose-xl max-w-none 
+              className="prose prose-slate prose-sm md:prose-base max-w-none 
                          prose-headings:font-black prose-headings:tracking-tight 
                          prose-p:leading-relaxed prose-p:text-slate-600 
                          prose-img:rounded-3xl prose-img:shadow-xl

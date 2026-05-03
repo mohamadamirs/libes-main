@@ -3,6 +3,7 @@ import DashboardLayout from "../../../layouts/DashboardLayout.astro";
 import { actions } from "astro:actions";
 import { sql } from "../../../lib/db";
 import RichTextEditor from "../../../components/RichTextEditor.astro";
+import TitleEditor from "../../../components/Editor/TitleEditor";
 
 const { user } = Astro.locals;
 if (user?.role !== 'admin') return Astro.redirect('/user');
@@ -27,18 +28,25 @@ if (result && !result.error) return Astro.redirect('/admin');
     <form method="POST" action={actions.createPost} class="space-y-6 md:space-y-8">
       <div class="group">
         <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Judul Artikel</label>
-        <input type="text" name="title" required class="w-full px-5 py-4 md:px-6 md:py-5 bg-white border border-slate-200 rounded-2xl md:rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-slate-900 placeholder:text-slate-300" placeholder="Apa judul artikel hari ini?" />
+        <TitleEditor client:load name="title" placeholder="Apa judul artikel hari ini?" />
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="group">
           <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Kategori</label>
-          <select name="category_id" class="w-full px-5 py-4 md:px-6 md:py-5 bg-white border border-slate-200 rounded-2xl md:rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-slate-900 appearance-none">
-            <option value="">Pilih Kategori (Opsional)</option>
-            {categories.map((cat) => (
-              <option value={cat.id}>{cat.name}</option>
-            ))}
-          </select>
+          <div class="relative">
+            <select name="category_id" class="w-full px-5 py-4 md:px-6 md:py-5 bg-white border border-slate-200 rounded-2xl md:rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-slate-900 appearance-none cursor-pointer">
+              <option value="">Pilih Kategori (Opsional)</option>
+              {categories.map((cat) => (
+                <option value={cat.id}>{cat.name}</option>
+              ))}
+            </select>
+            <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
 

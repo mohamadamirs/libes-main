@@ -1,4 +1,11 @@
-<section id="hero" class="relative min-h-[100svh] pt-28 pb-16 md:pt-36 md:pb-24 flex items-center overflow-hidden  text-left">
+---
+import { getLatestMedia } from "../../lib/googleDrive";
+
+const latestMedia = await getLatestMedia(1);
+const latestImage = latestMedia.length > 0 ? latestMedia[0] : null;
+---
+
+<section id="hero" class="relative min-h-[100svh] pt-28 pb-8 md:pt-36 md:pb-12 flex items-center overflow-hidden  text-left">
   <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-30">
     <div class="absolute top-0 left-0 w-1/2 h-1/2 bg-blue-400 rounded-full blur-3xl opacity-50"></div>
     <div class="absolute bottom-0 right-0 w-1/2 h-1/2 bg-indigo-400 rounded-full blur-3xl opacity-50"></div>
@@ -48,11 +55,11 @@
            <div class="absolute inset-0 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-[4rem] rotate-12 opacity-5 animate-pulse"></div>
            <div class="absolute inset-4 border-2 border-slate-900/10 rounded-[4rem] -rotate-6"></div>
            
-           <div class="relative bg-white p-4 rounded-[3rem] shadow-2xl border border-slate-100 rotate-3 hover:rotate-0 transition-transform duration-500 group overflow-hidden">
+           <div class="relative bg-white p-2 md:p-3 rounded-[3rem] shadow-2xl border border-slate-100 rotate-3 hover:rotate-0 transition-transform duration-500 group overflow-hidden w-full aspect-square max-w-[400px]">
               <img 
-                src="/literasi-brebesan.webp" 
-                alt="Literasi Brebesan Logo" 
-                class="w-full h-full object-contain max-w-[300px]"
+                src={latestImage ? `/api/drive-image/${latestImage.id}?sz=800` : "/literasi-brebesan.webp"} 
+                alt={latestImage ? latestImage.name : "Literasi Brebesan"} 
+                class="w-full h-full object-cover rounded-[2.2rem]"
                 loading="eager"
                 fetchpriority="high"
                 decoding="async"

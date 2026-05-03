@@ -3,6 +3,7 @@ import DashboardLayout from "../../../../layouts/DashboardLayout.astro";
 import { actions } from "astro:actions";
 import { sql } from "../../../../lib/db";
 import RichTextEditor from "../../../../components/RichTextEditor.astro";
+import TitleEditor from "../../../../components/Editor/TitleEditor";
 
 const { id } = Astro.params;
 const { user } = Astro.locals;
@@ -43,14 +44,7 @@ if (result && !result.error) return Astro.redirect('/user?success=Perubahan tuli
       <div class="space-y-6">
         <div class="group">
           <label class="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2 block pl-1">Judul Cerita</label>
-          <input 
-            type="text" 
-            name="title" 
-            value={post.title}
-            required 
-            placeholder="Tulis judul yang menarik..."
-            class="w-full px-0 py-2 bg-transparent border-b-2 border-slate-100 focus:border-blue-600 outline-none transition-all font-black text-3xl md:text-5xl text-slate-900 placeholder:text-slate-100" 
-          />
+          <TitleEditor client:load name="title" value={post.title} placeholder="Tulis judul yang menarik..." />
         </div>
 
         <div class="inline-flex items-center gap-3 bg-slate-50 p-1.5 rounded-2xl border border-slate-100 shadow-sm">

@@ -20,33 +20,48 @@ const { name, value = "", placeholder = "Tulis ceritamu di sini..." } = Astro.pr
 <style is:global>
   /* Menyesuaikan style Quill agar senada dengan desain kita */
   .ql-toolbar.ql-snow {
-    border: none !important;
-    border-bottom: 1px solid #e2e8f0 !important;
-    padding: 1rem 1.5rem !important;
-    background: #f8fafc;
+    border: 1px solid #dbeafe !important; /* blue-100 */
+    border-top: none !important;
+    padding: 0.75rem 1rem !important;
+    background: rgba(239, 246, 255, 0.95) !important; /* blue-50 */
+    backdrop-filter: blur(12px) !important;
+    position: sticky !important;
+    top: 118px; /* Menyesuaikan: Header(68px) + Tabs(approx 50px) */
+    z-index: 40;
+    border-radius: 0 0 1rem 1rem !important;
+    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.05);
+    transition: all 0.3s ease;
+  }
+  @media (min-width: 768px) {
+    .ql-toolbar.ql-snow {
+      top: 136px; /* Menyesuaikan: Header(80px) + Tabs(approx 56px) */
+      padding: 1rem 1.5rem !important;
+      border-radius: 0 0 2rem 2rem !important;
+    }
   }
   .ql-container.ql-snow {
     border: none !important;
     font-family: inherit;
   }
   .ql-editor {
-    padding: 1.5rem !important;
-    min-height: 400px;
-    font-size: 1.125rem;
+    padding: 2rem !important; /* Disamakan dengan p-8 preview */
+    min-height: 500px;
+    font-size: 1rem;
     line-height: 1.8;
     color: #334155;
   }
   @media (min-width: 768px) {
     .ql-editor {
-      padding: 3rem !important;
+      padding: 3rem !important; /* Disamakan dengan md:p-12 preview */
     }
   }
   .ql-editor h1, .ql-editor h2, .ql-editor h3 {
     font-weight: 900 !important;
     color: #0f172a !important;
     letter-spacing: -0.02em !important;
-    margin-top: 2rem !important;
-    margin-bottom: 1rem !important;
+    margin-top: 1.5em !important;
+    margin-bottom: 0.5em !important;
+    line-height: 1.2 !important;
   }
   .ql-editor a {
     color: #2563eb !important;
