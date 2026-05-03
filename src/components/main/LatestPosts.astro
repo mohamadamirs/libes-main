@@ -1,5 +1,6 @@
 ---
 import { sql } from "../../lib/db";
+import { Image } from "astro:assets";
 
 const { rows: posts } = await sql`
   SELECT 
