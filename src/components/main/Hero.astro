@@ -5,7 +5,7 @@ const latestMedia = await getLatestMedia(1);
 const latestImage = latestMedia.length > 0 ? latestMedia[0] : null;
 ---
 
-<section id="hero" class="relative min-h-[100svh] pt-28 pb-8 md:pt-36 md:pb-12 flex items-center overflow-hidden  text-left">
+<section id="hero" class="relative min-h-fit lg:min-h-[100svh] pt-28 pb-12 md:pt-36 md:pb-20 flex items-center overflow-hidden text-left">
   <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-30">
     <div class="absolute top-0 left-0 w-1/2 h-1/2 bg-blue-400 rounded-full blur-3xl opacity-50"></div>
     <div class="absolute bottom-0 right-0 w-1/2 h-1/2 bg-indigo-400 rounded-full blur-3xl opacity-50"></div>
