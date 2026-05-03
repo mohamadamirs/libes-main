@@ -15,14 +15,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   try {
-    const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
+    // Persingkat nama file untuk menghindari URL yang terlalu panjang
+    const extension = file.name.split('.').pop() || 'jpg';
+    const filename = `${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${extension}`;
     
-    // Pastikan token tersedia (Astro menggunakan import.meta.env, SDK Vercel biasanya mencari process.env)
+    // Pastikan token tersedia
     const token = process.env.BLOB_READ_WRITE_TOKEN || import.meta.env.BLOB_READ_WRITE_TOKEN;
 
     const blob = await put(`posts/${filename}`, file, {
       access: 'public',
       token: token,
+      contentType: file.type, // PENTING: Beritahu Vercel tipe konten aslinya
     });
 
     return new Response(JSON.stringify({ url: blob.url }), { status: 200 });
