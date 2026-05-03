@@ -9,7 +9,7 @@ export default function UserRoleManager({ initialRole }: Props) {
 
   return (
     <div class="group">
-      <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-4">Peran (Role)</label>
+      <label class="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-4">Peran (Role)</label>
       
       <div class="relative inline-flex p-1 bg-slate-100 rounded-2xl border border-slate-200 overflow-hidden">
         {/* Sliding Background Indicator */}

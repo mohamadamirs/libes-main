@@ -7,7 +7,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const { cookies, url, redirect, locals } = context;
 
   // 1. BYPASS SEO & STATIC FILES
-  if (url.pathname === '/sitemap.xml' || url.pathname === '/robots.txt') {
+  const seoFiles = ['/sitemap.xml', '/robots.txt', '/favicon.ico'];
+  if (seoFiles.some(file => url.pathname === file || url.pathname === file + '/')) {
     return next();
   }
 

@@ -127,7 +127,7 @@ const getTabUrl = (tab: string) => `/admin?tab=${tab}`;
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
           <h1 class="text-3xl font-black text-slate-900 tracking-tighter leading-none">Dashboard Admin</h1>
-          <p class="text-xs font-bold text-slate-400 mt-2 tracking-wider">Sistem Manajemen Literasi Brebesan</p>
+          <p class="text-xs font-bold text-slate-500 mt-2 tracking-wider">Sistem Manajemen Literasi Brebesan</p>
         </div>
         
         <nav class="flex p-1 bg-slate-100 rounded-2xl md:rounded-full w-fit border border-slate-200">
@@ -187,7 +187,7 @@ const getTabUrl = (tab: string) => `/admin?tab=${tab}`;
 
         <div class="p-4 md:p-6 rounded-3xl bg-white border border-slate-200 shadow-sm">
           <span class="block text-2xl md:text-4xl font-black text-slate-900 mb-1">{stats.val3}</span>
-          <span class="text-[9px] md:text-[10px] font-black text-slate-400">{stats.label3}</span>
+          <span class="text-[9px] md:text-[10px] font-black text-slate-500">{stats.label3}</span>
         </div>
       </div>
     </header>
@@ -206,7 +206,7 @@ const getTabUrl = (tab: string) => `/admin?tab=${tab}`;
       <div class="flex flex-col gap-3">
         {displayData.length === 0 ? (
           <div class="p-12 text-center bg-slate-50 rounded-3xl border border-dashed border-slate-300">
-            <p class="text-xs font-bold text-slate-400">Data tidak ditemukan.</p>
+            <p class="text-xs font-bold text-slate-500">Data tidak ditemukan.</p>
           </div>
         ) : (
           <>
@@ -226,7 +226,7 @@ const getTabUrl = (tab: string) => `/admin?tab=${tab}`;
                       <h3 class="font-bold text-slate-900 truncate">{agenda.title}</h3>
                       <span class={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${agenda.status === 'published' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'}`}>{agenda.status}</span>
                     </div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{formatDate(agenda.event_date)} • {agenda.location}</p>
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{formatDate(agenda.event_date)} • {agenda.location}</p>
                   </div>
 
                   {/* Kolom Kanan: Aksi */}
@@ -259,11 +259,11 @@ const getTabUrl = (tab: string) => `/admin?tab=${tab}`;
                   <h3 class="font-black text-slate-900 uppercase tracking-widest text-sm mb-4">Konfigurasi Situs</h3>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Nama Situs</p>
+                      <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Nama Situs</p>
                       <p class="font-bold text-slate-700">Literasi Brebesan</p>
                     </div>
                     <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Status Sistem</p>
+                      <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Status Sistem</p>
                       <p class="font-bold text-emerald-600 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         Online / Aktif

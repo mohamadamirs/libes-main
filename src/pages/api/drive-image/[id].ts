@@ -22,9 +22,8 @@ export const GET: APIRoute = async ({ params, url }) => {
     return new Response(buffer, {
       headers: {
         "Content-Type": contentType,
-        // Cache gambar di Edge Network selama 1 hari (s-maxage)
-        // Dan di browser pengguna selama 1 hari (max-age)
-        "Cache-Control": "public, max-age=86400, s-maxage=86400, stale-while-revalidate=3600",
+        // Cache gambar di Edge Network dan Browser selama 1 tahun (31536000 detik)
+        "Cache-Control": "public, max-age=31536000, s-maxage=31536000, immutable",
       }
     });
   } catch (e) {

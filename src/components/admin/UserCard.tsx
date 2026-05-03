@@ -27,12 +27,12 @@ export default function UserCard({ user }: Props) {
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
         {/* Kolom Kiri: Info */}
         <div class="flex-1 flex items-center gap-4">
-          <div class="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-black text-slate-400 uppercase shrink-0">
+          <div class="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-black text-slate-500 uppercase shrink-0">
             {user.full_name[0]}
           </div>
           <div class="min-w-0">
             <h3 class="font-bold text-slate-900 leading-tight truncate">{user.full_name}</h3>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">
               {user.email} • <span class={user.role === 'admin' ? 'text-indigo-600' : 'text-slate-500'}>{user.role}</span>
             </p>
           </div>

@@ -28,44 +28,44 @@ if (result && !result.error) {
          <a href="/admin" class="text-[11px] md:text-xs font-black uppercase tracking-widest text-blue-600 hover:underline">← Dasbor Admin</a>
       </div>
       <h1 class="text-3xl md:text-4xl font-black uppercase tracking-tighter text-slate-900">Agenda Baru</h1>
-      <p class="text-xs md:text-sm font-bold text-slate-400 mt-1 uppercase tracking-widest">Literasi Brebesan</p>
+      <p class="text-xs md:text-sm font-bold text-slate-500 mt-1 uppercase tracking-widest">Literasi Brebesan</p>
     </header>
 
     <form method="POST" action={actions.saveAgenda} enctype="multipart/form-data" class="space-y-5 md:space-y-6 md:bg-white md:p-8 md:rounded-[2.5rem] md:shadow-sm md:border md:border-slate-100 text-left">
 
       <div class="group">
-        <label class="block text-[11px] md:text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Judul Acara</label>
+        <label class="block text-[11px] md:text-xs font-black uppercase tracking-[0.2em] text-slate-500 mb-2 group-focus-within:text-blue-600 transition-colors">Judul Acara</label>
         <input type="text" name="title" required class="w-full px-5 py-4 md:px-6 md:py-5 bg-white md:bg-slate-50 border border-slate-200 rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-sm md:text-base text-slate-900 placeholder:text-slate-300" placeholder="Misal: Diskusi Buku..." />
       </div>
 
       <div class="group">
-        <label class="block text-[11px] md:text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Deskripsi Singkat</label>
+        <label class="block text-[11px] md:text-xs font-black uppercase tracking-[0.2em] text-slate-500 mb-2 group-focus-within:text-blue-600 transition-colors">Deskripsi Singkat</label>
         <textarea name="description" rows="4" required class="w-full px-5 py-4 md:px-6 md:py-5 bg-white md:bg-slate-50 border border-slate-200 rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-medium text-sm md:text-base text-slate-700 placeholder:text-slate-300" placeholder="Jelaskan detail acara..."></textarea>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-6">
         <div class="group">
-          <label class="block text-[11px] md:text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Tanggal Acara</label>
+          <label class="block text-[11px] md:text-xs font-black uppercase tracking-[0.2em] text-slate-500 mb-2 group-focus-within:text-blue-600 transition-colors">Tanggal Acara</label>
           <input type="date" name="event_date" required class="w-full px-5 py-4 md:px-6 md:py-5 bg-white md:bg-slate-50 border border-slate-200 rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-sm md:text-base text-slate-700" />
         </div>
         <div class="group">
-          <label class="block text-[11px] md:text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Waktu Mulai</label>
+          <label class="block text-[11px] md:text-xs font-black uppercase tracking-[0.2em] text-slate-500 mb-2 group-focus-within:text-blue-600 transition-colors">Waktu Mulai</label>
           <input type="time" name="event_time" required class="w-full px-5 py-4 md:px-6 md:py-5 bg-white md:bg-slate-50 border border-slate-200 rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-sm md:text-base text-slate-700" />
         </div>
       </div>
 
       <div class="group">
-        <label class="block text-[11px] md:text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Lokasi</label>
+        <label class="block text-[11px] md:text-xs font-black uppercase tracking-[0.2em] text-slate-500 mb-2 group-focus-within:text-blue-600 transition-colors">Lokasi</label>
         <input type="text" name="location" required class="w-full px-5 py-4 md:px-6 md:py-5 bg-white md:bg-slate-50 border border-slate-200 rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-sm md:text-base text-slate-700 placeholder:text-slate-300" placeholder="Cth: Kedai Kopi Sekitar, Brebes" />
       </div>
 
       <div class="group">
-        <label class="block text-[11px] md:text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Link WhatsApp RSVP</label>
+        <label class="block text-[11px] md:text-xs font-black uppercase tracking-[0.2em] text-slate-500 mb-2 group-focus-within:text-blue-600 transition-colors">Link WhatsApp RSVP</label>
         <input type="url" name="wa_link" value="https://wa.me/628993986415" required class="w-full px-5 py-4 md:px-6 md:py-5 bg-white md:bg-slate-50 border border-slate-200 rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-sm md:text-base text-slate-700" />
       </div>
 
       <div class="group">
-        <label class="block text-[11px] md:text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Poster Kegiatan (Opsional)</label>
+        <label class="block text-[11px] md:text-xs font-black uppercase tracking-[0.2em] text-slate-500 mb-2 group-focus-within:text-blue-600 transition-colors">Poster Kegiatan (Opsional)</label>
         <input type="file" name="poster" accept="image/*" class="w-full px-5 py-3 md:px-6 md:py-4 bg-white md:bg-slate-50 border border-slate-200 rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-sm text-slate-700 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[11px] file:font-black file:uppercase file:tracking-widest file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer" />
       </div>
 
@@ -75,15 +75,15 @@ if (result && !result.error) {
         <div class="flex flex-col sm:flex-row bg-white p-2 rounded-[2rem] sm:rounded-full gap-2 sm:gap-1 shadow-sm border border-slate-100">
           <label class="flex-1 cursor-pointer">
             <input type="radio" name="status" value="draft" class="peer hidden" checked id="status-draft" />
-            <div class="text-center py-3 md:py-4 rounded-[1.5rem] sm:rounded-full text-[11px] md:text-[11px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-slate-100 peer-checked:text-slate-900 transition-all">Draft</div>
+            <div class="text-center py-3 md:py-4 rounded-[1.5rem] sm:rounded-full text-[11px] md:text-[11px] font-black uppercase tracking-widest text-slate-500 peer-checked:bg-slate-100 peer-checked:text-slate-900 transition-all">Draft</div>
           </label>
           <label class="flex-1 cursor-pointer">
             <input type="radio" name="status" value="scheduled" class="peer hidden" id="status-scheduled" />
-            <div class="text-center py-3 md:py-4 rounded-[1.5rem] sm:rounded-full text-[11px] md:text-[11px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-amber-500 peer-checked:text-white peer-checked:shadow-md transition-all">Jadwalkan</div>
+            <div class="text-center py-3 md:py-4 rounded-[1.5rem] sm:rounded-full text-[11px] md:text-[11px] font-black uppercase tracking-widest text-slate-500 peer-checked:bg-amber-500 peer-checked:text-white peer-checked:shadow-md transition-all">Jadwalkan</div>
           </label>
           <label class="flex-1 cursor-pointer">
             <input type="radio" name="status" value="published" class="peer hidden" id="status-published" />
-            <div class="text-center py-3 md:py-4 rounded-[1.5rem] sm:rounded-full text-[11px] md:text-[11px] font-black uppercase tracking-widest text-slate-400 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:shadow-md transition-all">Publish</div>
+            <div class="text-center py-3 md:py-4 rounded-[1.5rem] sm:rounded-full text-[11px] md:text-[11px] font-black uppercase tracking-widest text-slate-500 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:shadow-md transition-all">Publish</div>
           </label>
         </div>
 
@@ -103,7 +103,7 @@ if (result && !result.error) {
         )}
 
         <div id="publish-at-container" class="hidden pt-2 group transition-all">
-          <label class="block text-[11px] md:text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Pilih Waktu Rilis Otomatis</label>
+          <label class="block text-[11px] md:text-xs font-black uppercase tracking-[0.2em] text-slate-500 mb-2">Pilih Waktu Rilis Otomatis</label>
           <input type="datetime-local" name="publish_at" id="publish-at-input" class="w-full px-5 py-4 md:px-6 md:py-5 bg-white border border-amber-200 rounded-[2rem] focus:ring-4 focus:ring-amber-50 outline-none transition-all font-bold text-sm md:text-base text-slate-700" />
         </div>
       </div>

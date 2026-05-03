@@ -95,7 +95,7 @@ export default function AgendaIsland() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[11px] md:text-xs font-black text-slate-400 uppercase tracking-widest mb-0.5 md:mb-1 truncate">Waktu</p>
+                <p className="text-[11px] md:text-xs font-black text-slate-500 uppercase tracking-widest mb-0.5 md:mb-1 truncate">Waktu</p>
                 <p className="text-xs md:text-sm font-bold text-slate-900 leading-none truncate">{formatDate(displayAgenda.event_date)}</p>
                 <p className="text-xs md:text-sm font-medium text-slate-500 mt-1 truncate">{displayAgenda.event_time} WIB</p>
               </div>
@@ -105,7 +105,7 @@ export default function AgendaIsland() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[11px] md:text-xs font-black text-slate-400 uppercase tracking-widest mb-0.5 md:mb-1 truncate">Lokasi</p>
+                <p className="text-[11px] md:text-xs font-black text-slate-500 uppercase tracking-widest mb-0.5 md:mb-1 truncate">Lokasi</p>
                 <p className="text-xs md:text-sm font-bold text-slate-900 leading-tight break-words line-clamp-2" title={displayAgenda.location}>{displayAgenda.location}</p>
               </div>
             </div>

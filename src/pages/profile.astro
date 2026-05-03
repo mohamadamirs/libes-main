@@ -77,12 +77,12 @@ const errorMessage = result?.error?.message || avatarResult?.error?.message || p
              <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[11px] font-black uppercase tracking-widest border border-indigo-100">
               {profile.role}
             </span>
-            <p class="text-[11px] text-slate-400 uppercase font-bold tracking-[0.2em]">Member sejak {new Date(profile.created_at).getFullYear()}</p>
+            <p class="text-[11px] text-slate-500 uppercase font-bold tracking-[0.2em]">Member sejak {new Date(profile.created_at).getFullYear()}</p>
           </div>
         </div>
       </div>
       
-      <a href={user.role === 'admin' ? '/admin' : '/user'} class="inline-flex items-center text-[11px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-all group bg-white px-5 py-3 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md active:scale-95">
+      <a href={user.role === 'admin' ? '/admin' : '/user'} class="inline-flex items-center text-[11px] font-black uppercase tracking-widest text-slate-500 hover:text-indigo-600 transition-all group bg-white px-5 py-3 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md active:scale-95">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
         Dashboard
       </a>
@@ -92,7 +92,7 @@ const errorMessage = result?.error?.message || avatarResult?.error?.message || p
       <!-- Sidebar Info -->
       <div class="md:col-span-1 space-y-6">
         <div class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden group">
-          <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2 relative z-10">
+          <h3 class="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-2 relative z-10">
             <span class="w-1.5 h-1.5 bg-indigo-600 rounded-full"></span>
             Akun & Keamanan
           </h3>
@@ -110,7 +110,7 @@ const errorMessage = result?.error?.message || avatarResult?.error?.message || p
                   <input type="hidden" name="fullName" value={profile.full_name} id="hidden-name" />
                   <input type="hidden" name="bio" value={profile.bio} id="hidden-bio" />
                   <div class="relative group mt-2">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 group-focus-within:text-pink-500 transition-colors">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500 group-focus-within:text-pink-500 transition-colors">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
                     </span>
                     <input 
@@ -130,7 +130,7 @@ const errorMessage = result?.error?.message || avatarResult?.error?.message || p
                   </a>
                 ) : (
                   <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 border-dashed mt-2">
-                    <p class="text-[11px] font-bold text-slate-400 italic">Belum ada Instagram</p>
+                    <p class="text-[11px] font-bold text-slate-500 italic">Belum ada Instagram</p>
                   </div>
                 )
               )}
@@ -167,7 +167,7 @@ const errorMessage = result?.error?.message || avatarResult?.error?.message || p
       <!-- Main Content -->
       <div class="md:col-span-2 space-y-6">
         <div class="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden group">
-          <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-2 relative z-10">
+          <h3 class="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-8 flex items-center gap-2 relative z-10">
             <span class="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-pulse"></span>
             Biodata Diri
           </h3>
@@ -214,7 +214,7 @@ const errorMessage = result?.error?.message || avatarResult?.error?.message || p
           <div class="mt-12 pt-8 border-t border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
              <div class="flex items-center gap-2">
                 <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                <div class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">
                    Akun Terdaftar: {new Date(profile.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </div>
              </div>

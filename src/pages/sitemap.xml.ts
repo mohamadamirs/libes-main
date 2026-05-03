@@ -26,8 +26,21 @@ export const GET: APIRoute = async () => {
     xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
     // Helper function (Flattened XML for better parsing)
+    const escapeXml = (unsafe: string) => {
+      return unsafe.replace(/[<>&'"]/g, (c) => {
+        switch (c) {
+          case '<': return '&lt;';
+          case '>': return '&gt;';
+          case '&': return '&amp;';
+          case '\'': return '&apos;';
+          case '"': return '&quot;';
+        }
+        return c;
+      });
+    };
+
     const addUrl = (path: string, lastmod: string, changefreq: string, priority: string) => {
-      xml += `<url><loc>${baseUrl}${path}</loc><lastmod>${lastmod}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
+      xml += `<url><loc>${baseUrl}${escapeXml(path)}</loc><lastmod>${lastmod}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
     };
 
     // 2. Home & Static
@@ -54,13 +67,13 @@ export const GET: APIRoute = async () => {
     return new Response(xml, {
       status: 200,
       headers: {
-        'Content-Type': 'application/xml',
-        'Cache-Control': 'public, s-maxage=3600'
+        'Content-Type': 'text/xml',
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=600'
       }
     });
   } catch (error) {
     console.error('Sitemap Error:', error);
     const emergency = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${baseUrl}/</loc><lastmod>${today}</lastmod></url></urlset>`;
-    return new Response(emergency, { status: 200, headers: { 'Content-Type': 'application/xml' } });
+    return new Response(emergency, { status: 200, headers: { 'Content-Type': 'text/xml' } });
   }
 };

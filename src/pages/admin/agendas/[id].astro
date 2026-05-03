@@ -48,38 +48,38 @@ if (result && !result.error) return Astro.redirect('/admin');
       <input type="hidden" name="id" value={agenda.id} />
 
       <div class="group">
-        <label class="block text-[11px] font-black uppercase text-slate-400 mb-2">Judul Acara</label>
+        <label class="block text-[11px] font-black uppercase text-slate-500 mb-2">Judul Acara</label>
         <input type="text" name="title" value={agenda.title} required class="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-[2rem] outline-none font-bold text-slate-900" />
       </div>
 
       <div class="group">
-        <label class="block text-[11px] font-black uppercase text-slate-400 mb-2">Deskripsi</label>
+        <label class="block text-[11px] font-black uppercase text-slate-500 mb-2">Deskripsi</label>
         <textarea name="description" rows="4" required class="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-[2rem] outline-none font-medium text-slate-700">{agenda.description}</textarea>
       </div>
 
       <div class="grid grid-cols-2 gap-4">
         <div class="group">
-          <label class="block text-[11px] font-black uppercase text-slate-400 mb-2">Tanggal</label>
+          <label class="block text-[11px] font-black uppercase text-slate-500 mb-2">Tanggal</label>
           <input type="date" name="event_date" value={agenda.event_date.toISOString().split('T')[0]} required class="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-[2rem] font-bold text-slate-700" />
         </div>
         <div class="group">
-          <label class="block text-[11px] font-black uppercase text-slate-400 mb-2">Waktu Mulai</label>
+          <label class="block text-[11px] font-black uppercase text-slate-500 mb-2">Waktu Mulai</label>
           <input type="time" name="event_time" value={agenda.event_time} required class="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-[2rem] font-bold text-slate-700" />
         </div>
       </div>
 
       <div class="group">
-        <label class="block text-[11px] font-black uppercase text-slate-400 mb-2">Lokasi</label>
+        <label class="block text-[11px] font-black uppercase text-slate-500 mb-2">Lokasi</label>
         <input type="text" name="location" value={agenda.location} required class="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-[2rem] font-bold text-slate-700" />
       </div>
 
       <div class="group">
-        <label class="block text-[11px] font-black uppercase text-slate-400 mb-2">Poster (Kosongkan jika tak diubah)</label>
+        <label class="block text-[11px] font-black uppercase text-slate-500 mb-2">Poster (Kosongkan jika tak diubah)</label>
         <input type="file" name="poster" accept="image/*" class="w-full px-6 py-4 bg-white border border-slate-200 rounded-[2rem] text-xs font-bold" />
       </div>
 
       <div class="group">
-        <label class="block text-[11px] font-black uppercase text-slate-400 mb-2">WhatsApp RSVP</label>
+        <label class="block text-[11px] font-black uppercase text-slate-500 mb-2">WhatsApp RSVP</label>
         <input type="url" name="wa_link" value={agenda.wa_link} required class="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-[2rem] font-bold text-slate-700" />
       </div>
 

@@ -16,7 +16,7 @@ const errorMessage = result?.error?.message;
 <DashboardLayout title="Tambah User Baru">
   <div class="max-w-2xl mx-auto px-4 py-8">
     <div class="mb-8">
-      <a href="/admin" class="inline-flex items-center text-sm font-bold text-slate-400 hover:text-blue-600 transition-colors group">
+      <a href="/admin" class="inline-flex items-center text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors group">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
         </svg>
@@ -34,7 +34,7 @@ const errorMessage = result?.error?.message;
 
     <form method="POST" action={actions.createUser} class="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 space-y-6">
       <div>
-        <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Nama Lengkap</label>
+        <label class="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-2">Nama Lengkap</label>
         <input 
           type="text" 
           name="fullName" 
@@ -45,7 +45,7 @@ const errorMessage = result?.error?.message;
       </div>
 
       <div>
-        <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Alamat Email</label>
+        <label class="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-2">Alamat Email</label>
         <input 
           type="email" 
           name="email" 
@@ -56,7 +56,7 @@ const errorMessage = result?.error?.message;
       </div>
 
       <div>
-        <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Kata Sandi Sementara</label>
+        <label class="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-2">Kata Sandi Sementara</label>
         <input 
           type="password" 
           name="password" 
@@ -67,7 +67,7 @@ const errorMessage = result?.error?.message;
       </div>
 
       <div>
-        <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Role / Peran</label>
+        <label class="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-2">Role / Peran</label>
         <div class="grid grid-cols-2 gap-4">
           <label class="relative flex items-center p-4 border border-slate-200 rounded-2xl cursor-pointer hover:bg-slate-50 transition-colors has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/50 group">
             <input type="radio" name="role" value="user" checked class="hidden" />

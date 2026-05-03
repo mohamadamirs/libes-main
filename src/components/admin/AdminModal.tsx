@@ -118,7 +118,7 @@ export default function AdminModal({
 
           {showInput && (
             <div className="mb-10 relative">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-3 pl-1">Pesan untuk penulis</label>
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block mb-3 pl-1">Pesan untuk penulis</label>
               <textarea
                 autoFocus
                 className="w-full px-5 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-medium text-slate-700 text-sm placeholder:text-slate-300 shadow-inner"

@@ -98,7 +98,7 @@ export default function FolderGallery({ yearId, monthId, activityId }: FolderGal
             <span className="text-sm md:text-base font-black text-slate-900 truncate uppercase tracking-tight leading-tight mb-1">
               {item.name}
             </span>
-            <span className="text-[10px] md:text-[11px] text-slate-400 font-bold uppercase tracking-widest">
+            <span className="text-[10px] md:text-[11px] text-slate-500 font-bold uppercase tracking-widest">
               {view === 'years' ? 'Arsip Tahunan' : view === 'months' ? 'Koleksi Bulan' : 'Lihat Dokumentasi'}
             </span>
           </div>
@@ -109,7 +109,7 @@ export default function FolderGallery({ yearId, monthId, activityId }: FolderGal
       ))}
       {data.length === 0 && (
         <div className="col-span-full py-20 text-center bg-white border-2 border-dashed border-slate-100 rounded-[2.5rem] px-6">
-          <p className="text-slate-400 font-black uppercase tracking-[0.3em] text-xs">Arsip Kosong</p>
+          <p className="text-slate-500 font-black uppercase tracking-[0.3em] text-xs">Arsip Kosong</p>
         </div>
       )}
     </div>

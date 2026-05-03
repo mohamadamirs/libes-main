@@ -22,18 +22,18 @@ if (result && !result.error) return Astro.redirect('/admin');
          <a href="/admin" class="text-[10px] font-black uppercase tracking-wider text-blue-600 hover:underline">← Kembali</a>
       </div>
       <h1 class="text-2xl md:text-3xl font-black text-slate-900 leading-tight">Buat Artikel</h1>
-      <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1 md:mt-2">Panel khusus Admin buat nulis konten</p>
+      <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1 md:mt-2">Panel khusus Admin buat nulis konten</p>
     </header>
 
     <form method="POST" action={actions.createPost} class="space-y-6 md:space-y-8">
       <div class="group">
-        <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Judul Artikel</label>
+        <label class="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-2 group-focus-within:text-blue-600 transition-colors">Judul Artikel</label>
         <TitleEditor client:load name="title" placeholder="Apa judul artikel hari ini?" />
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="group">
-          <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Kategori</label>
+          <label class="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-2 group-focus-within:text-blue-600 transition-colors">Kategori</label>
           <div class="relative">
             <select name="category_id" class="w-full px-5 py-4 md:px-6 md:py-5 bg-white border border-slate-200 rounded-2xl md:rounded-[2rem] focus:ring-4 focus:ring-blue-50 outline-none transition-all font-bold text-slate-900 appearance-none cursor-pointer">
               <option value="">Pilih Kategori (Opsional)</option>
@@ -41,7 +41,7 @@ if (result && !result.error) return Astro.redirect('/admin');
                 <option value={cat.id}>{cat.name}</option>
               ))}
             </select>
-            <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+            <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
@@ -51,7 +51,7 @@ if (result && !result.error) return Astro.redirect('/admin');
       </div>
 
       <div class="group">
-        <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2 group-focus-within:text-blue-600 transition-colors">Isi Konten</label>
+        <label class="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-2 group-focus-within:text-blue-600 transition-colors">Isi Konten</label>
         <RichTextEditor name="content" />
       </div>
 
@@ -59,12 +59,12 @@ if (result && !result.error) return Astro.redirect('/admin');
         <div class="flex-1 bg-slate-100 p-1.5 rounded-2xl md:rounded-[2rem] flex gap-1">
           <label class="flex-1 cursor-pointer">
             <input type="radio" name="status" value="draft" class="peer hidden" checked />
-            <div class="text-center py-2.5 md:py-3.5 rounded-xl md:rounded-[1.5rem] text-[10px] font-black uppercase tracking-wider text-slate-400 peer-checked:bg-white peer-checked:text-slate-900 peer-checked:shadow-sm transition-all">Draft</div>
+            <div class="text-center py-2.5 md:py-3.5 rounded-xl md:rounded-[1.5rem] text-[10px] font-black uppercase tracking-wider text-slate-500 peer-checked:bg-white peer-checked:text-slate-900 peer-checked:shadow-sm transition-all">Draft</div>
           </label>
           
           <label class="flex-1 cursor-pointer">
             <input type="radio" name="status" value="published" class="peer hidden" />
-            <div class="text-center py-2.5 md:py-3.5 rounded-xl md:rounded-[1.5rem] text-[10px] font-black uppercase tracking-wider text-slate-400 peer-checked:bg-green-500 peer-checked:text-white peer-checked:shadow-lg transition-all">Publish</div>
+            <div class="text-center py-2.5 md:py-3.5 rounded-xl md:rounded-[1.5rem] text-[10px] font-black uppercase tracking-wider text-slate-500 peer-checked:bg-green-500 peer-checked:text-white peer-checked:shadow-lg transition-all">Publish</div>
           </label>
         </div>
 

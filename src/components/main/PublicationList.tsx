@@ -105,7 +105,7 @@ export default function PublicationList({ initialPosts, categoryId }: Props) {
                    <span class="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[9px] md:text-[10px] font-black uppercase tracking-wider border border-blue-100">
                       {post.category_name || "Umum"}
                    </span>
-                   <span class="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                   <span class="text-[9px] md:text-[10px] text-slate-500 font-bold uppercase tracking-widest">
                       {formatDate(post.updated_at)}
                    </span>
                 </div>
@@ -122,6 +122,8 @@ export default function PublicationList({ initialPosts, categoryId }: Props) {
                     <img 
                       src={firstImage} 
                       alt={post.title}
+                      width="600"
+                      height="337"
                       class="w-full h-full object-cover"
                       loading="lazy"
                     />
@@ -160,7 +162,7 @@ export default function PublicationList({ initialPosts, categoryId }: Props) {
                       )}
                     </div>
                   </div>
-                  <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm border border-slate-100 group-hover:border-blue-600">
+                  <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-50 text-slate-500 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm border border-slate-100 group-hover:border-blue-600">
                     <svg class="w-3.5 h-3.5 md:w-4 md:h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path></svg>
                   </div>
                 </div>

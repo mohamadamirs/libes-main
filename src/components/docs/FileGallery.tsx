@@ -104,7 +104,7 @@ export default function FileGallery({ activityId }: FileGalleryProps) {
             ))}
             {files.length === 0 && (
               <div className="col-span-full py-20 text-center bg-white border-2 border-dashed border-slate-100 rounded-[2.5rem]">
-                <p className="text-slate-400 font-black uppercase tracking-[0.3em] text-xs">Folder Media Kosong</p>
+                <p className="text-slate-500 font-black uppercase tracking-[0.3em] text-xs">Folder Media Kosong</p>
               </div>
             )}
           </>

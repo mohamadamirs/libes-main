@@ -22,7 +22,7 @@ export default function AgendaStatusManager({ initialStatus, initialPublishAt }:
             checked={status === 'draft'} 
             onChange={() => setStatus('draft')}
           />
-          <div class="text-center py-3 rounded-xl md:rounded-full text-[11px] font-black uppercase text-slate-400 peer-checked:bg-slate-100 peer-checked:text-slate-900 transition-all">Draft</div>
+          <div class="text-center py-3 rounded-xl md:rounded-full text-[11px] font-black uppercase text-slate-500 peer-checked:bg-slate-100 peer-checked:text-slate-900 transition-all">Draft</div>
         </label>
         
         <label class="flex-1 min-w-[100px] cursor-pointer">
@@ -34,7 +34,7 @@ export default function AgendaStatusManager({ initialStatus, initialPublishAt }:
             checked={status === 'scheduled'} 
             onChange={() => setStatus('scheduled')}
           />
-          <div class="text-center py-3 rounded-xl md:rounded-full text-[11px] font-black uppercase text-slate-400 peer-checked:bg-amber-500 peer-checked:text-white transition-all">Terjadwal</div>
+          <div class="text-center py-3 rounded-xl md:rounded-full text-[11px] font-black uppercase text-slate-500 peer-checked:bg-amber-500 peer-checked:text-white transition-all">Terjadwal</div>
         </label>
         
         <label class="flex-1 min-w-[100px] cursor-pointer">
@@ -46,7 +46,7 @@ export default function AgendaStatusManager({ initialStatus, initialPublishAt }:
             checked={status === 'published'} 
             onChange={() => setStatus('published')}
           />
-          <div class="text-center py-3 rounded-xl md:rounded-full text-[11px] font-black uppercase text-slate-400 peer-checked:bg-blue-600 peer-checked:text-white transition-all">Tayang</div>
+          <div class="text-center py-3 rounded-xl md:rounded-full text-[11px] font-black uppercase text-slate-500 peer-checked:bg-blue-600 peer-checked:text-white transition-all">Tayang</div>
         </label>
       </div>
 

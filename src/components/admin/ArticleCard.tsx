@@ -49,7 +49,7 @@ export default function ArticleCard({ post }: Props) {
             <span class={`text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded border ${
               post.status === 'published' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
               post.status === 'pending' ? 'bg-amber-50 text-amber-600 border-amber-100' : 
-              'bg-slate-50 text-slate-400'
+              'bg-slate-50 text-slate-500'
             }`}>
               {post.status}
             </span>
@@ -70,7 +70,7 @@ export default function ArticleCard({ post }: Props) {
             </h3>
           </a>
           
-          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tight truncate max-w-xs">{post.author} • {formatDate(post.created_at)}</p>
+          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-tight truncate max-w-xs">{post.author} • {formatDate(post.created_at)}</p>
         </div>
 
         {/* Kolom Kanan: Aksi */}

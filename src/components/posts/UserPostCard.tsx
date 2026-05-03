@@ -59,7 +59,7 @@ export default function UserPostCard({ post }: Props) {
              </button>
            )}
 
-           <span class="text-[9px] md:text-[10px] text-slate-400 font-bold">
+           <span class="text-[9px] md:text-[10px] text-slate-500 font-bold">
               {formatDate(post.created_at)}
            </span>
         </div>
@@ -80,13 +80,13 @@ export default function UserPostCard({ post }: Props) {
       </div>
 
       <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
-        <a href={`/user/posts/edit/${post.id}`} class="w-9 h-9 md:w-12 md:h-12 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl md:rounded-2xl transition-all border border-transparent hover:border-blue-100" title="Edit Tulisan">
+        <a href={`/user/posts/edit/${post.id}`} class="w-9 h-9 md:w-12 md:h-12 flex items-center justify-center text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl md:rounded-2xl transition-all border border-transparent hover:border-blue-100" title="Edit Tulisan">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </a>
 
         <button 
           onClick={() => setIsDeleteModalOpen(true)}
-          class="w-9 h-9 md:w-12 md:h-12 flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl md:rounded-2xl transition-all border border-transparent hover:border-rose-100 cursor-pointer" 
+          class="w-9 h-9 md:w-12 md:h-12 flex items-center justify-center text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl md:rounded-2xl transition-all border border-transparent hover:border-rose-100 cursor-pointer" 
           title="Hapus Tulisan"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>

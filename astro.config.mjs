@@ -27,4 +27,16 @@ export default defineConfig({
   },
 
   integrations: [preact()],
+  image: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**.vercel-storage.com",
+      },
+      {
+        protocol: "https",
+        hostname: "drive.google.com",
+      },
+    ],
+  },
 });

@@ -33,7 +33,7 @@ const formatDate = (date: any) => {
 <DashboardLayout title="Baca Artikel">
   <div class="pt-6 pb-24 px-4 max-w-lg mx-auto">
 
-    <a href="/admin" class="inline-flex items-center text-[11px] font-bold uppercase text-slate-400 mb-6 hover:text-blue-600">
+    <a href="/admin" class="inline-flex items-center text-[11px] font-bold uppercase text-slate-500 mb-6 hover:text-blue-600">
       ← Kembali ke Dashboard
     </a>
 
@@ -50,7 +50,7 @@ const formatDate = (date: any) => {
             {post.category_name || 'Tanpa Kategori'}
           </span>
         </div>
-        <span class="text-[11px] text-slate-400 font-bold uppercase shrink-0">
+        <span class="text-[11px] text-slate-500 font-bold uppercase shrink-0">
           {formatDate(post.created_at)}
         </span>
       </div>
@@ -81,7 +81,7 @@ const formatDate = (date: any) => {
       <form method="POST" action={actions.deletePost} class="m-0" onsubmit="return confirm('Yakin mau hapus artikel ini?')">
         <input type="hidden" name="id" value={post.id} />
         <button type="submit" class={`w-full py-3.5 border font-bold text-[11px] rounded-xl uppercase tracking-wider active:scale-95 transition-all ${
-          post.status === 'published' ? 'col-span-2 bg-red-50 text-red-600 border-red-100' : 'bg-white text-slate-400 border-slate-200'
+          post.status === 'published' ? 'col-span-2 bg-red-50 text-red-600 border-red-100' : 'bg-white text-slate-500 border-slate-200'
         }`}>
           Hapus
         </button>
