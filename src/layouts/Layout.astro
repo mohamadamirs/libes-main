@@ -53,27 +53,23 @@ const finalSchema = schema || defaultJsonLd;
     <meta name="keywords" content="komunitas literasi brebes, komunitas literasi brebesan, literasi brebesan, komunitas literasi di brebes, literasi brebes, membaca berdaya bergerak nyata, literasi digital brebes" />
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="icon" type="image/png" href="/literasi-brebesan.png" sizes="32x32" />
-    <link rel="apple-touch-icon" href="/literasi-brebesan.png" />
 
-    <!-- Meta Tags for Social Media Previews -->
-    <meta itemprop="name" content={formattedTitle} />
-    <meta itemprop="description" content={description} />
-    <meta itemprop="image" content={socialImageURL} />
-
-    <!-- Open Graph / Facebook -->
+    <!-- Open Graph / Facebook (PENTING: Urutan Berpengaruh buat WA) -->
     <meta property="og:type" content={type} />
-    <meta property="og:url" content={canonicalURL} />
-    <meta property="og:title" content={formattedTitle} />
-    <meta property="og:description" content={description} />
     <meta property="og:image" content={socialImageURL} />
     <meta property="og:image:secure_url" content={socialImageURL} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={formattedTitle} />
-    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={formattedTitle} />
+    <meta property="og:description" content={description} />
     <meta property="og:locale" content="id_ID" />
     <meta property="og:site_name" content="Literasi Brebesan" />
+
+    <!-- Meta Tags Tambahan untuk WhatsApp -->
+    <meta name="image" content={socialImageURL} />
+    <meta itemprop="image" content={socialImageURL} />
+    <link rel="image_src" href={socialImageURL} />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -81,12 +77,6 @@ const finalSchema = schema || defaultJsonLd;
     <meta name="twitter:title" content={formattedTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImageURL} />
-    <meta name="twitter:image:alt" content={formattedTitle} />
-    <meta name="twitter:site" content="@libes_brebesan" />
-
-    <!-- Additional for WhatsApp and other crawlers -->
-    <meta name="image" content={socialImageURL} />
-    <link rel="image_src" href={socialImageURL} />
 
     <!-- Font & Preconnect -->
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />

@@ -45,7 +45,8 @@ const stripHtml = (html: string) => {
 // Helper untuk ambil gambar pertama dari konten
 const extractFirstImage = (html: string) => {
   if (!html) return null;
-  const match = html.match(/<img[^>]+src="([^">]+)"/);
+  // Regex lebih kuat untuk menangani kutip ganda maupun tunggal
+  const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
   return match ? match[1] : null;
 };
 
