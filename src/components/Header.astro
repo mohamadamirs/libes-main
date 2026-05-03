@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import logoImage from '../../public/literasi-brebesan.webp';
+import logoImage from '../assets/logo.webp';
 
 // 1. Ambil data dari Middleware
 const { user } = Astro.locals;
@@ -31,7 +31,7 @@ const initial = user?.fullName?.charAt(0) || 'U';
               alt="Logo Literasi Brebesan"
               width={96} 
               height={96}
-              quality="max"
+              quality="high"
               format="webp"
               loading="eager"
               class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-slate-100 shadow-sm object-cover"

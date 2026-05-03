@@ -49,7 +49,7 @@ const formatDate = (date: any) => {
 
 const extractFirstImage = (html: string) => {
   if (!html) return null;
-  const match = html.match(/<img[^>]+src="([^">]+)"/);
+  const match = html.match(/<img\s+[^>]*src="([^">]+)"/i);
   return match ? match[1] : null;
 };
 ---
