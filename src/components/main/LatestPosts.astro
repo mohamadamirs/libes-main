@@ -1,60 +1,16 @@
 ---
 import { sql } from "../../lib/db";
 import { Image } from "astro:assets";
+import { formatDate, truncateTitle, truncateText, extractFirstImage } from "../../lib/utils";
 
 const { rows: posts } = await sql`
-  SELECT 
-    p.title, 
-    p.slug, 
-    p.content, 
-    p.updated_at, 
-    p.user_id,
-    pr.full_name as author_name,
-    pr.avatar_url as author_avatar,
-    pr.instagram as author_instagram,
-    c.name as category_name
-  FROM posts p
-  LEFT JOIN profiles pr ON p.user_id = pr.id
-  LEFT JOIN categories c ON p.category_id = c.id
-  WHERE p.status = 'published'
-  ORDER BY p.updated_at DESC
+...
   LIMIT 3
 `;
-
-// Helper untuk membersihkan HTML untuk Meta Description
-const stripHtml = (html: string) => {
-  if (!html) return "";
-  return html.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim();
-};
-
-const truncateText = (text: string | null, length = 80) => {
-  if (!text) return "";
-  const clean = stripHtml(text);
-  if (clean.length <= length) return clean;
-  return clean.substring(0, length).trim() + "...";
-};
-
-const truncateTitle = (text: string | null, length = 55) => {
-  if (!text) return "";
-  if (text.length <= length) return text;
-  return text.substring(0, length).trim() + "...";
-};
-
-const formatDate = (date: any) => {
-  if (!date) return "";
-  return new Date(date).toLocaleDateString("id-ID", {
-    year: "numeric", month: "short", day: "numeric",
-  });
-};
-
-const extractFirstImage = (html: string) => {
-  if (!html) return null;
-  const match = html.match(/<img\s+[^>]*src="([^">]+)"/i);
-  return match ? match[1] : null;
-};
 ---
 
 <section id="posts" class="py-20 md:py-32 bg-slate-50 relative overflow-hidden border-t border-slate-100 scroll-mt-20 md:scroll-mt-28">
+...
   <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
     <div class="mb-12 md:mb-20 text-left">
       <div class="inline-flex items-center gap-2 bg-blue-50 px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-blue-100 mb-4 md:mb-6 text-left">

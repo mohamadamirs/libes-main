@@ -55,7 +55,7 @@ const finalSchema = schema || defaultJsonLd;
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
-    <!-- Open Graph / Facebook (PENTING: Urutan Berpengaruh buat WA) -->
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content={type} />
     <meta property="og:image" content={socialImageURL} />
     <meta property="og:image:secure_url" content={socialImageURL} />
@@ -66,7 +66,7 @@ const finalSchema = schema || defaultJsonLd;
     <meta property="og:description" content={description} />
     <meta property="og:locale" content="id_ID" />
     <meta property="og:site_name" content="Literasi Brebesan" />
-    <meta property="fb:app_id" content="966242223397117" /> <!-- Placeholder ID untuk menghilangkan peringatan -->
+    <meta property="fb:app_id" content="966242223397117" />
 
     <!-- Meta Tags Tambahan untuk WhatsApp -->
     <meta name="image" content={socialImageURL} />
@@ -81,19 +81,8 @@ const finalSchema = schema || defaultJsonLd;
     <meta name="twitter:image" content={socialImageURL} />
 
     <!-- Font & Preconnect -->
-    <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800&display=swap" rel="stylesheet" />
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F1JNGQZELH"></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-F1JNGQZELH');
-    </script>
+    <link rel="preload" href="/fonts/plus-jakarta-sans-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/logo.webp" as="image" />
 
     <!-- Data Terstruktur -->
     <script type="application/ld+json" set:html={JSON.stringify(finalSchema)} />
@@ -143,10 +132,18 @@ const finalSchema = schema || defaultJsonLd;
       
       // Handle navigation errors/cancellation
       document.addEventListener('astro:after-preparation', () => {
-        // Preparation finished, but page-load hasn't fired yet. 
-        // We keep it visible until page-load.
       });
     </script>
+    
+    <!-- Google tag (gtag.js) moved to end of body for non-render blocking -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F1JNGQZELH"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-F1JNGQZELH');
+    </script>
+
     <slot />
   </body>
 </html>

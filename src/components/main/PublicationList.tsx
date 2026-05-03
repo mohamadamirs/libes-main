@@ -1,4 +1,5 @@
 import { useState } from 'preact/hooks';
+import { formatDate, truncateTitle, truncateText, extractFirstImage } from '../../lib/utils';
 
 interface Post {
   title: string;
@@ -16,38 +17,6 @@ interface Props {
   initialPosts: Post[];
   categoryId: string | null;
 }
-
-const stripHtml = (html: string) => {
-  if (!html) return "";
-  return html.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim();
-};
-
-const truncateText = (text: string | null, length = 100) => {
-  if (!text) return "";
-  const clean = stripHtml(text);
-  if (clean.length <= length) return clean;
-  return clean.substring(0, length).trim() + "...";
-};
-
-const truncateTitle = (text: string | null, length = 50) => {
-  if (!text) return "";
-  if (text.length <= length) return text;
-  return text.substring(0, length).trim() + "...";
-};
-
-const formatDate = (date: any) => {
-  if (!date) return "";
-  return new Date(date).toLocaleDateString("id-ID", {
-    year: "numeric", month: "short", day: "numeric",
-  });
-};
-
-// Helper untuk ambil gambar pertama dari konten (Vercel Blob / Editor Images)
-const extractFirstImage = (html: string) => {
-  if (!html) return null;
-  const match = html.match(/<img[^>]+src="([^">]+)"/);
-  return match ? match[1] : null;
-};
 
 export default function PublicationList({ initialPosts, categoryId }: Props) {
   const [posts, setPosts] = useState<Post[]>(initialPosts);

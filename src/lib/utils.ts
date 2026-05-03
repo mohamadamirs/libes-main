@@ -14,3 +14,36 @@ export function generateSlug(title: string) {
 
   return `${baseSlug}-${uniqueId}`;
 }
+
+export const stripHtml = (html: string) => {
+  if (!html) return "";
+  return html.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim();
+};
+
+export const truncateText = (text: string | null, length = 100) => {
+  if (!text) return "";
+  const clean = stripHtml(text);
+  if (clean.length <= length) return clean;
+  return clean.substring(0, length).trim() + "...";
+};
+
+export const truncateTitle = (text: string | null, length = 50) => {
+  if (!text) return "";
+  if (text.length <= length) return text;
+  return text.substring(0, length).trim() + "...";
+};
+
+export const formatDate = (date: any) => {
+  if (!date) return "";
+  return new Date(date).toLocaleDateString("id-ID", {
+    year: "numeric", month: "short", day: "numeric",
+  });
+};
+
+// Helper untuk ambil gambar pertama dari konten (Vercel Blob / Editor Images)
+export const extractFirstImage = (html: string) => {
+  if (!html) return null;
+  const match = html.match(/<img\s+[^>]*src="([^">]+)"/i);
+  return match ? match[1] : null;
+};
+

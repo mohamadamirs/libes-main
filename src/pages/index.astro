@@ -28,6 +28,9 @@ const homeSchema = {
     "https://www.instagram.com/literasibrebesan"
   ]
 };
+
+// Set Cache-Control header for the home page (1 hour SWR)
+Astro.response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=1800');
 ---
 
 <Layout 
