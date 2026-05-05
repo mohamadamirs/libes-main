@@ -1,5 +1,4 @@
 ---
-import CopyAccount from "./CopyAccount";
 ---
 
 <section id="tentang" class="py-16 md:py-24 bg-white relative overflow-hidden border-t border-slate-50 scroll-mt-20 md:scroll-mt-28">
@@ -9,115 +8,84 @@ import CopyAccount from "./CopyAccount";
     <div class="mb-10 md:mb-16 text-left">
       <div class="inline-flex items-center gap-2 bg-blue-50 px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-blue-100 mb-4 md:mb-6">
         <span class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-600 animate-pulse"></span>
-        <span class="text-[11px] md:text-xs font-black uppercase tracking-wider text-blue-700 leading-none">Visi & Misi</span>
+        <span class="text-[11px] md:text-xs font-black uppercase tracking-wider text-blue-700 leading-none">Sejarah & Filosofi</span>
       </div>
-      <h2 class="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 uppercase leading-tight">
-        Arah <span class="text-blue-600 font-bold lowercase tracking-normal">Gerak Kita</span>
+      <h2 class="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight uppercase leading-tight">
+        Jejak <span class="text-blue-600 font-bold lowercase tracking-normal">& Harapan</span>
       </h2>
       <p class="mt-3 md:mt-4 text-slate-500 font-medium max-w-xl text-sm md:text-lg leading-relaxed">
-        Menjadi garda depan dalam pengembangan budaya literasi yang kreatif dan inklusif di Brebes.
+        Dari keresahan menjadi gerakan, dari diskusi menjadi kontribusi nyata untuk masyarakat Brebes.
       </p>
     </div>
 
     <!-- Content Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-stretch">
       
-      <!-- Kolom Kiri: Visi Misi & Slogan (Span 7) -->
-      <div class="lg:col-span-7 space-y-8 md:space-y-10">
+      <!-- Card Sejarah (Main Story) -->
+      <div class="lg:col-span-8 bg-white rounded-[2.5rem] p-8 md:p-12 border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-500 relative overflow-hidden group">
+        <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl group-hover:bg-blue-500/10 transition-colors duration-500"></div>
         
-        <div id="visi-misi" class="bg-slate-50 rounded-[2rem] p-6 md:p-8 border border-slate-100 space-y-6 md:space-y-8 hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-500 relative overflow-hidden">
+        <div class="relative z-10">
+          <div class="flex items-center gap-3 mb-8">
+            <span class="px-4 py-1.5 bg-blue-50 text-blue-700 text-[10px] font-black uppercase tracking-widest rounded-full border border-blue-100">Sejarah Literasi Brebesan</span>
+          </div>
           
-          <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl"></div>
-
-          <div class="relative z-10 space-y-3 md:space-y-4">
-            <h3 class="text-lg md:text-xl font-black text-slate-900  flex items-center gap-3">
-              <span class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shadow-sm">V</span>
-              Visi
-            </h3>
-            <p class="text-slate-600 font-bold text-sm md:text-lg leading-relaxed pl-11">
-              Menjadi garda depan dalam pengembangan budaya literasi yang kreatif dan inklusif serta berwawasan sosial.
+          <div class="space-y-6">
+            <p class="text-slate-600 font-bold text-base md:text-xl leading-relaxed">
+              <span class="text-4xl md:text-5xl font-black text-blue-600 float-left mr-3 mt-1 leading-none">D</span>ilatarbelakangi oleh keresahan beberapa pemuda Brebes melihat angka literasi yang sangat rendah, terciptalah gagasan untuk membuat wadah pemberdayaan SDM yang nyata. Komunitas ini lahir bukan sekadar untuk membaca, tapi untuk berdampak.
+            </p>
+            <p class="text-slate-500 font-medium text-sm md:text-lg leading-relaxed">
+              Kegiatan perdana dimulai dengan <strong class="text-slate-900 font-black">Nglapak Buku di Taman Juang 45 Brebes pada 29 Juni 2025</strong>, yang kini diperingati sebagai Hari Lahir Literasi Brebesan. Momentum ini berlanjut pada 17 Agustus 2025 dengan pembentukan kepengurusan formal di bawah kepemimpinan Sahabat Ibnu Hamdun.
+            </p>
+            <p class="text-slate-500 font-medium text-sm md:text-lg leading-relaxed">
+              Hingga kini, lebih dari <span class="text-blue-600 font-black text-2xl md:text-3xl inline-block px-1 align-middle">130+</span> orang telah bergabung dari berbagai latar belakang; Pelajar, Mahasiswa, hingga Pengusaha. Kami percaya literasi harus inklusif, menjangkau semua kalangan, dan memberikan manfaat seluas-luasnya bagi masyarakat luas.
             </p>
           </div>
 
-          <div class="h-px bg-slate-200/60 w-full relative z-10"></div>
+          <!-- Slogan Section -->
+          <div class="mt-12 pt-8 border-t border-slate-50 flex flex-wrap gap-2">
+             {['#LiterasiBerdampak', '#LiterasiUntukSemua', '#MembacaBerdayaBergerakNyata'].map(s => (
+               <span class="px-4 py-2 bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest rounded-xl border border-slate-100 transition-all hover:text-blue-600 hover:border-blue-100 hover:bg-white">
+                 {s}
+               </span>
+             ))}
+          </div>
+        </div>
+      </div>
 
-          <div class="relative z-10 space-y-4 md:space-y-5">
-            <h3 class="text-lg md:text-xl font-black text-slate-900  flex items-center gap-3">
-              <span class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shadow-sm">M</span>
-              Misi
-            </h3>
-            <ul class="space-y-4 md:space-y-6 list-none p-0 m-0 pl-11">
-              {[
-                { n: "1", t: "Menumbuhkan minat baca lewat kegiatan literasi yang seru and inklusif." },
-                { n: "2", t: "Mendorong diskusi sehat untuk melatih berpikir kritis and kreatif." },
-                { n: "3", t: "Mewujudkan ruang untuk tumbuh bersama masyarakat and berkontribusi melalui gerakan sosial sebagai kontribusi nyata untuk masyarakat luas." }
-              ].map(m => (
-                <li class="flex items-start gap-4 text-slate-600 font-medium text-sm md:text-base leading-relaxed">
-                  <span class="flex items-center justify-center w-6 h-6 rounded-lg bg-blue-600 text-white text-[10px] font-black shrink-0 mt-0.5">{m.n}</span>
-                  {m.t}
-                </li>
-              ))}
-            </ul>
+      <!-- Column Visi & Misi -->
+      <div class="lg:col-span-4 flex flex-col gap-6">
+        
+        <!-- Visi Card -->
+        <div class="bg-blue-600 rounded-[2.5rem] p-8 md:p-10 text-white shadow-2xl shadow-blue-600/20 relative overflow-hidden group flex-1 flex flex-col justify-center">
+          <div class="absolute -right-4 -top-4 w-32 h-32 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+          <div class="relative z-10">
+            <h3 class="text-[10px] font-black uppercase tracking-[0.2em] mb-4 text-blue-100 opacity-80">Visi Utama</h3>
+            <p class="text-lg md:text-2xl font-bold leading-tight italic">
+              "Menjadi Garda depan dalam pengembangan budaya literasi yang kreatif, inklusif, and berwawasan sosial."
+            </p>
           </div>
         </div>
 
-        <!-- Slogan Section -->
-        <div class="flex flex-wrap gap-3">
-           {['#Literasiberdampak', '#LiterasiUntukSemua', '#MembacaBerdayaBergerakNyata'].map(s => (
-             <span class="px-5 py-2.5 bg-white border border-slate-200 rounded-full text-[10px] md:text-xs font-black text-blue-600 uppercase tracking-wider shadow-sm hover:shadow-md transition-all">
-               {s}
-             </span>
-           ))}
-        </div>
-
-      </div>
-
-      <!-- Kolom Kanan: Info Tambahan (Span 5) -->
-      <div class="lg:col-span-5 space-y-6 md:space-y-8">
-        
-        <!-- Perencanaan Kedepan Card -->
-        <div id="rencana" class="bg-slate-900 rounded-[2rem] p-6 md:p-8 text-white relative overflow-hidden shadow-2xl scroll-mt-32">
-          <div class="absolute top-0 right-0 w-32 h-32 bg-blue-600/20 rounded-full blur-3xl"></div>
-          <h3 class="text-lg md:text-xl font-black  mb-6 flex items-center gap-3">
-            <span class="w-2 h-6 bg-blue-600 rounded-full"></span>
-            Perencanaan Kedepan
-          </h3>
-          <ul class="grid grid-cols-1 gap-3">
+        <!-- Misi Card -->
+        <div class="bg-slate-900 rounded-[2.5rem] p-8 md:p-10 text-white relative overflow-hidden group">
+          <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-blue-400"></div>
+          <h3 class="text-[10px] font-black uppercase tracking-[0.2em] mb-8 text-slate-500">Misi Gerakan</h3>
+          <ul class="space-y-6">
             {[
-              "Lapak Buku", "Nderes Buku", "Anjangsana", 
-              "Kolaborasi Antar Komunitas", "Go to School", "Musikalisasi Puisi"
-            ].map(plan => (
-              <li class="flex items-center gap-3 text-xs md:text-sm font-bold text-slate-300 group cursor-default">
-                <svg class="w-4 h-4 text-blue-500 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-                {plan}
+              { n: "01", t: "Menumbuhkan minat baca lewat kegiatan literasi yang seru dan inklusif." },
+              { n: "02", t: "Mendorong diskusi sehat untuk melatih berpikir kritis dan kreatif." },
+              { n: "03", t: "Mewujudkan ruang tumbuh bersama dan kontribusi nyata melalui gerakan sosial." }
+            ].map((m) => (
+              <li class="flex gap-4 group/item">
+                <span class="flex-shrink-0 text-blue-500 font-black text-xs mt-1 transition-transform group-hover/item:translate-x-1">{m.n}</span>
+                <p class="text-sm md:text-base font-bold text-slate-300 leading-snug group-hover/item:text-white transition-colors">
+                  {m.t}
+                </p>
               </li>
             ))}
           </ul>
         </div>
-
-        <!-- Pembayaran Kas Card -->
-        <div id="kas" class="bg-white border-2 border-dashed border-slate-200 rounded-[2rem] p-6 md:p-8 shadow-sm scroll-mt-32">
-          <h3 class="text-sm md:text-base font-black text-slate-900 uppercase tracking-wider mb-4">Kas Komunitas</h3>
-          
-          <CopyAccount 
-            client:visible 
-            accountNumber="105018103098" 
-            accountName="An. Purwanti / Jago" 
-          />
-
-          <div class="space-y-3">
-             <p class="text-[10px] font-black uppercase text-slate-500 tracking-wider">Note:</p>
-             <div class="flex items-start gap-2">
-               <span class="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0"></span>
-               <p class="text-xs font-bold text-slate-600 leading-tight">Wajib untuk pengurus setiap pertemuan</p>
-             </div>
-             <div class="flex items-start gap-2">
-               <span class="w-1.5 h-1.5 rounded-full bg-green-500 mt-1.5 shrink-0"></span>
-               <p class="text-xs font-bold text-slate-600 leading-tight">Sunah (sukarela) untuk anggota</p>
-             </div>
-          </div>
-        </div>
-
       </div>
 
     </div>
