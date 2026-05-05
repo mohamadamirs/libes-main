@@ -28,7 +28,8 @@ CREATE TABLE "posts" (
 	"created_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	"updated_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	"slug" varchar(255) CONSTRAINT "posts_slug_key" UNIQUE,
-	"category_id" uuid
+	"category_id" uuid,
+	"rejection_reason" text
 );
 CREATE TABLE "profiles" (
 	"id" uuid PRIMARY KEY,

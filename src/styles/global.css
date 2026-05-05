@@ -10,6 +10,74 @@
   font-style: normal;
 }
 
+@theme {
+  --animate-pulse-slow: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-rotate-border: rotate-border 4s linear infinite;
+
+  @keyframes pulse-slow {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1.02);
+    }
+    50% {
+      opacity: 0.85;
+      transform: scale(1.01);
+    }
+  }
+
+  @keyframes rotate-border {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+}
+
+/* Rotating Border Logic */
+.rotating-border-active, .solid-border-active {
+  position: relative;
+  overflow: hidden;
+}
+
+.rotating-border-active::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg,
+    #3b82f6 0%,
+    #3b82f6 25%, /* Seperempat lingkaran agar mirip loading */
+    transparent 25%,
+    transparent 100%
+  );
+  animation: rotate-border 0.8s linear infinite; /* Jauh lebih cepat, gaya loading */
+  z-index: 0;
+}
+
+.solid-border-active::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px solid #3b82f6;
+  border-radius: inherit;
+  z-index: 0;
+}
+
+.rotating-border-active::after, .solid-border-active::after {
+  content: "";
+  position: absolute;
+  inset: 2px; /* Ketebalan stroke */
+  background: white;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+.rotating-border-active > *, .solid-border-active > * {
+  position: relative;
+  z-index: 2;
+}
+
 @layer base {
   html {
     font-family: "Plus Jakarta Sans", sans-serif;

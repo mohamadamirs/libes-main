@@ -5,21 +5,32 @@ export const GET: APIRoute = async ({ url }) => {
   const limit = parseInt(url.searchParams.get("limit") || "9", 10);
   const offset = parseInt(url.searchParams.get("offset") || "0", 10);
   const categoryId = url.searchParams.get("category");
+  const search = url.searchParams.get("search");
 
   try {
-    let query;
-    if (categoryId) {
-      query = sql`
-        SELECT
-          p.title,
-          p.content,
-          p.slug,
-          p.updated_at,
-          p.user_id,
-          pr.full_name as author_name,
-          pr.instagram as author_instagram,
-          pr.avatar_url as author_avatar,
-          c.name as category_name
+    const searchPattern = search ? `%${search}%` : null;
+    let posts;
+
+    if (categoryId && search) {
+      const { rows } = await sql`
+        SELECT p.title, p.content, p.slug, p.updated_at, p.user_id,
+               pr.full_name as author_name, pr.instagram as author_instagram, pr.avatar_url as author_avatar,
+               c.name as category_name
+        FROM posts p
+        LEFT JOIN profiles pr ON p.user_id = pr.id
+        LEFT JOIN categories c ON p.category_id = c.id
+        WHERE p.status = 'published' 
+          AND p.category_id = ${categoryId}
+          AND (p.title ILIKE ${searchPattern} OR p.content ILIKE ${searchPattern})
+        ORDER BY p.updated_at DESC
+        LIMIT ${limit} OFFSET ${offset}
+      `;
+      posts = rows;
+    } else if (categoryId) {
+      const { rows } = await sql`
+        SELECT p.title, p.content, p.slug, p.updated_at, p.user_id,
+               pr.full_name as author_name, pr.instagram as author_instagram, pr.avatar_url as author_avatar,
+               c.name as category_name
         FROM posts p
         LEFT JOIN profiles pr ON p.user_id = pr.id
         LEFT JOIN categories c ON p.category_id = c.id
@@ -27,18 +38,26 @@ export const GET: APIRoute = async ({ url }) => {
         ORDER BY p.updated_at DESC
         LIMIT ${limit} OFFSET ${offset}
       `;
+      posts = rows;
+    } else if (search) {
+      const { rows } = await sql`
+        SELECT p.title, p.content, p.slug, p.updated_at, p.user_id,
+               pr.full_name as author_name, pr.instagram as author_instagram, pr.avatar_url as author_avatar,
+               c.name as category_name
+        FROM posts p
+        LEFT JOIN profiles pr ON p.user_id = pr.id
+        LEFT JOIN categories c ON p.category_id = c.id
+        WHERE p.status = 'published' 
+          AND (p.title ILIKE ${searchPattern} OR p.content ILIKE ${searchPattern})
+        ORDER BY p.updated_at DESC
+        LIMIT ${limit} OFFSET ${offset}
+      `;
+      posts = rows;
     } else {
-      query = sql`
-        SELECT
-          p.title,
-          p.content,
-          p.slug,
-          p.updated_at,
-          p.user_id,
-          pr.full_name as author_name,
-          pr.instagram as author_instagram,
-          pr.avatar_url as author_avatar,
-          c.name as category_name
+      const { rows } = await sql`
+        SELECT p.title, p.content, p.slug, p.updated_at, p.user_id,
+               pr.full_name as author_name, pr.instagram as author_instagram, pr.avatar_url as author_avatar,
+               c.name as category_name
         FROM posts p
         LEFT JOIN profiles pr ON p.user_id = pr.id
         LEFT JOIN categories c ON p.category_id = c.id
@@ -46,9 +65,8 @@ export const GET: APIRoute = async ({ url }) => {
         ORDER BY p.updated_at DESC
         LIMIT ${limit} OFFSET ${offset}
       `;
+      posts = rows;
     }
-
-    const { rows: posts } = await query;
 
     return new Response(JSON.stringify(posts), {
       status: 200,
